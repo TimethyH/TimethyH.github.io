@@ -24,14 +24,14 @@ urls:
 
 # Edit Author details (For multi authors check _data/authors.yml)
 
-author_logo: Timmy.jpeg
-author: Timethy Hyman
+author_logo: Timmy.png
+author: Timmy
 author_bio: Hi, my name is Timethy. This is my digital playground.
 author_email: "timethy.hyman@gmail.com"
 author_location: Netherlands
-# author_website_url: "https://sujaykundu.com"
+author_website_url: "https://timethyh.github.io"
 typewrite-text: Welcome to my digital diary.  
-hero_cover_img: sample_cover.jpg # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
+hero_cover_img: background.jpg # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
 
 # Experiences
 author_work_experiences:
