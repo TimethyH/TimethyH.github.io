@@ -1,0 +1,63 @@
+---
+layout: default
+permalink: /projects/
+---
+
+<div class="col-lg-12">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <ul>
+        <div class="row">
+          {% for project in site.projects %}
+          <div class="card blog-post mb-4">
+            {% if project.thumbnail %}
+            <img class="card-img-top" src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" alt="{{ project.title }}">
+            {% endif %}
+            <div class="card-body center">
+              <h4 class="card-title">{{ project.title }}</h4>
+              {% if project.date %}
+              <h6 class="card-subtitle mb-2 text-muted">{{ project.date | date: "%b %-d, %Y" }}</h6>
+              {% endif %}
+              {% if project.summary %}
+              <p class="card-text">{{ project.summary }}</p>
+              {% endif %}
+              <a href="{{ project.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg">Read</a>
+              <span class="disqus-comment-count" data-disqus-identifier="{{ project.url }}"></span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </ul>
+
+      {% if paginator and paginator.total_pages > 1 %}
+      <div class="row center">
+        <ul class="pagination pagination-sm">
+          {% if paginator.previous_page %}
+          <li class="pagination-link"><a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo;</a></li>
+          {% else %}
+          <li class="disabled pagination-link"><span aria-hidden="true">&laquo;</span></li>
+          {% endif %}
+
+          {% for p in (1..paginator.total_pages) %}
+            {% if p == paginator.page %}
+            <li class="pagination-link active"><span>{{ p }}</span></li>
+            {% elsif p == 1 %}
+            <li class="pagination-link"><a href="{{ '/projects/' | prepend: site.baseurl }}">{{ p }}</a></li>
+            {% else %}
+            <li class="pagination-link"><a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', p }}">{{ p }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if paginator.next_page %}
+          <li class="pagination-link"><a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">&raquo;</a></li>
+          {% else %}
+          <li class="disabled pagination-link"><span aria-hidden="true">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+    {%- include blog_sidebar.html -%}
+  </div>
+</div>
+```

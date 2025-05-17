@@ -1,0 +1,45 @@
+---
+layout: default
+title: Projects
+permalink: /projects/
+---
+
+<div class="col-lg-12">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Mirror blog.html card layout -->
+      <ul>
+        <div class="row">
+          {% for project in site.projects %}
+          <div class="card blog-post mb-4">
+            {% if project.thumbnail %}
+            <img class="card-img-top" src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" alt="{{ project.title }}">
+            {% endif %}
+            <div class="card-body center">
+              <h4 class="card-title">{{ project.title }}</h4>
+              {% if project.date %}
+              <h6 class="card-subtitle mb-2 text-muted">{{ project.date | date: "%b %-d, %Y" }}</h6>
+              {% endif %}
+              {% if project.summary %}
+              <p class="card-text">{{ project.summary }}</p>
+              {% endif %}
+              <a href="{{ project.url | prepend: site.baseurl }}" data-disqus-identifier="{{ project.url }}" class="btn btn-dark btn-lg">View Project</a>
+              <span class="disqus-comment-count" data-disqus-identifier="{{ project.url }}"></span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </ul>
+
+      <!-- Optional: include pagination if desired -->
+      <!-- {% if paginator %}
+      <div class="row center">
+        {% include blog_pagination.html %}
+      </div>
+      {% endif %} -->
+
+    </div>
+    {%- include blog_sidebar.html -%}
+  </div>
+</div>
+```

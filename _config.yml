@@ -12,13 +12,14 @@ urls:
       url: /
     - text: About
       url: /about
+    - text: Projects
+      url: /projects
     - text: Blogs
       url: /blog
     - text: Gallery
       url: /gallery
     - text: Contact
       url : /contact
-
 
 # Edit Author details (For multi authors check _data/authors.yml)
 
@@ -135,6 +136,9 @@ collections:
     output: true
   authors:
     output: true
+  projects:
+    output: true
+    
 
 defaults:
   -
@@ -154,6 +158,13 @@ defaults:
       path: 'assets/**'
     values:
       sitemap: false
+  -
+    scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project"
+      permalink: /projects/:path/
 
 # Build settings
 plugins:
