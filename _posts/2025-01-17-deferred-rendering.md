@@ -94,7 +94,7 @@ We create a G-Buffer which holds Render Targets. These Render Targets, can be wr
 
 These buffers should be linked to textures so we can use them in other shaders.
 
-# Implementation.
+## Implementation.
 
 ## The General Idea
 
