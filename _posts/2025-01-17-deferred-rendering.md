@@ -11,27 +11,27 @@ permalink: /blog/deferred-implementation/
 usemathjax: true
 ---
 
-# A simple implementation of Deferred Rendering.
+## A simple implementation of Deferred Rendering.
 
-## Introduction
+### Introduction
 
 Hello there! In this blog post I will be explaining what deferred rendering entails and how you can start implementing it yourself.
 Since my personal project is under NDA, I will not be diving into specifics, but i will give a broad explanation on how to approach the subject in the API of your choice.
 
-## Prerequisites
+### Prerequisites
 
 To implement a deferred pipeline, I’m assuming a basic understanding of a modern graphics API such as OpenGL, Vulkan or DirectX 12. I’m also assuming some experience writing shaders using HLSL or GLSL.
 If this is not the case, don’t worry. The following tutorial will still give you great insight on the idea behind a deferred renderer and is not code heavy.
 
-## What is Deferred Rendering?
+### What is Deferred Rendering?
 
 A deferred pipeline is essentially the separation between rendering geometry and applying light calculations to this geometry. In a normal forward rendering pipeline, geometry is rendered to the scene and every pixel of its vertices gets shaded in the same pass. The difference is that in a deferred pipeline, the first pass, often referred to as the ‘geometry pass’ will render all objects to the screen and store scene data in the G-Buffer (more on this later). After the geometry pass, we go through the ‘light pass’. In this pass we use the data stored in the G-Buffer to shade the final pixel of objects rendered to the screen. Finally we could opt to create more passes such as light passes for different types of lighting and a transparent pass for transparent objects. I will elaborate on the reasoning behind these passes later in the article.
 
-## Why would I even bother implementing a deferred pipeline?
+### Why would I even bother implementing a deferred pipeline?
 
 The downside of the forward rendered pipeline is that all pixels of the objects get shaded, even the pixels that get overlapped with other geometry. This results in a lot of wasted calculations. The deferred approach is beneficial since by using a deferred pipeline, we render all geometry of the scene to the screen, and only apply lighting calculations on the final rendered pixels. By doing this, we drastically decrease the amount of calculations needed to light the scene since the amount of pixels calculated is now fixed. In a forward pipeline, we could render 2-3 lights while maintaining 60fps, with a deferred pipeline we can render thousands of lights without dropping below 60fps. (** will add profiling information)
 
-## Benefits and detriments.
+### Benefits and detriments.
 
 The deferred pipeline also has some downsides. Setting up a deferred rendering pipeline is harder to setup compared to the standard forward rendered brother. Deferred rendering is also only beneficial in certain cases where the the separation of the geometry pass and the light pass outweigh the overhead created by the G-Buffer. Deferred rendering shines because of its scalability with the amount of lights, but it’s not ideal when:
 
@@ -67,7 +67,7 @@ By processing geometry only once during the geometry pass, deferred rendering av
 
 Post processing becomes easier because screen space data needed is already stored in the G-Buffer. This simplifies implementation of effects like SSAO ( Screen Space Ambient Occlusion ), Motion Blur and Depth of Field.
 
-## The G-Buffer.
+### The G-Buffer.
 
 We create a G-Buffer which holds Render Targets. These Render Targets, can be written to in a pixel shader. In this shader we store attribute data in a big buffer. We need this data to do the light calculations in the light pass later on. The data stored in a G-Buffer varies from implementation to implementation, but generally it will hold the following:
 
@@ -94,15 +94,15 @@ We create a G-Buffer which holds Render Targets. These Render Targets, can be wr
 
 These buffers should be linked to textures so we can use them in other shaders.
 
-## Implementation.
+### Implementation.
 
-## The General Idea
+### The General Idea
 
 To implement a deferred pipeline we need to do a few things. First of all we need to create 3 Render Targets, one for each attribute mentioned above. We need to enable writing to these Render Targets, and we need to create a separate Render Target Mask for the G-Buffer. This mask needs to get initialized with the previously created Render Targets. Finally when switching between passes, you want to set the correct Render Target to output to. More on this later.
 
 The next step is to separate the pipeline into multiple passes. A geometry pass where we load all geometry vertices into the vertex shader and render the geometry to the scene. In the pixel shader of this pass we also fill the G-Buffer attributes. Positions get filled with the world space positions of the mesh, normals with the normals provided by the mesh ( or calculated using normal mapping ), and finally the albedo texture gets sampled and its data stored in the corresponding buffer.
 
-## The light pass.
+### The light pass.
 
 After the geometry pass, we want to create a light pass with its own set of shaders. In this example i will on two variations of the implementation. A simple way to implement this, would be to render a quad to the screen using the vertex shader and sampling the G-Buffer in the pixel shader to do the lighting calculations. This works, and is already an improvement in regards of a forward rendered pipeline, but in this case we do no light culling. We can optimize this further. Light culling is important because of distance attenuation, where for example, the light of a lighter should not affect an object 50km away. Even if you add an attenuating function, there will always be some light contribution, even if its very minimal. Now you might ask yourself.. “What if i just add an if statement for when the light is past a certain threshold?” This would indeed solve that issue, but having an if statement in the pixel shader is expensive considering it would have to be done for every light on every pixel. Thing brings us to the topic of light culling.
 
@@ -140,7 +140,7 @@ Now we can use these UV’s to sample the G-Buffer data.
     float3 Normal = texture(gNormal, TexCoords).xyz;
 ```
 
-## Final Pass
+### Final Pass
 
 In the final pass we want to render a quad to the screen and sample the data previously written to G-Buffer. This is the easiest part since it only requires us to sample the texture with all previous light calculations and output it to the screen.
 
@@ -155,7 +155,7 @@ float4 main(V2P input)
 }
 ```
 
-## Switching between passes
+### Switching between passes
 
 First of all its important to make sure we sync the GPU before rendering anything to the screen with each pass.
 
@@ -165,13 +165,13 @@ Light pass setup: When switching to the light pass its important you set the Ren
 
 Final pass setup: For the final pass we want to select the initial Render Target and Render Target Mask again. Here we do not use the G-Buffer. Finally for Depth Stencil Control, we want all depth testing and depth writing to be disabled. In this pass we render to a 2D quad.
 
-## Alternative passes
+### Alternative passes
 
 In my implementation i only went over the point light pass. Ideally we create a separate shader as well to handle direct lighting. We do this to avoid something called an ‘uber-shader’ which is a big shader which handles all calculations. [Aortiz Alguero](https://www.aortiz.me/2018/12/21/CG.html) phrases it as follows: “And therein lies the biggest perk of deferred shading, it reduces the number of responsibilities of a shader through specialization. By dividing the work between multiple shader programs we can avoid massively branching “uber-shaders” and reduce register pressure — in other words, reduce the amount of variables a shader program needs to keep track of at a given time.”
 
 If we want to render transparent objects we need to add another pass which handles this. As the deferred pipeline does not support this, which means these objects need to be forward rendered.
 
-## Further Optimizations
+### Further Optimizations
 
 The deferred pipeline allows us to perform certain optimizations.
 
@@ -208,7 +208,7 @@ This would look something like this:
 
 An article explaining this in more detail [here](https://therealmjp.github.io/posts/reconstructing-position-from-depth/).
 
-## Finally we can look into occupancy
+### Finally we can look into occupancy
 
 Occupancy is essentially how well the GPU can hide memory latency. The GPU will break down tasks into wavefronts and assign these wavefronts to SIMD to operate on. Multiple wavefronts can be assigned to a single SIMD, but only 1 wavefront can be executed at time. Afterwards the GPU can switch between wavefronts when one of the wavefronts is waiting for data to be loaded from memory.
 
@@ -242,18 +242,18 @@ PixelColor = vec4(r, g, b, a);
 
 This is the article where i learned about [Occupancy](https://gpuopen.com/learn/occupancy-explained/) if you want to read more in depth about it.
 
-## Conclusion.
+### Conclusion.
 
 To conclude, a deferred renderer is an amazing optimization when it comes to complex geometry or a scene with a lot of lights. It scales well with lights and does not waste cycles computing pixels that will never make it on the screen. It has it’s flaws such as constantly reading and writing to the G-Buffer, but this overhead quickly becomes worth it with the right geometrical and lighting conditions mentioned above. The deferred pipeline also makes post processing effects easier since the G-Buffer already contains most data needed, and also allows for further optimizations in for example light clustering.
 
 That concludes the basic implementation of a deferred pipeline. I hope it was useful to you whether you are an experienced graphics programmer, someone looking for a new challenge or just a curious reader.
 If you happen to have any questions or corrections, feel free to leave a comment.
 
-### Future work
+#### Future work
 
 In the future i intend to optimize the project more and add light clustering. Once that is implemented i will update this article with my findings on the subject as well.
 
-### Further Reading:
+#### Further Reading:
 
 [Deferred Shading](https://learnopengl.com/Advanced-Lighting/Deferred-Shading) by Joey de Vries.
 
