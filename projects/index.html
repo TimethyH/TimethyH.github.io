@@ -1,63 +1,28 @@
 ---
 layout: default
+title: Projects
 permalink: /projects/
 ---
+<div style="margin-top: 80px;"></div>
+<p class="lead mb-4">
+  Welcome! Here you’ll find a chronological tour of my work, organized by year.  
+  Click on any card below to dive into that year’s projects.
+</p>
 
-<div class="col-lg-12">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <ul>
-        <div class="row">
-          {% for project in site.projects %}
-          <div class="card blog-post mb-4">
-            {% if project.thumbnail %}
-            <img class="card-img-top" src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" alt="{{ project.title }}">
-            {% endif %}
-            <div class="card-body center">
-              <h4 class="card-title">{{ project.title }}</h4>
-              {% if project.date %}
-              <h6 class="card-subtitle mb-2 text-muted">{{ project.date | date: "%b %-d, %Y" }}</h6>
-              {% endif %}
-              {% if project.summary %}
-              <p class="card-text">{{ project.summary }}</p>
-              {% endif %}
-              <a href="{{ project.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg">Read</a>
-              <span class="disqus-comment-count" data-disqus-identifier="{{ project.url }}"></span>
-            </div>
+<div class="row g-4 mt-4">
+  {% assign groups = "year1|Year 1,year2|Year 2,year3|Year 3,year4|Year 4" | split: "," %}
+  {% for pair in groups %}
+    {% assign parts = pair | split:"|" %}
+    {% assign slug  = parts[0] %}
+    {% assign label = parts[1] %}
+    <div class="col-12 col-md-6 col-lg-3">
+      <a href="{{ '/projects/' | append: slug | append: '/' | relative_url }}">
+        <div class="card h-100 text-center">
+          <div class="card-body d-flex flex-column justify-content-center">
+            <h2 class="card-title">{{ label }}</h2>
           </div>
-          {% endfor %}
         </div>
-      </ul>
-
-      {% if paginator and paginator.total_pages > 1 %}
-      <div class="row center">
-        <ul class="pagination pagination-sm">
-          {% if paginator.previous_page %}
-          <li class="pagination-link"><a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo;</a></li>
-          {% else %}
-          <li class="disabled pagination-link"><span aria-hidden="true">&laquo;</span></li>
-          {% endif %}
-
-          {% for p in (1..paginator.total_pages) %}
-            {% if p == paginator.page %}
-            <li class="pagination-link active"><span>{{ p }}</span></li>
-            {% elsif p == 1 %}
-            <li class="pagination-link"><a href="{{ '/projects/' | prepend: site.baseurl }}">{{ p }}</a></li>
-            {% else %}
-            <li class="pagination-link"><a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', p }}">{{ p }}</a></li>
-            {% endif %}
-          {% endfor %}
-
-          {% if paginator.next_page %}
-          <li class="pagination-link"><a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">&raquo;</a></li>
-          {% else %}
-          <li class="disabled pagination-link"><span aria-hidden="true">&raquo;</span></li>
-          {% endif %}
-        </ul>
-      </div>
-      {% endif %}
+      </a>
     </div>
-    {%- include blog_sidebar.html -%}
-  </div>
+  {% endfor %}
 </div>
-```

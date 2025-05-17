@@ -1,34 +1,64 @@
 ---
 layout: default
 ---
+
 <div class="col-lg-12">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      {%- include blog_post_breadcrumb.html -%}
+
+      {%- comment -%}
+      Dynamic “Back” button to the Year X listing
+      {%- endcomment -%}
+      {% assign year_slug  = page.category %}
+      {% assign year_label = year_slug | replace: "year", "Year " %}
+
+      <a
+        href="{{ '/projects/' | append: year_slug | append: '/' | relative_url }}"
+        class="btn btn-outline-secondary mb-4"
+      >
+        ← Back to {{ year_label }} Projects
+      </a>
+
       <article class="card" itemscope itemtype="http://schema.org/BlogPosting">
         <div class="card-header">
           <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
           {% if page.subtitle %}
-          <h4 class="post-meta">{{ page.subtitle }}</h4>
+            <h4 class="post-meta">{{ page.subtitle }}</h4>
           {% endif %}
           <div class="post-summary">
-            Category: <a href="{{ site.baseurl }}/projects/#{{ page.category | slugify }}">{{ page.category }}</a>
-            {% if page.date %} | Completed: <time datetime="{{ page.date }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time>{% endif %}
+            Category:
+            <a
+              href="{{ '/projects/' | append: year_slug | append: '/' | relative_url }}"
+            >
+              {{ year_label }}
+            </a>
+            {% if page.date %}
+              | Completed:
+              <time datetime="{{ page.date }}" itemprop="datePublished">
+                {{ page.date | date: "%b %-d, %Y" }}
+              </time>
+            {% endif %}
           </div>
         </div>
         <div class="card-body" itemprop="articleBody">
           {% if page.thumbnail %}
-          <img class="card-img-top" src="{{ site.url }}{{ site.baseurl }}{{ page.thumbnail }}" alt="{{ page.title }}">
-          <br><br>
+            <img
+              class="card-img-top"
+              src="{{ site.url }}{{ site.baseurl }}{{ page.thumbnail }}"
+              alt="{{ page.title }}"
+            >
+            <br><br>
           {% endif %}
           {{ content }}
           <br>
           {%- include share_page.html -%}
         </div>
       </article>
+
       <div class="comments">
         {%- include blog_post_comments.html -%}
       </div>
+
     </div>
     {%- include blog_sidebar.html -%}
   </div>
