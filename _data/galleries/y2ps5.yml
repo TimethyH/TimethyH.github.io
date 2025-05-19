@@ -21,6 +21,27 @@ pictures:
     sizes:
       - spheres.png
 
+  - title: "Normals"
+    caption: "The normals used are calculated using normal mapping."
+    original: norms.png
+    thumbnail: norms.png
+    sizes:
+      - norms.png
+
+  - title: "Tangent Normals"
+    caption: "The calculated tangents"
+    original: norm1.png
+    thumbnail: norm1.png
+    sizes:
+      - norm1.png
+
+  - title: "BiTangent Normals"
+    caption: "The calculated bitangents"
+    original: norm2.png
+    thumbnail: norm2.png
+    sizes:
+      - norm2.png
+
   - title: "PS5 Renderer"
     caption: "A classic helmet with IBL influence from the skybox."
     type: video

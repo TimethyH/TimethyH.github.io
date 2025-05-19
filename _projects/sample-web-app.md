@@ -2,7 +2,7 @@
 layout: project
 title: "Sample Web App"
 subtitle: "A modern web application built with React"
-category: year2
+category: year4
 thumbnail: /assets/img/background.jpg
 technologies: 
   - React

@@ -2,7 +2,7 @@
 layout: project
 title: "Machine Learning Image Classifier"
 subtitle: "An ML model that classifies images into categories"
-category: year1
+category: year4
 thumbnail: /assets/img/background.jpg
 technologies: 
   - Python
