@@ -28,10 +28,19 @@
     thumbnail: Y1D.png
 -
   title: Y2 PS5 Project
-  directory: ps5
+  directory: y2ps5
   preview:
     filename: helmet.png
     original: helmet.png
     sizes:
     - helmet.png
     thumbnail: helmet.png
+-
+  title: Y2 VR Project
+  directory: y2vr
+  preview:
+    filename: fogThumb.png
+    original: fogThumb.png
+    sizes:
+    - fogThumb.png
+    thumbnail: fogThumb.png

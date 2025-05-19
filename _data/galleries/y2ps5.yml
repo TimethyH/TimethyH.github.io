@@ -1,0 +1,28 @@
+picture_path: y2ps5
+pictures:
+  - title: "The Helmet"
+    caption: "Very Pretty :)."
+    original: helmet.png
+    thumbnail: helmet.png
+    sizes:
+      - helmet.png
+
+  - title: "1028 lights"
+    caption: "1028 lights using the renderer."
+    original: lights.png
+    thumbnail: lights.png
+    sizes:
+      - lights.png
+
+  - title: "Spheres"
+    caption: "The deferred renderer uses sphere bounding volumes to only light up the pixels covered by the spheres"
+    original: spheres.png
+    thumbnail: spheres.png
+    sizes:
+      - spheres.png
+
+  - title: "PS5 Renderer"
+    caption: "A classic helmet with IBL influence from the skybox."
+    type: video
+    video_src: IBL.mp4
+    thumbnail: helmet.png

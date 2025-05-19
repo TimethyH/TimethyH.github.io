@@ -1,0 +1,7 @@
+picture_path: y2vr
+pictures:
+  - title: "VR Fog"
+    caption: "Currently still work in progress since the block jsut started but by implemeting ray marching, i was able to calculate fog density."
+    type: video
+    video_src: initialFog.mp4
+    thumbnail: fogThumb.png
