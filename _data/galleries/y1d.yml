@@ -1,0 +1,8 @@
+picture_path: y1d
+pictures:
+  - title: "Game Demo"
+    caption: "This block i researched Reinforcement Learning, here i made models so every enemy has its own behaviour."
+    original: Demo.gif
+    thumbnail: Demo.gif
+    sizes:
+      - Demo.gif

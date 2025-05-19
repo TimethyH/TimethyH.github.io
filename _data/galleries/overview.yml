@@ -1,9 +1,28 @@
+
 -
-  title: Mountains
-  directory: mountains
+  title: Y1 Block A
+  directory: y1a
   preview:
-    filename: 1.jpg
-    original: 1-thumbnail.jpg
+    filename: Y1A1.png
+    original: Y1A1.png
     sizes:
-    - 1-thumbnail.jpg
-    thumbnail: 1-thumbnail.jpg
+    - Y1A1.png
+    thumbnail: Y1A1.png
+-
+  title: Y1 Block C
+  directory: y1c
+  preview:
+    filename: Y1C.png
+    original: Y1C.png
+    sizes:
+    - Y1C.png
+    thumbnail: Y1C.png
+-
+  title: Y1 Block D
+  directory: y1d
+  preview:
+    filename: Y1D.png
+    original: Y1D.png
+    sizes:
+    - Y1D.png
+    thumbnail: Y1D.png

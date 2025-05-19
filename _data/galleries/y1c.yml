@@ -1,0 +1,43 @@
+picture_path: y1c
+pictures:
+  - title: "Scene Overview"
+    caption: "This scene is ray traced. It contains Reflections, Refractions, PointLights, SpotLights and DirectionalLights."
+    original: Y1C.png
+    thumbnail: Y1C.png
+    sizes:
+      - Y1C.png
+
+  - title: "Reflecting Sphere"
+    caption: "Ray's hitting the sphere accurately display the reflected image."
+    original: reflectingSphere.png
+    thumbnail: reflectingSphere.png
+    sizes:
+      - reflectingSphere.png
+
+  - title: "Glass Refractions"
+    caption: "Rays accurately refract using Snell's Law."
+    original: glass.png
+    thumbnail: glass.png
+    sizes:
+      - glass.png
+  
+  - title: "Glass Sphere"
+    caption: "A Glass sphere with nice reflections :)."
+    original: sphereGLASS.png
+    thumbnail: sphereGLASS.png
+    sizes:
+      - sphereGLASS.png
+
+  - title: "Shadows"
+    caption: "A Metal sphere with soft shadows :)."
+    original: softShadowLights.png
+    thumbnail: softShadowLights.png
+    sizes:
+      - softShadowLights.png
+
+  #- title: "Sliding Puzzle Demo"
+  #  caption: "A Gif showcasing engine capabilities. (click to play)"
+  #  original: GameShowcase.gif
+  #  thumbnail: vayne.png
+  #  sizes:
+  #    - GameShowcase.gif

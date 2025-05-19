@@ -4,35 +4,22 @@ title: Gallery
 permalink: /gallery/
 ---
 
-
-    <div class="col-lg-8 offset-md-2">
-
-      <div class="row">
-    {% assign count = 0 %}
-    {% assign align = "left" %}
+<div class="col-lg-8 offset-md-2">
+  <div class="row" id="gallery-index">
     {% for gallery in site.data.galleries.overview %}
-    {% if count == 0 %}<div class="row">{% endif %}
-      <div class="card">
-        <div class="card-title"> {{gallery.title}}</div>
-        <div class="row">
-
-        <a href="{{ site.url }}{{ site.baseurl }}/gallery/{{ gallery.directory }}.html">
-          <img class="img-thumbnail" alt="{{ gallery.title }}" src="{{ site.url }}{{ site.baseurl }}/assets/img/gallery/{% if gallery.picture_path %}{{ gallery.picture_path }}{% else %}{{ gallery.directory }}{% endif %}/{{ gallery.preview.thumbnail }}" />
+      <div class="col-sm-6 col-md-4 mb-4">
+        <a href="{{ site.url }}{{ site.baseurl }}/gallery/{{ gallery.directory }}/" class="media-tile">
+          <div class="media-wrapper">
+            <img loading="lazy"
+                 alt="{{ gallery.title }}"
+                 class="media-element"
+                 src="{{ site.url }}{{ site.baseurl }}/assets/img/gallery/{% if gallery.picture_path %}{{ gallery.picture_path }}{% else %}{{ gallery.directory }}{% endif %}/{{ gallery.preview.thumbnail }}" />
+          </div>
+          <div class="caption mt-2 text-center px-2">
+            <h6 class="mb-1">{{ gallery.title }}</h6>
+          </div>
         </a>
-        </div>
       </div>
-    {% if count == 1 %}</div>{% endif %}
-    {% assign count = count | plus: 1 %}
-    {% assign align = "right" %}
-    {% if count >= 2 %}
-    {% assign align = "left" %}
-    {% assign count = 0 %}
-    {% endif %}
     {% endfor %}
-
-    {% if count != 1 %}
-    </div>
-    {% endif %}
-
-    </div>
+  </div>
 </div>
