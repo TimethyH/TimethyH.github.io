@@ -1,0 +1,14 @@
+picture_path: ps5
+pictures:
+  - title: "1028 lights"
+    caption: "1028 lights using the renderer.."
+    original: lights.png
+    thumbnail: lights.png
+    sizes:
+      - lights.png
+
+  - title: "Demo Video"
+    caption: "A classic helmet with IBL influence from the skybox."
+    type: video
+    video_src: IBL.mp4
+    thumbnail: helmet.png
