@@ -177,7 +177,7 @@ The deferred pipeline allows us to perform certain optimizations.
 
 **We can utilize light culling techniques such as clustered shading, to further optimize our renderer.**
 I have not implemented this myself yet, but the general idea behind this optimization is that we divide the view frustrum into 3D grids and we quickly calculate a list of lights intersecting each volume of this grid.
-A beautiful article elaborating this optimization is found [here](https://www.aortiz.me/2018/12/21/CG.html#deferred-shading).
+A beautiful article elaborating this optimization is found [In this article](https://www.aortiz.me/2018/12/21/CG.html#deferred-shading).
 
 **We can reconstruct the world position of the object using the depth buffer.**
 The main benefit here is that the G-Buffer becomes smaller. Storing the position of each pixel directly in the G-buffer requires storing three 32-bit components (X, Y, Z). Reconstructing the positions will in turn save a lot of memory. This in turn also reduces the bandwidth required to read and write from the G-Buffer.
@@ -206,7 +206,7 @@ This would look something like this:
 }
 ```
 
-An article explaining this in more detail [here](https://therealmjp.github.io/posts/reconstructing-position-from-depth/).
+An article explaining this in more detail [In this article](https://therealmjp.github.io/posts/reconstructing-position-from-depth/).
 
 ### Finally we can look into occupancy
 
