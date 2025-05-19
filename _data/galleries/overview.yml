@@ -1,7 +1,7 @@
 
 -
   title: Y1 Block A
-  directory: y1a
+  directory: /gallery/y1a
   preview:
     filename: Y1A1.png
     original: Y1A1.png
@@ -10,7 +10,7 @@
     thumbnail: Y1A1.png
 -
   title: Y1 Block C
-  directory: y1c
+  directory: /gallery/y1c
   preview:
     filename: Y1C.png
     original: Y1C.png
@@ -19,7 +19,7 @@
     thumbnail: Y1C.png
 -
   title: Y1 Block D
-  directory: y1d
+  directory: /gallery/y1d
   preview:
     filename: Y1D.png
     original: Y1D.png
