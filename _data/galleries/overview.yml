@@ -26,3 +26,12 @@
     sizes:
     - Y1D.png
     thumbnail: Y1D.png
+-
+  title: Y2 PS5 Project
+  directory: /gallery/ps5
+  preview:
+    filename: Y1D.png
+    original: Y1D.png
+    sizes:
+    - Y1D.png
+    thumbnail: Y1D.png
