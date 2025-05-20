@@ -1,8 +1,20 @@
 picture_path: y1d
 pictures:
+  - title: "The Team"
+    caption: ""
+    original: team.png
+    thumbnail: team.png
+    sizes:
+      - team.png
   - title: "Game Demo"
-    caption: "This block i researched Reinforcement Learning, here i made models so every enemy has its own behaviour."
+    caption: "Enemies using the Reinforcement Learning model"
     original: Demo.gif
     thumbnail: Demo.gif
     sizes:
       - Demo.gif
+  - title: "Menu"
+    caption: ""
+    original: Y1D1.png
+    thumbnail: Y1D1.png
+    sizes:
+      - Y1D1.png
