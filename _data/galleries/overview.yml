@@ -1,6 +1,6 @@
 
 -
-  title: Y1 Block A
+  title: Y1 First Game
   directory: y1a
   preview:
     filename: Y1A1.png
@@ -9,7 +9,7 @@
     - Y1A1.png
     thumbnail: Y1A1.png
 -
-  title: Y1 Block C
+  title: Y1 RayTracing Project
   directory: y1c
   preview:
     filename: Y1C.png
@@ -18,7 +18,7 @@
     - Y1C.png
     thumbnail: Y1C.png
 -
-  title: Y1 Block D
+  title: Y1 Reinforcement Learning
   directory: y1d
   preview:
     filename: Y1D.png
