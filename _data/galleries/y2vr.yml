@@ -1,7 +1,19 @@
 picture_path: y2vr
 pictures:
-  - title: "VR Fog"
+  - title: "VR Fog Week 2"
     caption: "Currently still work in progress since the block jsut started but by implemeting ray marching, i was able to calculate fog density."
     type: video
     video_src: initialFog.mp4
+    thumbnail: fogThumb.png
+
+  - title: "VR Fog Week 3"
+    caption: "Looking more organic. Accomplished by baking noise and fbm calculations in a 3D texture."
+    type: video
+    video_src: staticCloud.mp4
+    thumbnail: fogThumb.png
+
+  - title: "VR Fog Week 3"
+    caption: "Looking more organic. Accomplished by baking noise and fbm calculations in a 3D texture."
+    type: video
+    video_src: DynamiFog.mp4
     thumbnail: fogThumb.png
