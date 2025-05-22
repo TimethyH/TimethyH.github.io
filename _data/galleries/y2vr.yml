@@ -14,8 +14,10 @@ pictures:
 
   - title: "VR Fog Week 2"
     caption: "Looking more organic. Accomplished by baking noise and fbm calculations in a 3D texture."
+  - title: "VR Fog Week 3"
+    caption: "Dynamic Fog, Accomplished by baking noise and fbm calculations in a 3D texture."
     type: video
-    video_src: DynamiFog.mp4
+    video_src: DynamicFog.mp4
     thumbnail: fogThumb.png
 
   - title: "VR Fog Week 3"
