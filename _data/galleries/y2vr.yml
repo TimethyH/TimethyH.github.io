@@ -23,3 +23,9 @@ pictures:
     type: video
     video_src: CloudScape.mp4
     thumbnail: fogThumb2.png
+
+  - title: "VR In Game Fog Week 2"
+    caption: "How my contributions look in game currently"
+    type: video
+    video_src: VRW2.mp4
+    thumbnail: fogThumb2.png
