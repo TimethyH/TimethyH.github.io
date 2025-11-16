@@ -4,42 +4,239 @@ title: Projects
 permalink: /projects/
 ---
 
+<style>
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.project-card {
+  background: var(--card-background, #fff);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.project-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+}
+
+.project-thumbnail {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.project-content {
+  padding: 24px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.project-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.project-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color, #333);
+}
+
+.project-date {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 12px;
+}
+
+.project-summary {
+  flex-grow: 1;
+  color: var(--text-secondary, #666);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.project-link {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background 0.3s ease;
+  text-align: center;
+}
+
+.project-link:hover {
+  background: #0056b3;
+  color: white;
+  text-decoration: none;
+}
+
+.projects-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.projects-header h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.projects-header p {
+  font-size: 18px;
+  color: #666;
+}
+
+/* Filter buttons (optional) */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 20px;
+  border: 2px solid #007bff;
+  background: transparent;
+  color: #007bff;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
 <div class="col-lg-12">
   <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <!-- Mirror blog.html card layout -->
-      <ul>
-        <div class="row">
-          {% for project in site.projects %}
-          <div class="card blog-post mb-4">
-            {% if project.thumbnail %}
-            <img class="card-img-top" src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" alt="{{ project.title }}">
-            {% endif %}
-            <div class="card-body center">
-              <h4 class="card-title">{{ project.title }}</h4>
-              {% if project.date %}
-              <h6 class="card-subtitle mb-2 text-muted">{{ project.date | date: "%b %-d, %Y" }}</h6>
-              {% endif %}
-              {% if project.summary %}
-              <p class="card-text">{{ project.summary }}</p>
-              {% endif %}
-              <a href="{{ project.url | prepend: site.baseurl }}" data-disqus-identifier="{{ project.url }}" class="btn btn-dark btn-lg">View Project</a>
-              <span class="disqus-comment-count" data-disqus-identifier="{{ project.url }}"></span>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </ul>
-
-      <!-- Optional: include pagination if desired -->
-      <!-- {% if paginator %}
-      <div class="row center">
-        {% include blog_pagination.html %}
+    <div class="col-lg-10">
+      
+      <div class="projects-header">
+        <h1>My Projects</h1>
+        <p>A collection of my graphics programming and rendering work</p>
       </div>
-      {% endif %} -->
+
+      <!-- Optional: Filter Buttons -->
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="vulkan">Vulkan</button>
+        <button class="filter-btn" data-filter="rendering">Rendering</button>
+        <button class="filter-btn" data-filter="raytracing">Raytracing</button>
+      </div>
+
+      <div class="projects-grid">
+        {% for project in site.projects reversed %}
+        <article class="project-card" data-tags="{{ project.tags | join: ' ' | downcase }}">
+          {% if project.thumbnail %}
+          <a href="{{ project.url | prepend: site.baseurl }}">
+            <img src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" 
+                 alt="{{ project.title }}" 
+                 class="project-thumbnail">
+          </a>
+          {% endif %}
+          
+          <div class="project-content">
+            {% if project.tags %}
+            <div class="project-tags">
+              {% for tag in project.tags %}
+              <span class="project-tag">{{ tag }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            
+            <h3>{{ project.title }}</h3>
+            
+            {% if project.date %}
+            <div class="project-date">
+              {{ project.date | date: "%B %Y" }}
+            </div>
+            {% endif %}
+            
+            {% if project.summary %}
+            <p class="project-summary">{{ project.summary }}</p>
+            {% endif %}
+            
+            <a href="{{ project.url | prepend: site.baseurl }}" class="project-link">
+              View Project →
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
 
     </div>
-    {%- include blog_sidebar.html -%}
   </div>
 </div>
-```
+
+<!-- Optional: JavaScript for filtering -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.project-card');
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Remove active class from all buttons
+      filterBtns.forEach(b => b.classList.remove('active'));
+      // Add active class to clicked button
+      this.classList.add('active');
+      
+      const filter = this.dataset.filter;
+      
+      projectCards.forEach(card => {
+        if (filter === 'all') {
+          card.style.display = 'flex';
+        } else {
+          const tags = card.dataset.tags;
+          if (tags.includes(filter)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        }
+      });
+    });
+  });
+});
+</script>

@@ -3,26 +3,177 @@ layout: default
 title: Projects
 permalink: /projects/
 ---
-<div style="margin-top: 80px;"></div>
-<p class="lead mb-4">
-  Welcome! Here you’ll find a chronological tour of my work, organized by year.  
-  Click on any card below to dive into that year’s projects.
-</p>
 
-<div class="row g-4 mt-4">
-  {% assign groups = "year1|Year 1,year2|Year 2,year3|Year 3,year4|Year 4" | split: "," %}
-  {% for pair in groups %}
-    {% assign parts = pair | split:"|" %}
-    {% assign slug  = parts[0] %}
-    {% assign label = parts[1] %}
-    <div class="col-12 col-md-6 col-lg-3">
-      <a href="{{ '/projects/' | append: slug | append: '/' | relative_url }}">
-        <div class="card h-100 text-center">
-          <div class="card-body d-flex flex-column justify-content-center">
-            <h2 class="card-title">{{ label }}</h2>
+<style>
+/* Only NEW styles needed for the grid and tags */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+/* Override blog-post width for grid layout */
+.projects-grid .blog-post {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.project-thumbnail {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.project-tag {
+  padding: 4px 12px;
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.project-tag.year-tag {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6c757d;
+}
+
+.projects-header {
+  text-align: center;
+  margin-bottom: 40px;
+  margin-top: 80px;
+}
+
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 8px 20px;
+  border: 2px solid #007bff;
+  background: transparent;
+  color: #007bff;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.filter-btn:hover,
+.filter-btn.active {
+  background: #007bff;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<div class="col-lg-12">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="projects-header">
+        <h1>My Projects</h1>
+        <p>A collection of my graphics programming and rendering work</p>
+      </div>
+
+      <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="year1">Year 1</button>
+        <button class="filter-btn" data-filter="year2">Year 2</button>
+        <button class="filter-btn" data-filter="year3">Year 3</button>
+        <button class="filter-btn" data-filter="year4">Year 4</button>
+      </div>
+
+      <div class="projects-grid">
+        {% for project in site.projects reversed %}
+        <!-- Use existing 'card' and 'blog-post' classes -->
+        <article class="card blog-post" data-category="{{ project.category }}">
+          {% if project.thumbnail %}
+          <a href="{{ project.url | prepend: site.baseurl }}">
+            <img src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" 
+                 alt="{{ project.title }}" 
+                 class="project-thumbnail">
+          </a>
+          {% endif %}
+          
+          <div class="card-body">
+            <div class="project-tags">
+              {% if project.category %}
+              {% assign year_num = project.category | replace: "year", "" %}
+              <span class="project-tag year-tag">Year {{ year_num }}</span>
+              {% endif %}
+              
+              {% if project.tags %}
+                {% for tag in project.tags %}
+                <span class="project-tag">{{ tag }}</span>
+                {% endfor %}
+              {% endif %}
+            </div>
+            
+            <h3 class="card-title">{{ project.title }}</h3>
+            
+            {% if project.date %}
+            <h6 class="card-subtitle mb-2 text-muted">
+              {{ project.date | date: "%B %Y" }}
+            </h6>
+            {% endif %}
+            
+            {% if project.summary %}
+            <p class="card-text">{{ project.summary }}</p>
+            {% endif %}
+            
+            <!-- Use existing 'btn-dark' class -->
+            <a href="{{ project.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg">
+              View Project →
+            </a>
           </div>
-        </div>
-      </a>
+        </article>
+        {% endfor %}
+      </div>
+
     </div>
-  {% endfor %}
+  </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const projectCards = document.querySelectorAll('.card');
+  
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      
+      const filter = this.dataset.filter;
+      
+      projectCards.forEach(card => {
+        if (filter === 'all') {
+          card.style.display = 'flex';
+        } else {
+          const category = card.dataset.category;
+          card.style.display = category === filter ? 'flex' : 'none';
+        }
+      });
+    });
+  });
+});
+</script>

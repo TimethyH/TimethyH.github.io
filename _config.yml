@@ -138,6 +138,7 @@ collections:
     output: true
   projects:
     output: true
+    permalink: /projects/:title/
     
 
 defaults:
