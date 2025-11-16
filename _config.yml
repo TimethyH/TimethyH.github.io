@@ -10,16 +10,16 @@ baseurl: "" # the subpath of your site, e.g. /blog
 urls:
     - text: Home
       url: /
-    - text: About
-      url: /about
+ #   - text: About
+ #     url: /about
     - text: Projects
       url: /projects
     - text: Blogs
       url: /blog
     - text: Gallery
       url: /gallery
-    - text: Contact
-      url : /contact
+#    - text: Contact
+#      url : /contact
 
 # Edit Author details (For multi authors check _data/authors.yml)
 
@@ -30,7 +30,7 @@ author_email: "timethy.hyman@gmail.com"
 author_location: Netherlands
 author_website_url: "https://timethyh.github.io"
 typewrite-text: Welcome to my digital diary.  
-hero_cover_img: background.jpg # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
+hero_cover_img: gallery/y2ps5/helmet.png # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
 
 # Experiences
 #author_work_experiences:
@@ -74,7 +74,7 @@ author_education_details:
 github_username:  TimethyH
 instagram_username: polxra
 # facebook_username: johndoe
-linkedin_username: Timethy Hyman
+linkedin_username: timethy-hyman-897940315
 # behance_username: johndoe
 # medium_username: johndoe
 # telegram_username: johndoe

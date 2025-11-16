@@ -3,14 +3,91 @@ layout: full-width
 ---
 
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     $("#typewriteText").typewrite({
       actions: [{ type: "{{site.typewrite-text}}" }]
     });
   });
 </script>
-    <!-- hero section-->
-    {%- include hero.html -%}
-    <div class="col-lg-8 offset-md-2">
-      {%- include recent_articles.html -%}
+<!-- hero section-->
+{%- include hero.html -%}
+
+<!-- Introduction section (replaces recent articles) -->
+<div class="col-lg-10 offset-md-1">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title text-center">Timethy Hyman</h2>
+
+      <div class="row">
+        <!-- Image Column -->
+        <div class="col-md-4">
+          <img src="{{site.url}}{{site.baseurl}}/assets/img/TimmyTraverse.png" class="img-fluid rounded"
+            alt="Timethy Hyman" />
+        </div>
+
+        <!-- Text Column -->
+        <div class="col-md-8">
+          <p>
+            👋 Hi, my name is Timethy Hyman.
+            I'm a 3rd year <strong>graphics programmer</strong> at <strong>Breda University of Applied
+              Sciences</strong>, with a passion for math and learning new things. I have experience in <strong>custom
+              engine development</strong> and <strong>extending existing engines</strong> such as Godot.
+          </p>
+
+          <p>
+            💼 Currently working at <strong>Traverse Research</strong>, where i work in the field of <strong>Computer
+              Graphics</strong> to research the latest rendering techniques.
+          </p>
+
+          <p>
+            🎮 In my free time you can find me coaching the Breda University volleyball team, learning a new piano piece
+            or working on cool side projects.
+          </p>
+
+          <p class="skills-section">
+            🛠️ <strong>Experience:</strong>
+          </p>
+
+          <div class="skills-grid">
+            <div class="skill-item" data-tooltip="3+ years of C++ experience in graphics programming and game engines">
+              <i class="devicon-cplusplus-plain colored"></i>
+              <span>C++</span>
+            </div>
+
+            <div class="skill-item" data-tooltip="1 Year of experience, implementing DLSS and Volumetric Fog">
+              <i class="devicon-rust-plain colored"></i>
+              <span>Rust</span>
+            </div>
+
+            <div class="skill-item" data-tooltip="2 Years of experience in the render backend of PlayStation 5 and optimization">
+              <i class="fab fa-playstation"></i>
+              <span>PS5</span>
+            </div>
+
+            <div class="skill-item" data-tooltip="Experience in Vulkan DLSS integration within the Traverse framework and custom engines">
+              <i class="devicon-vulkan-plain colored"></i>
+              <span>Vulkan</span>
+            </div>
+
+            <div class="skill-item" data-tooltip="Experience in custom VR engine">
+              <i class="devicon-opengl-plain"></i>
+              <span>OpenGL</span>
+            </div>
+          </div>
+
+
+          <p>
+            💡 If you'd like to know more about what I do, feel free to check out my projects below !
+          </p>
+        </div>
+      </div>
+
+      <!-- Optional: Add links to projects/contact -->
+      <div class="text-center mt-4">
+        <a href="{{site.url}}{{site.baseurl}}/projects" class="btn btn-outline-dark btn-lg">
+          View My Projects
+        </a>
+      </div>
     </div>
+  </div>
+</div>
