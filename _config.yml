@@ -30,7 +30,7 @@ author_email: "timethy.hyman@gmail.com"
 author_location: Netherlands
 author_website_url: "https://timethyh.github.io"
 typewrite-text: Welcome to my digital diary.  
-hero_cover_img: gallery/y2ps5/helmet.png # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
+hero_cover_img: helmet.png # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
 
 # Experiences
 #author_work_experiences:
