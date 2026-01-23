@@ -54,6 +54,114 @@ permalink: /projects/
   color: white;
 }
 
+/* Color coding for specific tags */
+.project-tag[data-tag="vulkan"] {
+  background: rgba(172, 50, 50, 0.1);
+  color: #ac3232;
+}
+.project-tag[data-tag="vulkan"]:hover,
+.project-tag[data-tag="vulkan"].active {
+  background: #cd2121;
+  color: white;
+}
+
+.project-tag[data-tag="directx 12"],
+.project-tag[data-tag="dx12"] {
+  background: rgba(16, 124, 16, 0.1);
+  color: #14a314;
+}
+.project-tag[data-tag="directx 12"]:hover,
+.project-tag[data-tag="directx 12"].active,
+.project-tag[data-tag="dx12"]:hover,
+.project-tag[data-tag="dx12"].active {
+  background: #107c10;
+  color: white;
+}
+
+.project-tag[data-tag="rendering"] {
+  background: rgba(255, 140, 0, 0.1);
+  color: #ff8c00;
+}
+.project-tag[data-tag="rendering"]:hover,
+.project-tag[data-tag="rendering"].active {
+  background: #ff8c00;
+  color: white;
+}
+
+.project-tag[data-tag="personal project"],
+.project-tag[data-tag="personal"] {
+  background: rgba(194, 57, 178, 0.313);
+  color: #c239b3;
+}
+.project-tag[data-tag="personal project"]:hover,
+.project-tag[data-tag="personal project"].active,
+.project-tag[data-tag="personal"]:hover,
+.project-tag[data-tag="personal"].active {
+  background: #c239b3;
+  color: white;
+}
+
+.project-tag[data-tag="university project"],
+.project-tag[data-tag="university"] {
+  background: rgba(238, 18, 18, 0.15);
+  color: #f01f0c;
+}
+.project-tag[data-tag="university project"]:hover,
+.project-tag[data-tag="university project"].active,
+.project-tag[data-tag="university"]:hover,
+.project-tag[data-tag="university"].active {
+  background: #ef1313;
+  color: white;
+}
+
+.project-tag[data-tag="traverse research"],
+.project-tag[data-tag="traverse"] {
+  background: rgba(255, 215, 0, 0.15);
+  color: #d4a000;
+}
+.project-tag[data-tag="traverse research"]:hover,
+.project-tag[data-tag="traverse research"].active,
+.project-tag[data-tag="traverse"]:hover,
+.project-tag[data-tag="traverse"].active {
+  background: #ffd700;
+  color: white;
+}
+
+.project-tag[data-tag="ps5"] {
+  background: rgba(3, 36, 249, 0.15);
+  color: white;
+}
+.project-tag[data-tag="ps5"]:hover,
+.project-tag[data-tag="ps5"].active {
+  background: #01aafe;
+  color: white;
+}
+.project-tag[data-tag="raytracing"],
+.project-tag[data-tag="ray tracing"] {
+  background: rgba(136, 23, 152, 0.1);
+  color: #881798;
+}
+.project-tag[data-tag="raytracing"]:hover,
+.project-tag[data-tag="raytracing"].active,
+.project-tag[data-tag="ray tracing"]:hover,
+.project-tag[data-tag="ray tracing"].active {
+  background: #881798;
+  color: white;
+}
+
+.project-tag[data-tag="Game"],
+.project-tag[data-tag="game"] {
+  background: rgba(0, 178, 148, 0.1);
+  color: #00b294;
+}
+.project-tag[data-tag="Game"]:hover,
+.project-tag[data-tag="Game"].active,
+.project-tag[data-tag="Game"]:hover,
+.project-tag[data-tag="Game"].active {
+  background: #ffffff;
+  color: rgb(0, 0, 0);
+}
+
 .projects-header {
   text-align: center;
   margin-bottom: 40px;
@@ -130,6 +238,13 @@ document.addEventListener('DOMContentLoaded', function() {
   
   let activeTag = null;
   
+  // Check if there's a tag in the URL hash
+  const hash = window.location.hash;
+  if (hash.startsWith('#tag-')) {
+    const urlTag = hash.replace('#tag-', '').replace(/-/g, ' ');
+    activateTagFilter(urlTag);
+  }
+  
   // Make tags clickable
   allTags.forEach(tag => {
     tag.addEventListener('click', function(e) {
@@ -143,32 +258,37 @@ document.addEventListener('DOMContentLoaded', function() {
         allTags.forEach(t => t.classList.remove('active'));
         projectCards.forEach(card => card.style.display = 'flex');
         activeTag = null;
+        window.location.hash = '';
         return;
       }
       
-      // Set new active tag
-      activeTag = selectedTag;
-      
-      // Update visual state
-      allTags.forEach(t => {
-        if (t.dataset.tag === selectedTag) {
-          t.classList.add('active');
-        } else {
-          t.classList.remove('active');
-        }
-      });
-      
-      // Filter projects
-      projectCards.forEach(card => {
-        const cardTags = card.dataset.tags;
-        
-        if (cardTags && cardTags.includes(selectedTag)) {
-          card.style.display = 'flex';
-        } else {
-          card.style.display = 'none';
-        }
-      });
+      activateTagFilter(selectedTag);
     });
   });
+  
+  function activateTagFilter(selectedTag) {
+    // Set new active tag
+    activeTag = selectedTag;
+    
+    // Update visual state
+    allTags.forEach(t => {
+      if (t.dataset.tag === selectedTag) {
+        t.classList.add('active');
+      } else {
+        t.classList.remove('active');
+      }
+    });
+    
+    // Filter projects
+    projectCards.forEach(card => {
+      const cardTags = card.dataset.tags;
+      
+      if (cardTags && cardTags.includes(selectedTag)) {
+        card.style.display = 'flex';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
 });
 </script>

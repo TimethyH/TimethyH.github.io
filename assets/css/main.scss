@@ -49,6 +49,7 @@
 
 .project-header {
   margin-bottom: 50px;
+  text-align: center;
 
   h1 {
     font-size: 42px;
@@ -217,6 +218,7 @@
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 24px;
+  justify-content: center;
 }
 
 .project-tag {
@@ -227,6 +229,63 @@
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  // Color coding for specific tags
+  &[data-tag="vulkan"] {
+    background: #ac3232;
+  }
+
+  &[data-tag="directx 12"], &[data-tag="dx12"] {
+    background: #107c10;
+  }
+
+  &[data-tag="rendering"] {
+    background: #ff8c00;
+  }
+
+  &[data-tag="raytracing"], &[data-tag="ray tracing"] {
+    background: #881798;
+  }
+
+  &[data-tag="real-time"], &[data-tag="real time"] {
+    background: #0099bc;
+  }
+
+  &[data-tag="personal project"], &[data-tag="personal"] {
+    background: #c239b3;
+  }
+
+  &[data-tag="university project"], &[data-tag="university"] {
+    background: #f50a0a;
+  }
+
+  &[data-tag="traverse research"], &[data-tag="traverse"] {
+    background: #ffd700;
+  }
+
+&[data-tag="ps5"] {
+  background: rgba(3, 36, 249, 0.15);
+  color: #0324f9;
+  &:hover { background: #01aafe; color: white; }
+}
+
+    &[data-tag="real-time"], &[data-tag="real time"] {
+    background: #0099bc;
+  }
+
+
+  &[data-tag="game"] {
+    background: #00b294;
+  }
 }
 
 .project-share {

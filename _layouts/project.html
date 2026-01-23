@@ -12,23 +12,11 @@ layout: default
     {% if page.subtitle %}
     <h4 class="project-subtitle">{{ page.subtitle }}</h4>
     {% endif %}
-    
-    <div class="project-meta">
-      {% assign year_slug = page.category %}
-      {% assign year_label = year_slug | replace: "year", "Year " %}
-      Category:
-      <a href="{{ '/projects/' | append: year_slug | append: '/' | relative_url }}" class="meta-link">
-        {{ year_label }}
-      </a>
-      {% if page.date %}
-      | Completed: {{ page.date | date: "%B %Y" }}
-      {% endif %}
-    </div>
 
     {% if page.tags %}
     <div class="project-tags">
       {% for tag in page.tags %}
-      <span class="project-tag">{{ tag }}</span>
+      <a href="{{ '/projects/' | relative_url }}#tag-{{ tag | downcase | replace: ' ', '-' }}" class="project-tag">{{ tag }}</a>
       {% endfor %}
     </div>
     {% endif %}
