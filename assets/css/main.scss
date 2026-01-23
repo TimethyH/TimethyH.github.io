@@ -39,3 +39,292 @@
 .example-main {
   color: blue;
 }
+
+/* === Project Layout Styles === */
+.project-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.project-header {
+  margin-bottom: 50px;
+
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+}
+
+.project-subtitle {
+  color: #666;
+  font-weight: 400;
+  margin-bottom: 16px;
+}
+
+.project-meta {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 20px;
+
+  .meta-link {
+    color: #007bff;
+    text-decoration: none;
+
+    &:hover {
+      color: #0056b3;
+    }
+  }
+}
+
+.project-back-button {
+  display: inline-block;
+  margin-bottom: 30px;
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #0056b3;
+    text-decoration: none;
+  }
+}
+
+/* Two-column layout */
+.project-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 80px;
+  align-items: start;
+}
+
+.project-text {
+  padding-right: 20px;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    margin-top: 0;
+  }
+
+  h3 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    margin-top: 24px;
+  }
+
+  p {
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 16px;
+  }
+
+  ul, ol {
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 20px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  pre {
+    background: #f5f5f5;
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+
+  code {
+    background: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 14px;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+}
+
+.project-media {
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+
+  video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+  }
+}
+
+.media-caption {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  font-style: italic;
+  margin-top: -10px;
+  margin-bottom: 20px;
+}
+
+/* Section divider */
+.section-divider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, #ddd, transparent);
+  margin: 40px 0;
+}
+
+/* Full-width section (for introductions, conclusions, etc.) */
+.project-full-width {
+  grid-column: 1 / -1;
+  max-width: 900px;
+  margin: 0 auto 60px;
+  text-align: left;
+
+  h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  p {
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 16px;
+  }
+}
+
+/* Tags */
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.project-tag {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(0, 123, 255, 0.1);
+  color: #007bff;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.project-share {
+  margin-top: 60px;
+}
+
+.project-comments {
+  margin-top: 40px;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .project-section {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .project-media {
+    position: static;
+  }
+  
+  .project-text {
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .project-header h1 {
+    font-size: 32px;
+  }
+  
+  .project-container {
+    padding: 20px 15px;
+  }
+
+  .project-footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
+
+/* Project footer signature */
+.project-footer {
+  margin-top: 80px;
+  padding-bottom: 40px;
+}
+
+.project-footer-divider {
+  height: 1px;
+  background: linear-gradient(to right, #ddd, transparent);
+  margin-bottom: 40px;
+}
+
+.project-footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.project-footer-signature {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+  transition: opacity 0.3s ease;
+
+  &:hover {
+    opacity: 0.7;
+    text-decoration: none;
+  }
+
+  .signature-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 4px;
+  }
+
+  .signature-title {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+  }
+}
+
+.project-footer-social {
+  display: flex;
+  gap: 20px;
+
+  a {
+    color: #333;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+
+    &:hover {
+      color: #007bff;
+      transform: translateY(-2px);
+    }
+  }
+}
