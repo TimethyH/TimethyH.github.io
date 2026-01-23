@@ -103,7 +103,8 @@ permalink: /projects/
       </div>
 
       <div class="projects-grid">
-        {% for project in site.projects reversed %}
+        {% assign sorted_projects = site.projects | sort: "path" %}
+        {% for project in sorted_projects %}
         <!-- Use existing 'card' and 'blog-post' classes -->
         <article class="card blog-post" data-category="{{ project.category }}">
           {% if project.thumbnail %}

@@ -1,18 +1,17 @@
 ---
 layout: project
-title: "Volumetric Fog System"
-subtitle: "Real-time atmospheric rendering with froxels and temporal reprojection"
+title: "Wasteland Walkers"
 date: 2024-11-15
-thumbnail: /assets/img/helmet.png
-order: 1
+thumbnail: /assets/img/projects/Y1D/thumb.png
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:
-  - DirectX 12
-  - Vulkan
-  - Rendering
-  - Real-time
-category: year3
+  - Unreal Engine
+  - Machine Learning
+  - Game
+  - University Project
+category: year1
 ---
+
 
 <!-- Full-width introduction section -->
 <div class="project-full-width" markdown="1">
