@@ -3,14 +3,13 @@ layout: project
 title: "DLSS Integration"
 subtitle: "Real-time atmospheric rendering with froxels and temporal reprojection"
 date: 2024-11-15
-thumbnail: /assets/img/projects/Y2VR/Ascension.jpg
+thumbnail: /assets/img/projects/Traverse/dlss.jpg
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:
-  - Custom Engine
   - Traverse Research
-  - Rendering
   - DX12
-category: Traverse
+  - Custom Engine
+  - Rendering
 ---
 
 <!-- Full-width introduction section -->
