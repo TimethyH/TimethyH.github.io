@@ -121,13 +121,13 @@
 
   p {
     line-height: 1.8;
-    color: #444;
+    color: #fff;
     margin-bottom: 16px;
   }
 
   ul, ol {
     line-height: 1.8;
-    color: #444;
+    color: #fff;
     margin-bottom: 20px;
     padding-left: 20px;
   }
@@ -137,7 +137,8 @@
   }
 
   pre {
-    background: #f5f5f5;
+    background: var(--code-bg, #2d2d2d);
+    color: var(--code-text, #f8f8f2);
     padding: 16px;
     border-radius: 6px;
     overflow-x: auto;
@@ -145,7 +146,8 @@
   }
 
   code {
-    background: #f5f5f5;
+    background: var(--code-bg, rgba(45, 45, 45, 0.5));
+    color: var(--code-text, #f8f8f2);
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 14px;
@@ -154,6 +156,7 @@
   pre code {
     background: none;
     padding: 0;
+    color: inherit;
   }
 }
 
@@ -207,7 +210,7 @@
 
   p {
     line-height: 1.8;
-    color: #444;
+    color: #fff;
     margin-bottom: 16px;
   }
 }
@@ -231,6 +234,7 @@
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
+  cursor: pointer;
 
   &:hover {
     background: #007bff;
@@ -241,50 +245,75 @@
 
   // Color coding for specific tags
   &[data-tag="vulkan"] {
-    background: #ac3232;
+    background: rgba(172, 50, 50, 0.1);
+    color: #ac3232;
+    &:hover, &.active { background: #ac3232; color: white; }
   }
 
   &[data-tag="directx 12"], &[data-tag="dx12"] {
-    background: #107c10;
+    background: rgba(16, 124, 16, 0.1);
+    color: #107c10;
+    &:hover, &.active { background: #107c10; color: white; }
   }
 
   &[data-tag="rendering"] {
-    background: #ff8c00;
+    background: rgba(255, 140, 0, 0.1);
+    color: #ff8c00;
+    &:hover, &.active { background: #ff8c00; color: white; }
   }
 
   &[data-tag="raytracing"], &[data-tag="ray tracing"] {
-    background: #881798;
+    background: rgba(136, 23, 152, 0.1);
+    color: #881798;
+    &:hover, &.active { background: #881798; color: white; }
   }
 
   &[data-tag="real-time"], &[data-tag="real time"] {
-    background: #0099bc;
+    background: rgba(0, 153, 188, 0.1);
+    color: #0099bc;
+    &:hover, &.active { background: #0099bc; color: white; }
   }
 
   &[data-tag="personal project"], &[data-tag="personal"] {
-    background: #c239b3;
+    background: rgba(194, 57, 179, 0.1);
+    color: #c239b3;
+    &:hover, &.active { background: #c239b3; color: white; }
   }
 
   &[data-tag="university project"], &[data-tag="university"] {
-    background: #f50a0a;
+    background: rgba(79, 195, 247, 0.15);
+    color: #4FC3F7;
+    &:hover, &.active { background: #4FC3F7; color: white; }
   }
 
   &[data-tag="traverse research"], &[data-tag="traverse"] {
-    background: #ffd700;
+    background: rgba(255, 215, 0, 0.15);
+    color: #ffcc34;
+    &:hover, &.active { background: #ffd700; color: #444; }
   }
 
-&[data-tag="ps5"] {
-  background: rgba(3, 36, 249, 0.15);
-  color: #0324f9;
-  &:hover { background: #01aafe; color: white; }
-}
-
-    &[data-tag="real-time"], &[data-tag="real time"] {
-    background: #0099bc;
+  &[data-tag="ps5"] {
+    background: rgba(3, 36, 249, 0.15);
+    color: white;
+    &:hover, &.active { background: #01aafe; color: white; }
   }
 
+  &[data-tag="custom engine"], &[data-tag="engine"] {
+    background: rgba(255, 23, 68, 0.1);
+    color: #FF1744;
+    &:hover, &.active { background: #FF1744; color: white; }
+  }
 
   &[data-tag="game"] {
-    background: #00b294;
+    background: rgba(0, 178, 148, 0.1);
+    color: #00b294;
+    &:hover, &.active { background: #00b294; color: white; }
+  }
+
+  &[data-tag="vr"] {
+    background: rgba(156, 39, 176, 0.1);
+    color: #9c27b0;
+    &:hover, &.active { background: #9c27b0; color: white; }
   }
 }
 
