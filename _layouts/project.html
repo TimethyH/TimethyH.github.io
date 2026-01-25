@@ -13,10 +13,10 @@ layout: default
     <h4 class="project-subtitle">{{ page.subtitle }}</h4>
     {% endif %}
 
-    {% if page.tags %}
+   {% if page.tags %}
     <div class="project-tags">
       {% for tag in page.tags %}
-      <a href="{{ '/projects/' | relative_url }}#tag-{{ tag | downcase | replace: ' ', '-' }}" class="project-tag">{{ tag }}</a>
+      <span class="project-tag">{{ tag }}</span>
       {% endfor %}
     </div>
     {% endif %}

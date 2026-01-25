@@ -1,65 +1,118 @@
 ---
 layout: default
 ---
+
+<style>
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.blog-grid .blog-post {
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.blog-thumbnail {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.blog-header {
+  text-align: center;
+  margin-bottom: 40px;
+  margin-top: 80px;
+}
+
+.pagination {
+  justify-content: center;
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .blog-grid { 
+    grid-template-columns: 1fr; 
+  }
+}
+</style>
+
 <div class="col-lg-12">
- <div class="row justify-content-center">
-      <div class="col-lg-8">
-              <ul>
-                  <div class="row">
-                      {% for post in paginator.posts %}
-                      <div class="card blog-post">
-                          <img class="card-img-top" src="{{site.url}}{{site.baseurl}}{{ post.thumbnail }}" alt="{{ post.title }}">
-                          <div class="card-body center">
-                              <!-- <img src="{{site.url}}{{site.baseurl}}/assets/img/{{ site.author_logo }}" class="author-profile-img"> -->
-                              <h4 class="card-title">{{ post.title }}</h4>
-
-                              <h6 class="card-subtitle mb-2 text-muted">{{ post.date | date: "%b %-d, %Y" }}</h6>
-                              <p class="card-text">{{ post.summary }} </p>
-
-                              <a href="{{ post.url | prepend: site.baseurl }}" data-disqus-identifier="{{ post.url }}" class="btn btn-dark btn-lg">Read</a>
-                              <span class="disqus-comment-count" data-disqus-identifier="{{ post.url }}"></span>
-
-                          </div>
-                      </div>
-                      {% endfor %}
-                  </div>
-              </ul>
-
-        <div class="row center">
-          <!-- Pagination links -->
-          {% if paginator.total_pages > 1 %}
-            <ul class="pagination pagination-sm">
-              {% if paginator.previous_page %}
-                <li class="pagination-link"><a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo;</a></li>
-              {% else %}
-                <li class="pagination-link disabled"><span aria-hidden="true">&laquo;</span></li>
-              {% endif %}
-
-              <li class="pagination-link" ><a href="/blog">First</a></li>
-
-              {% for page in (1..paginator.total_pages) %}
-                {% if page == paginator.page %}
-             <li class="disabled pagination-link"><span><b>{{ page }}</b></span></li>
-                {% elsif page == 1 %}
-                  <li class="pagination-link"><a href="/blog">{{ page }}</a></li>
-                {% else %}
-                  <li class="pagination-link"><a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a></li>
-                {% endif %}
-              {% endfor %}
-
-              <li class="pagination-link"><a href="/blog/page/{{ paginator.total_pages }}/#/">Last</a></li>
-
-              {% if paginator.next_page %}
-                <li class="pagination-link"><a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">&raquo;</a></li>
-              {% else %}
-                <li class="disabled pagination-link"><span>&raquo;</span></li>
-              {% endif %}
-            </ul>
-          {% endif %}
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      
+      <div class="blog-header">
+        <h1>My Blogs</h1>
+        <p>Thoughts, tutorials, and insights on some of my projects</p>
       </div>
 
-    </div>
-    {%- include blog_sidebar.html -%}
+      <div class="blog-grid">
+        {% for post in paginator.posts %}
+        <article class="card blog-post">
+          {% if post.thumbnail %}
+          <a href="{{ post.url | prepend: site.baseurl }}">
+            <img src="{{ site.url }}{{ site.baseurl }}{{ post.thumbnail }}" 
+                 alt="{{ post.title }}" 
+                 class="blog-thumbnail">
+          </a>
+          {% endif %}
+          
+          <div class="card-body">
+            <h3 class="card-title">{{ post.title }}</h3>
+            
+            {% if post.date %}
+            <h6 class="card-subtitle mb-2 text-muted">
+              {{ post.date | date: "%B %d, %Y" }}
+            </h6>
+            {% endif %}
+            
+            {% if post.summary %}
+            <p class="card-text">{{ post.summary }}</p>
+            {% endif %}
+            
+            <a href="{{ post.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg">
+              Read Article →
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
 
- </div>
+      <!-- Pagination -->
+      {% if paginator.total_pages > 1 %}
+      <div class="row center">
+        <ul class="pagination pagination-sm">
+          {% if paginator.previous_page %}
+            <li class="pagination-link"><a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo;</a></li>
+          {% else %}
+            <li class="pagination-link disabled"><span aria-hidden="true">&laquo;</span></li>
+          {% endif %}
+
+          <li class="pagination-link"><a href="/blog">First</a></li>
+
+          {% for page in (1..paginator.total_pages) %}
+            {% if page == paginator.page %}
+              <li class="disabled pagination-link"><span><b>{{ page }}</b></span></li>
+            {% elsif page == 1 %}
+              <li class="pagination-link"><a href="/blog">{{ page }}</a></li>
+            {% else %}
+              <li class="pagination-link"><a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          <li class="pagination-link"><a href="/blog/page/{{ paginator.total_pages }}/">Last</a></li>
+
+          {% if paginator.next_page %}
+            <li class="pagination-link"><a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">&raquo;</a></li>
+          {% else %}
+            <li class="disabled pagination-link"><span>&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
 </div>
