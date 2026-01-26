@@ -1,29 +1,48 @@
 ---
 layout: project
 title: "Ascension Protocol - VR"
-subtitle: "Real-time atmospheric rendering with froxels and temporal reprojection"
-date: 2024-11-15
+subtitle: "VR game fully made in a custom engine."
+date: 2025-06-27
 thumbnail: /assets/img/projects/Y2VR/Ascension.jpg
-summary: "Real-time volumetric fog with god rays using froxel-based techniques"
+summary: "VR game fully made in our own custom engine."
 tags:
   - Custom Engine
   - University Project
   - Rendering
   - VR
   - Game
-category: year2
 ---
 
-<!-- Full-width introduction section -->
-<div class="project-full-width" markdown="1">
+<!-- Two-column section: Overview text left, Video right -->
+<div class="project-text" markdown="1">
 
 ## Overview
 
-**Volumetric Fog System** is a real-time atmospheric rendering technique I implemented in my DirectX 12 engine. The system uses froxel-based volumetric lighting to create realistic fog effects with god rays and light scattering.
+Ascension Protocol is a VR game created in our custom engine in year 2 at Breda University. In this game, you are elevated through the clouds and met with hordes of robots. Your goal is to evade, deflect and shoot them while keeping your balance on the collapsing platform till you reach the mountain peak.
 
-This project was developed over three months as part of my graphics programming studies, focusing on advanced lighting techniques and GPU optimization. The implementation supports dynamic lights, temporal reprojection for noise reduction, and runs at 60+ FPS at 1080p.
+The team consisted of 8 developers. My role in the team was **Graphics Programmer** and **Optimization**.
+
+### What did I do?
+
+- I was in charge of the skybox and IBL reflections
+- I created the volumetric fog used for the dust and clouds, as well as the depth fog
+- I was in charge of the bloom postprocessing effect and HDR color support
+- I was in charge of the **Optimizations** such as frustum culling, memory management and general profiling so the game stays within budget of 16.6 ms
+- I made improvements to the shadows in the game
+
+The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itself.
 
 </div>
+<div class="project-media" markdown="1">
+
+<video controls>
+  <source src="/assets/img/gallery/y2vr/ThatsSoSick.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+<p class="media-caption">Gameplay footage of Ascension Protocol</p>
+
+</div>
+
 
 <div class="section-divider"></div>
 

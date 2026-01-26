@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Deferred Rendering on PS5"
-date: 2024-11-15
+date: 2024-09-23
 thumbnail: /assets/img/helmet.png
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:

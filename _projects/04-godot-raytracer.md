@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Raytracing in Godot"
-date: 2024-11-15
+date: 2025-09-23
 thumbnail: /assets/img/projects/Y3A/materials.png
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:

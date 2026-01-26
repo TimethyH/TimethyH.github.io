@@ -79,6 +79,14 @@
   }
 }
 
+.project-container article {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
 .project-back-button {
   display: inline-block;
   margin-bottom: 30px;
@@ -198,9 +206,7 @@
 /* Full-width section (for introductions, conclusions, etc.) */
 .project-full-width {
   grid-column: 1 / -1;
-  max-width: 900px;
-  margin: 0 auto 60px;
-  text-align: left;
+  max-width: 100%;
 
   h2 {
     font-size: 28px;

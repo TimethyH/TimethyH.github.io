@@ -2,7 +2,7 @@
 layout: project
 title: "DLSS Integration"
 subtitle: "Real-time atmospheric rendering with froxels and temporal reprojection"
-date: 2024-11-15
+date: 2025-07-23
 thumbnail: /assets/img/projects/Traverse/dlss.jpg
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:

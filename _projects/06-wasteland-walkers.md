@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Wasteland Walkers"
-date: 2024-11-15
+date: 2024-06-23
 thumbnail: /assets/img/projects/Y1D/thumb.png
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:
