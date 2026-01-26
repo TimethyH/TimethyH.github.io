@@ -3,7 +3,7 @@
 
 @import "devlopr";
 
-/* === Gallery Grid Custom Styles === */
+/* === Gallery Grid Custom Styles === */  
 .media-tile {
   display: flex;
   flex-direction: column;
@@ -42,7 +42,7 @@
 
 /* === Project Layout Styles === */
 .project-container {
-  max-width: 1400px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 40px 20px;
 }
@@ -107,7 +107,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 60px;
   margin-bottom: 80px;
-  align-items: start;
+  align-items: center;
 }
 
 .project-text {
@@ -141,7 +141,7 @@
   }
 
   li {
-    margin-bottom: 8px;
+    margin-bottom: 2px;
   }
 
   pre {
@@ -169,6 +169,11 @@
 }
 
 .project-media {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   img {
     width: 100%;
     height: auto;
@@ -183,6 +188,14 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     margin-bottom: 20px;
+  }
+
+  > div {
+    margin-bottom: 20px;
+  }
+
+  iframe {
+    border-radius: 8px;
   }
 }
 

@@ -14,20 +14,23 @@ tags:
 ---
 
 <!-- Two-column section: Overview text left, Video right -->
+<div class="project-section">
 <div class="project-text" markdown="1">
 
 ## Overview
 
-Ascension Protocol is a VR game created in our custom engine in year 2 at Breda University. In this game, you are elevated through the clouds and met with hordes of robots. Your goal is to evade, deflect and shoot them while keeping your balance on the collapsing platform till you reach the mountain peak.
+Ascension Protocol is a VR game created in our custom engine in year 2 at Breda University. 
+
+In this game, you are elevated through the clouds and met with hordes of robots. Your goal is to evade, deflect and shoot them while keeping your balance on the collapsing platform till you reach the mountain peak.
 
 The team consisted of 8 developers. My role in the team was **Graphics Programmer** and **Optimization**.
 
 ### What did I do?
 
-- I was in charge of the skybox and IBL reflections
-- I created the volumetric fog used for the dust and clouds, as well as the depth fog
-- I was in charge of the bloom postprocessing effect and HDR color support
-- I was in charge of the **Optimizations** such as frustum culling, memory management and general profiling so the game stays within budget of 16.6 ms
+- I was in charge of the skybox and IBL reflections.
+- Created the volumetric fog used for the dust and clouds, as well as the depth fog.
+- Created the bloom postprocessing effect and HDR color support.
+- I was in charge of the **Optimizations** so the game stays within budget of 16.6 ms
 - I made improvements to the shadows in the game
 
 The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itself.
@@ -35,14 +38,19 @@ The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itse
 </div>
 <div class="project-media" markdown="1">
 
-<video controls>
-  <source src="/assets/img/gallery/y2vr/ThatsSoSick.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <iframe 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+    src="https://www.youtube.com/embed/r9AC-AtrcQo" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+</div>
 <p class="media-caption">Gameplay footage of Ascension Protocol</p>
 
 </div>
-
+</div>
 
 <div class="section-divider"></div>
 
@@ -50,22 +58,33 @@ The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itse
 <div class="project-section">
 <div class="project-text" markdown="1">
 
-## Froxel Grid Implementation
+## Volumetric Fog
 
-The core of the volumetric fog system is built around a 3D froxel grid. Each froxel (frustum voxel) represents a volume of space in view space, allowing efficient sampling of lighting and fog density.
+The core of the volumetric fog system is built around a 3D noise texture and 2 render passes.  
+The shader that handles the 3D noise generation has 2 interesting functions: the **noise(vec3 p)** function which generates 2D tilable noise based on the world position of the ray, and the **fbm(vec3 p)** function which uses the generated noise to add layers of detail at multiple frequencies.  The result of which looks like puffy, layered clouds. 
 
-Key features:
-- **160x90x64** froxel resolution for optimal performance
-- Non-uniform depth distribution for better detail near camera
-- View-space aligned to prevent swimming artifacts
-- Compute shader-based volume generation
+The main function samples the density at a world position by generating a plane and multiplying the plane position with the fbm and stores this into the 2D texture. This is repeated 256 times to generate a 256x256x256 3D texture.
 
-The froxel grid is regenerated each frame using a compute shader that calculates lighting contributions from all active light sources.
+```hlsl
+// Density function
+float scene(vec3 p) 
+{
+    float f = fbm(p);
+
+    // Height-based falloff
+    float base = smoothstep(0.0, 1.0, p.y);
+    return base * f;
+}
+```
+
+The 2nd pass raymarches through every slice of the noise texture and samples the cloud density at the ray's world position. It then calculates the cloud color using the density and sun parameters.
+
 
 </div>
 <div class="project-media" markdown="1">
 
-![Froxel grid visualization](/assets/img/helmet.png)
+<video controls src="../assets/img/projects/Y2VR/CloudUI.mp4" title="Title"></video>
+
 <p class="media-caption">Visualization of the froxel grid structure in view space</p>
 
 </div>
@@ -77,7 +96,7 @@ The froxel grid is regenerated each frame using a compute shader that calculates
 <div class="project-section">
 <div class="project-text" markdown="1">
 
-## Volumetric Lighting
+## Optimizations
 
 The volumetric lighting pass samples the froxel grid to compute in-scattering and light attenuation. This creates the characteristic god rays effect when light passes through fog.
 
