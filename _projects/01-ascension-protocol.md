@@ -84,10 +84,11 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 <div class="project-media" markdown="1">
 
 <video controls src="/assets/img/projects/Y2VR/fog.mp4" title="Title"></video>
+<p class="media-caption">Volumetrics used as dust</p>
 
 <video controls src="/assets/img/projects/Y2VR/CloudUI.mp4" title="Title"></video>
 
-<p class="media-caption">Visualization of the froxel grid structure in view space</p>
+<p class="media-caption">The clouds with tweakable parameters</p>
 
 </div>
 </div>
@@ -100,7 +101,7 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 
 ## Optimizations
 
-The volumetric lighting pass samples the froxel grid to compute in-scattering and light attenuation. This creates the characteristic god rays effect when light passes through fog.
+After profiling I concluded that our project was memory bound and took a lot of time rendering objects that were not visible on screen. 
 
 ### Implementation Details
 
