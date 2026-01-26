@@ -67,6 +67,7 @@ The main function samples the density at a world position by generating a plane,
 
 The 2nd pass raymarches through every slice of the noise texture and samples the cloud density at the ray's world position. It then calculates the cloud color using the density and sun parameters.
 
+*I will go more into detail on how I achieved this in my blog. (linked once it's online)*
 
 </div>
 <div class="project-media" markdown="1">
@@ -90,7 +91,7 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 
 After profiling I concluded that our project was memory bound and took a lot of time rendering objects that were not visible on screen. To solve this I added frustum culling which allowed the forward pass to go from 2.30ms to 0.74ms. I also reduced the resolutions used for bloom and fog which led the fog renderpass go from 3.32ms to 0.93ms.
 
-I will go more into detail on how I achieved this in my blog. (linked once it's online)
+*I will go more into detail on how I achieved this in my blog. (linked once it's online)*
 
 </div>
 <div class="project-media" markdown="1">
@@ -108,38 +109,26 @@ I will go more into detail on how I achieved this in my blog. (linked once it's 
 <div class="project-section">
 <div class="project-text" markdown="1">
 
-## Performance Optimizations
+## Bloom and HDR
 
-To achieve real-time performance, I implemented several key optimizations:
+Bloom makes the game feel more alive. To get bloom working I first needed to make sure the render targets support HDR.
 
-1. **Checkerboard rendering**: Only update half the pixels each frame
-2. **Depth-aware upsampling**: Bilateral filter for artifact-free upscaling
-3. **GPU-driven culling**: Lights outside frustum are culled on GPU
-4. **Async compute**: Volume generation runs in parallel with geometry pass
+HDR is needed since bloom requires values to be above the 1.0 threshold. This allows us to do lighting calculations with bright colors and tonemap them back to the 0.0 - 1.0 threshold.
 
-Here's the core froxel indexing function:
+The bloom is seperated into 3 parts, first I separate the brighter colors into a separate color buffer and keep the original scene colors separate in another color buffer.  
+Then using dual kawase blur, I down sample the bright color buffer. To do this, I take 4 samples per pixel and blur them together. I do this for n amount of mips, in my case 4. Each time with a smaller render target.  
+Then I upsample the final downsampled buffer in a forloop aswel for every mip, which results in a bright blurred texture of our original resulution.
 
-```hlsl
-uint3 GetFroxelCoord(float3 viewPos) {
-    float depth = -viewPos.z;
-    float linearDepth = saturate(depth / farPlane);
-    float zSlice = log2(linearDepth * zParams.x + 1.0) * zParams.y;
-    
-    uint3 coord;
-    coord.xy = uint2(screenPos.xy * froxelDimensions.xy);
-    coord.z = uint(zSlice * froxelDimensions.z);
-    return coord;
-}
-```
-
-With these optimizations, the system runs at **~3.5ms** at 1080p on an RTX 3070.
+Finally in the postprocessing shader, I add the fog, the scene and the brightcolors together. Using ACESFILM tonemapping and gamma correction to bring the values to sRGB space (0-1).
 
 </div>
 <div class="project-media" markdown="1">
 
-![Performance graph](/assets/img/helmet.png)
-<p class="media-caption">Frame time breakdown showing volumetric pass cost</p>
+<video controls src="/assets/img/projects/Y2VR/bloomCrab.mp4" title="Title"></video>
+<p class="media-caption">The crab enemy has bloom on its eye</p>
 
+<video controls src="/assets/img/projects/Y2VR/FlyerParticles.mp4" title="Title"></video>
+<p class="media-caption">The flying drone and particles using bloom</p>
 </div>
 </div>
 
@@ -148,18 +137,9 @@ With these optimizations, the system runs at **~3.5ms** at 1080p on an RTX 3070.
 <!-- Final full-width section -->
 <div class="project-full-width" markdown="1">
 
-## Results & Reflections
+## Dive Deeper
 
-This project taught me a lot about volumetric rendering techniques and GPU optimization. The biggest challenge was handling the noise inherent to ray marching - temporal reprojection helped significantly but required careful handling of disocclusion cases.
-
-The system integrates seamlessly into my engine's deferred renderer and supports multiple dynamic lights. I'm particularly happy with how the exponential depth distribution allows good quality near the camera while still supporting large view distances.
-
-### What I Learned
-
-- Deep understanding of froxel-based volume rendering
-- Temporal reprojection and history buffer management  
-- Performance optimization for compute-heavy rendering techniques
-- DirectX 12 compute shader programming and UAV barriers
+This is a summary of what I did on for the project during the 8 weeks I had. If you'd like to know more on how I implemented the fog, bloom or optimization steps, take a look at the full article: [not online yet](https://timethyh.github.io/blog/#/)
 
 **GitHub Repository**: [github.com/yourusername/volumetric-fog](https://github.com/yourusername/volumetric-fog)
 
