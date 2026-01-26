@@ -79,6 +79,8 @@ We calculate Transmittance and Scattered light and store the values for every fr
 
 This is still a work in progress eventhough the result looks "okay" right now. Will update this sections as the project moves forward.
 
+<video controls src="/assets/img/projects/Traverse/tempFog.mp4" title="Title"></video>
+
 <div class="section-divider"></div>
 
 <!-- Final full-width section -->
