@@ -75,7 +75,6 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 <p class="media-caption">Volumetrics used as dust</p>
 
 <video controls src="/assets/img/projects/Y2VR/CloudUI.mp4" title="Title"></video>
-
 <p class="media-caption">The clouds with tweakable parameters</p>
 
 </div>
@@ -89,27 +88,16 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 
 ## Optimizations
 
-After profiling I concluded that our project was memory bound and took a lot of time rendering objects that were not visible on screen. 
+After profiling I concluded that our project was memory bound and took a lot of time rendering objects that were not visible on screen. To solve this I added frustum culling which allowed the forward pass to go from 2.30ms to 0.74ms. I also reduced the resolutions used for bloom and fog which led the fog renderpass go from 3.32ms to 0.93ms.
 
-### Implementation Details
-
-I used ray marching through the froxel grid with the following optimizations:
-
-- **Temporal reprojection**: Reduces noise by blending current and previous frames
-- **Exponential depth distribution**: More detail near camera, better performance overall  
-- **Hardware interpolation**: Leveraging 3D texture sampling for smooth results
-- **Adaptive step size**: Fewer samples in empty space
-
-The shader performs 32 ray marching steps per pixel, with temporal accumulation bringing effective sample count much higher.
+I will go more into detail on how I achieved this in my blog. (linked once it's online)
 
 </div>
 <div class="project-media" markdown="1">
 
-![Volumetric lighting in forest scene](/assets/img/helmet.png)
-<p class="media-caption">God rays streaming through trees in a forest environment</p>
 
-![Debug view of light scattering](/assets/img/helmet.png)
-<p class="media-caption">Debug visualization showing light scattering values</p>
+<video controls src="/assets/img/projects/Y2VR/lowResFog.mp4" title="Title"></video>
+<p class="media-caption">Fog quality at half resolution</p>
 
 </div>
 </div>
