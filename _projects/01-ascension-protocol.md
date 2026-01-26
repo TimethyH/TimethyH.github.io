@@ -63,19 +63,7 @@ The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itse
 The core of the volumetric fog system is built around a 3D noise texture and 2 render passes.  
 The shader that handles the 3D noise generation has 2 interesting functions: the **noise(vec3 p)** function which generates 2D tilable noise based on the world position of the ray, and the **fbm(vec3 p)** function which uses the generated noise to add layers of detail at multiple frequencies.  The result of which looks like puffy, layered clouds. 
 
-The main function samples the density at a world position by generating a plane and multiplying the plane position with the fbm and stores this into the 2D texture. This is repeated 256 times to generate a 256x256x256 3D texture.
-
-```hlsl
-// Density function
-float scene(vec3 p) 
-{
-    float f = fbm(p);
-
-    // Height-based falloff
-    float base = smoothstep(0.0, 1.0, p.y);
-    return base * f;
-}
-```
+The main function samples the density at a world position by generating a plane, multiplying the plane position with the fbm and stores this value into the 2D texture. This is repeated 256 times to generate a 256x256x256 3D texture.
 
 The 2nd pass raymarches through every slice of the noise texture and samples the cloud density at the ray's world position. It then calculates the cloud color using the density and sun parameters.
 
