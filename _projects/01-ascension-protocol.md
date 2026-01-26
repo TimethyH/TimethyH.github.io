@@ -83,6 +83,8 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 </div>
 <div class="project-media" markdown="1">
 
+<video controls src="/assets/img/projects/Y2VR/fog.mp4" title="Title"></video>
+
 <video controls src="/assets/img/projects/Y2VR/CloudUI.mp4" title="Title"></video>
 
 <p class="media-caption">Visualization of the froxel grid structure in view space</p>
