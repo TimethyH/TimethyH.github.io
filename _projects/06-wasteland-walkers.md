@@ -3,7 +3,7 @@ layout: project
 title: "Wasteland Walkers"
 date: 2024-06-23
 thumbnail: /assets/img/projects/Y1D/thumb.webp
-summary: "Real-time volumetric fog with god rays using froxel-based techniques"
+summary: "Maneuver through the desert wasteland in search of the Oasis"
 tags:
   - Unreal Engine
   - Machine Learning
@@ -18,10 +18,15 @@ category: year1
 
 ## Overview
 
-**Volumetric Fog System** is a real-time atmospheric rendering technique I implemented in my DirectX 12 engine. The system uses froxel-based volumetric lighting to create realistic fog effects with god rays and light scattering.
+Wasteland walkers is a local co-op game where you control Shelly the robot. Work as a team to maneuver Shelly through the desert, shoot down enemies and find your way to the Oasis.
 
-This project was developed over three months as part of my graphics programming studies, focusing on advanced lighting techniques and GPU optimization. The implementation supports dynamic lights, temporal reprojection for noise reduction, and runs at 60+ FPS at 1080p.
+The game was made in 8 weeks during my first year at Breda University.  The game was made using UnrealEngine 5 by a team of 12 developers.
 
+**What did I do**
+  - Created a reinforcement learning system which controls all enemy behaviour.
+  - I was in charge of all audio: Custom made music for the game, audio implementations and transitions.
+  - Created the rotating start menu + widgets
+  - Added bloom + day/night cycles.
 </div>
 
 <div class="section-divider"></div>
@@ -30,17 +35,32 @@ This project was developed over three months as part of my graphics programming 
 <div class="project-section">
 <div class="project-text" markdown="1">
 
-## Froxel Grid Implementation
+## Reinforcement Learning
 
-The core of the volumetric fog system is built around a 3D froxel grid. Each froxel (frustum voxel) represents a volume of space in view space, allowing efficient sampling of lighting and fog density.
+Most of my time this project was spent on getting my little enemies to behave the way I wanted them to. It turns out that Reinforcement Learning is a huge rabbit hole. Luckily an extension that handled most of the setup already existed, I only needed to learn how Reinforcement learning works and implement the training system.
 
-Key features:
-- **160x90x64** froxel resolution for optimal performance
-- Non-uniform depth distribution for better detail near camera
-- View-space aligned to prevent swimming artifacts
-- Compute shader-based volume generation
+The key insights I learned regarding this topic, is that you can give an agent n anount of options, e.g. it can move forwards, backwards and rotate. Then you add or subtract points based off of the decisions the agent makes in accordance to what you want it to do. 
 
-The froxel grid is regenerated each frame using a compute shader that calculates lighting contributions from all active light sources.
+### A simple example from my implementation
+
+Wasteland walkers has 4 enemy types:
+  - The crawler
+  - The spider
+  - The scorpion
+  - the beetle
+
+The crawler's only objective is to crash into shelly. 
+This meant that I would give it points for being close to the player, and points for looking in the direction of the player.
+
+To iterate and train the agents, they get reset after a few conditions:
+  - They got stuck in a state where no learning can be achieved
+  - They accomplished their task
+  - Their global timer ran out
+
+After resetting an agent, the agents with relatively good scores get their data recorded, where as the agents that performed poorly get discarded. After this a new set of agents get spawned with the data of the well performing parents.
+
+It's important to be very strict and careful with the rules you set and the way you award points. My first baby worms learned to drift to their target...
+ 
 
 </div>
 <div class="project-media" markdown="1">
@@ -53,96 +73,9 @@ The froxel grid is regenerated each frame using a compute shader that calculates
 
 <div class="section-divider"></div>
 
-<!-- Another two-column section -->
-<div class="project-section">
-<div class="project-text" markdown="1">
-
-## Volumetric Lighting
-
-The volumetric lighting pass samples the froxel grid to compute in-scattering and light attenuation. This creates the characteristic god rays effect when light passes through fog.
-
-### Implementation Details
-
-I used ray marching through the froxel grid with the following optimizations:
-
-- **Temporal reprojection**: Reduces noise by blending current and previous frames
-- **Exponential depth distribution**: More detail near camera, better performance overall  
-- **Hardware interpolation**: Leveraging 3D texture sampling for smooth results
-- **Adaptive step size**: Fewer samples in empty space
-
-The shader performs 32 ray marching steps per pixel, with temporal accumulation bringing effective sample count much higher.
-
-</div>
-<div class="project-media" markdown="1">
-
-![Volumetric lighting in forest scene](/assets/img/helmet.png)
-<p class="media-caption">God rays streaming through trees in a forest environment</p>
-
-![Debug view of light scattering](/assets/img/helmet.png)
-<p class="media-caption">Debug visualization showing light scattering values</p>
-
-</div>
-</div>
-
-<div class="section-divider"></div>
-
-<!-- Example with code -->
-<div class="project-section">
-<div class="project-text" markdown="1">
-
-## Performance Optimizations
-
-To achieve real-time performance, I implemented several key optimizations:
-
-1. **Checkerboard rendering**: Only update half the pixels each frame
-2. **Depth-aware upsampling**: Bilateral filter for artifact-free upscaling
-3. **GPU-driven culling**: Lights outside frustum are culled on GPU
-4. **Async compute**: Volume generation runs in parallel with geometry pass
-
-Here's the core froxel indexing function:
-
-```hlsl
-uint3 GetFroxelCoord(float3 viewPos) {
-    float depth = -viewPos.z;
-    float linearDepth = saturate(depth / farPlane);
-    float zSlice = log2(linearDepth * zParams.x + 1.0) * zParams.y;
-    
-    uint3 coord;
-    coord.xy = uint2(screenPos.xy * froxelDimensions.xy);
-    coord.z = uint(zSlice * froxelDimensions.z);
-    return coord;
-}
-```
-
-With these optimizations, the system runs at **~3.5ms** at 1080p on an RTX 3070.
-
-</div>
-<div class="project-media" markdown="1">
-
-![Performance graph](/assets/img/helmet.png)
-<p class="media-caption">Frame time breakdown showing volumetric pass cost</p>
-
-</div>
-</div>
-
-<div class="section-divider"></div>
-
 <!-- Final full-width section -->
 <div class="project-full-width" markdown="1">
 
-## Results & Reflections
-
-This project taught me a lot about volumetric rendering techniques and GPU optimization. The biggest challenge was handling the noise inherent to ray marching - temporal reprojection helped significantly but required careful handling of disocclusion cases.
-
-The system integrates seamlessly into my engine's deferred renderer and supports multiple dynamic lights. I'm particularly happy with how the exponential depth distribution allows good quality near the camera while still supporting large view distances.
-
-### What I Learned
-
-- Deep understanding of froxel-based volume rendering
-- Temporal reprojection and history buffer management  
-- Performance optimization for compute-heavy rendering techniques
-- DirectX 12 compute shader programming and UAV barriers
-
-**GitHub Repository**: [github.com/yourusername/volumetric-fog](https://github.com/yourusername/volumetric-fog)
+**Check it out on Itch!**: [Wasteland Walkers](https://buas.itch.io/team-mace)
 
 </div>
