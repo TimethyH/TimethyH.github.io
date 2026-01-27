@@ -64,7 +64,7 @@ The extra limitation of this is that every texture in this array has to share th
 I deemed it important for the raytracer to be able to render any amount of textures,
 without the user needing to worry about their resolutions, or over-allocating texture slots.
 
-implementation details can be found on my [blog](https://timethyh.github.io/blog/#/) *once its online...*
+implementation details can be found on my [blog](https://timethyh.github.io/blog/#/) (*once its online...*)
 
 
 </div>
