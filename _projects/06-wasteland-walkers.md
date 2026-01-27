@@ -1,6 +1,7 @@
 ---
 layout: project
 title: "Wasteland Walkers"
+subtitle: "Timethy Hyman"
 date: 2024-06-23
 thumbnail: /assets/img/projects/Y1D/thumb.webp
 summary: "Maneuver through the desert wasteland in search of the Oasis"
