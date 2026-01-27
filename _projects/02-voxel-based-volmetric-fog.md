@@ -2,7 +2,7 @@
 layout: project
 title: "Voxel based Volumetric Fog"
 date: 2026-01-23
-thumbnail: /assets/img/projects/Traverse/fogTree.png
+thumbnail: /assets/img/projects/Traverse/fogTree.webp
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:
   - Traverse Research
