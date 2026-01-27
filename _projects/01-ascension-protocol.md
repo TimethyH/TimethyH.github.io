@@ -1,7 +1,7 @@
 ---
 layout: project
 title: "Ascension Protocol - VR"
-subtitle: "VR game fully made in a custom engine."
+subtitle: "Timethy Hyman"
 date: 2025-06-27
 thumbnail: /assets/img/projects/Y2VR/Ascension.jpg
 summary: "VR game fully made in our own custom engine."
