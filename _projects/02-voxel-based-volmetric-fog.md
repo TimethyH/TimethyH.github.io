@@ -1,6 +1,7 @@
 ---
 layout: project
 title: "Voxel based Volumetric Fog"
+subtitle: "Timethy Hyman"
 date: 2026-01-23
 thumbnail: /assets/img/projects/Traverse/fogTree.webp
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
