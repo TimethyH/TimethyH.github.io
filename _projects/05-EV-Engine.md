@@ -1,6 +1,7 @@
 ---
 layout: project
 title: "EV Engine"
+subtitle: "Timethy Hyman"
 date: 2025-11-23
 thumbnail: /assets/img/cube.png
 summary: "Real-time volumetric fog with god rays using froxel-based techniques"
