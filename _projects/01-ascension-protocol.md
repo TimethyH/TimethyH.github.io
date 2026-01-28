@@ -141,6 +141,4 @@ Finally in the postprocessing shader, I add the fog, the scene and the brightcol
 
 This is a summary of what I did on for the project during the 8 weeks I had. If you'd like to know more on how I implemented the fog, bloom or optimization steps, take a look at the full article: [not online yet](https://timethyh.github.io/blog/#/)
 
-**GitHub Repository**: [github.com/yourusername/volumetric-fog](https://github.com/yourusername/volumetric-fog)
-
 </div>
