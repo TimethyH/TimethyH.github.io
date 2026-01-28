@@ -62,7 +62,7 @@ The froxel grid is created by dividing the render resolution into 8x8pix froxels
 ![alt text](/assets/img/projects/Traverse/Froxels.webp)
 <p class="media-caption">The froxel grid within the view frustum</p>
 
-<video controls src="/assets/img/projects/Traverse/GPUDepthFroxelDebug.webm" title="Title"></video>
+<video controls preload="metadata" src="/assets/img/projects/Traverse/GPUDepthFroxelDebug.webm" title="Title"></video>
 <p class="media-caption">Visualized depth slices</p>
 
 </div>
@@ -83,7 +83,7 @@ This is still a work in progress eventhough the result looks "okay" right now. W
 </div>
 <div class="project-media" markdown="1">
 
-<video controls src="/assets/img/projects/Traverse/tempFog.webm" title="Title"></video>
+<video controls preload="metadata" src="/assets/img/projects/Traverse/tempFog.webm" title="Title"></video>
 
 </div>
 </div>
