@@ -51,7 +51,7 @@ We have an instance buffer which is used to identify which object was hit. The v
 ![Overview](/assets/img/projects/GodotRT/summary2.webp)
 <p class="media-caption">Engine Architechture</p>
 
-![Volumetric lighting in forest scene](/assets/img/projects/GodotRT/summary2.webp)
+![Volumetric lighting in forest scene](/assets/img/projects/GodotRT/hitmissshader.webp)
 <p class="media-caption">Hit and Miss shader visualized</p>
 
 </div>
