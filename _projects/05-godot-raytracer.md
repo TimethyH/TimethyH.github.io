@@ -3,7 +3,7 @@ layout: project
 title: "Raytracing in Godot"
 subtitle: "Timethy Hyman"
 date: 2025-09-23
-thumbnail: /assets/img/projects/Y3A/materials.png
+thumbnail: /assets/img/projects/GodotRT/materials.png
 summary: "Godot Raytracing Extension"
 tags:
   - Vulkan
