@@ -55,6 +55,8 @@ In a deferred renderer,we first draw all geometry into the render target. Then i
 
 To keep track of all the geometry and their data, deferred rendering uses a G-Buffer. This contains data such as the normals, depth and albedo of the rendered geometry.
 
+Here you can see all light volumes individually illuminating the object.
+
 </div>
 <div class="project-media" markdown="1">
 
