@@ -1,43 +1,38 @@
 <style>
-/* Mobile header adjustments */
+/* Mobile header adjustments - ONLY for mobile */
 @media (max-width: 991px) {
-  #topNav {
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  /* Keep hamburger on left */
-  .navbar-toggler {
-    order: 1;
-  }
-  
-  /* Center the brand name */
+  /* Only apply when navbar is collapsed (mobile) */
+  .navbar-toggler:not(.collapsed) ~ .navbar-brand,
   .navbar-brand {
-    order: 2;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
   }
   
-  /* Center social icons below */
-  #topNav > .nav.justify-content-end {
-    order: 3;
+  /* Center social icons below - only on mobile */
+  .navbar > .nav.justify-content-end {
     width: 100%;
     justify-content: center !important;
-    margin-top: 10px;
+    margin-top: 20px;
     padding-bottom: 10px;
   }
+}
+
+/* Desktop - keep everything normal */
+@media (min-width: 992px) {
+  .navbar-brand {
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+  }
   
-  /* Collapsed menu */
-  #navbarNav {
-    order: 4;
-    width: 100%;
+  .navbar > .nav.justify-content-end {
+    width: auto !important;
+    justify-content: flex-end !important;
+    margin-top: 0 !important;
   }
 }
 </style>
-
-<nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="topNav">
-  <!-- rest of your header code... -->
 
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="topNav">
   <button
