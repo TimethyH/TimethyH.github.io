@@ -73,7 +73,7 @@ The problem is that this generates bindings for every API, every function, struc
 To get only the bindings we're interested in, we need to filter what we allow into the generated file using **regex**. e.g.
 
 ```
-allowlist_item((r"(PFN_)?NVSDK_NGX_\w+");
+allowlist_item(r"(PFN_)?NVSDK_NGX_\w+");
 ```
 
 Learning how to work with **regex** and linking the correct libraries to eachother was the biggest bottleneck of this project.
