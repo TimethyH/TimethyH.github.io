@@ -72,10 +72,10 @@ The 2nd pass raymarches through every slice of the noise texture and samples the
 </div>
 <div class="project-media" markdown="1">
 
-<video controls src="/assets/img/projects/Y2VR/fog.mp4" title="Title"></video>
+<video controls src="/assets/img/projects/Y2VR/fog.webm" title="Title"></video>
 <p class="media-caption">Volumetrics used as dust</p>
 
-<video controls src="/assets/img/projects/Y2VR/CloudUI.mp4" title="Title"></video>
+<video controls src="/assets/img/projects/Y2VR/CloudUI.webm" title="Title"></video>
 <p class="media-caption">The clouds with tweakable parameters</p>
 
 </div>
@@ -97,7 +97,7 @@ After profiling I concluded that our project was memory bound and took a lot of 
 <div class="project-media" markdown="1">
 
 
-<video controls src="/assets/img/projects/Y2VR/lowResFog.mp4" title="Title"></video>
+<video controls src="/assets/img/projects/Y2VR/lowResFog.webm" title="Title"></video>
 <p class="media-caption">Fog quality at half resolution</p>
 
 </div>
@@ -124,10 +124,10 @@ Finally in the postprocessing shader, I add the fog, the scene and the brightcol
 </div>
 <div class="project-media" markdown="1">
 
-<video controls src="/assets/img/projects/Y2VR/bloomCrab.mp4" title="Title"></video>
+<video controls src="/assets/img/projects/Y2VR/bloomCrab.webm" title="Title"></video>
 <p class="media-caption">The crab enemy has bloom on its eye</p>
 
-<video controls src="/assets/img/projects/Y2VR/FlyerParticles.mp4" title="Title"></video>
+<video controls src="/assets/img/projects/Y2VR/FlyerParticles.webm" title="Title"></video>
 <p class="media-caption">The flying drone and particles using bloom</p>
 </div>
 </div>
