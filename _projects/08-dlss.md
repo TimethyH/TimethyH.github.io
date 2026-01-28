@@ -47,11 +47,16 @@ The DLSS algorithm needs a few resources to function:
 
 Luckily, Traverse already had all of these. The hard part was understanding how the system needs to be setup and generating the correct bindings.
 
+The difference in this snapshot is mainly noticable on the cables and the tables.
+
 </div>
 <div class="project-media" markdown="1">
 
-![Froxel grid visualization](/assets/img/helmet.png)
-<p class="media-caption">Visualization of the froxel grid structure in view space</p>
+![Froxel grid visualization](/assets/img/projects/Traverse/DLSS/sceneOFF.webp)
+<p class="media-caption">DLSS Off</p>
+
+![Froxel grid visualization](/assets/img/projects/Traverse/DLSS/sceneON.webp)
+<p class="media-caption">DLSS On</p>
 
 </div>
 </div>
@@ -59,7 +64,7 @@ Luckily, Traverse already had all of these. The hard part was understanding how 
 <div class="section-divider"></div>
 
 <!-- Another two-column section -->
-<div class="project-section">
+<div class="project-section reverse">
 <div class="project-text" markdown="1">
 
 ## Binding Generation
@@ -77,6 +82,19 @@ allowlist_item(r"(PFN_)?NVSDK_NGX_\w+");
 ```
 
 Learning how to work with **regex** and linking the correct libraries to eachother was the biggest bottleneck of this project.
+
+</div>
+<div class="project-media" markdown="1">
+
+![Froxel grid visualization](/assets/img/projects/Traverse/DLSS/dlssOFF.webp)
+<p class="media-caption">DLSS Off</p>
+
+![Froxel grid visualization](/assets/img/projects/Traverse/DLSS/dlssON.webp)
+<p class="media-caption">DLSS On</p>
+
+</div>
+</div>
+
 
 <div class="section-divider"></div>
 
