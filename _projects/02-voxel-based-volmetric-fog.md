@@ -35,7 +35,7 @@ This project is still on going.
 </div>
 <div class="project-media" markdown="1">
 
-![alt text](/assets/img/projects/Traverse/fogThumb.png)
+![alt text](/assets/img/projects/Traverse/fogThumb.webp)
 
 ![alt text](/assets/img/projects/Traverse/fogTree.webp)
 <p class="media-caption">Volumetric Fog and Godrays</p>
@@ -59,7 +59,7 @@ The froxel grid is created by dividing the render resolution into 8x8pix froxels
 </div>
 <div class="project-media" markdown="1">
 
-![alt text](/assets/img/projects/Traverse/Froxels.png)
+![alt text](/assets/img/projects/Traverse/Froxels.webp)
 <p class="media-caption">The froxel grid within the view frustum</p>
 
 <video controls src="/assets/img/projects/Traverse/GPUDepthFroxelDebug.mp4" title="Title"></video>
