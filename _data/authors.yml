@@ -3,7 +3,7 @@ johndoe:
    name: John Doe
    username: johndoe
    site: http://johndoe.com
-   avatar: johndoe.png
+   avatar: logo.jpg
    bio: "Hi I a John, a Web Developer and Designer."
    email: mail@johndoe.com
    social:
