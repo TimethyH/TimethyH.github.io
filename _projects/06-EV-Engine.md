@@ -57,16 +57,6 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 - Descriptors
 
 </div>
-<div class="project-media" markdown="1">
-
-<video controls src="/assets/img/projects/Y2VR/fog.mp4" title="Title"></video>
-<p class="media-caption">Volumetrics used as dust</p>
-
-<video controls src="/assets/img/projects/Y2VR/CloudUI.mp4" title="Title"></video>
-<p class="media-caption">The clouds with tweakable parameters</p>
-
-</div>
-</div>
 
 <div class="section-divider"></div>
 
