@@ -37,7 +37,7 @@ This project is still on going.
 
 ![alt text](/assets/img/projects/Traverse/fogThumb.png)
 
-![alt text](/assets/img/projects/Traverse/fogTree.png)
+![alt text](/assets/img/projects/Traverse/fogTree.webp)
 <p class="media-caption">Volumetric Fog and Godrays</p>
 
 </div>

@@ -3,7 +3,7 @@ layout: project
 title: "Deferred Rendering on PS5"
 subtitle: "Timethy Hyman"
 date: 2024-09-23
-thumbnail: /assets/img/helmet.png
+thumbnail: /assets/img/helmet.webp
 summary: "My first rendering project."
 tags:
   - PS5
