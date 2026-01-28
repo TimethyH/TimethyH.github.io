@@ -13,8 +13,9 @@ tags:
   - Rendering
 ---
 
-<!-- Full-width introduction section -->
-<div class="project-full-width" markdown="1">
+<!-- Two-column section: Overview text left, Video right -->
+<div class="project-section">
+<div class="project-text" markdown="1">
 
 ## Overview
 
@@ -28,6 +29,13 @@ During my Summer of Code internship at Traverse Research, I was asked to integra
   - Generated Rust bindings so the C and C++ functions can be called externally.
   - Created a system that detects if the user is running **Vulkan** or **DX12** to then generate the correct bindings, find the corresponding API headers and link the libraries.
   - Created a module within Traverse that handles all setup initialization with a single function call.
+
+</div>
+<div class="project-media" markdown="1">
+
+![alt text](/assets/img/projects/Traverse/dlssLogo.webp)
+
+</div>
 </div>
 
 <div class="section-divider"></div>
@@ -47,7 +55,7 @@ The DLSS algorithm needs a few resources to function:
 
 Luckily, Traverse already had all of these. The hard part was understanding how the system needs to be setup and generating the correct bindings.
 
-The difference in this snapshot is mainly noticable on the cables and the tables.
+The difference in this snapshot is mainly noticable on the quality of the cables and tables.
 
 </div>
 <div class="project-media" markdown="1">
