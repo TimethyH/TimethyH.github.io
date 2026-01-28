@@ -41,13 +41,18 @@ During my self study block in Year 3,  I worked together with 2 other programmer
 
 ## Pipeline Overview
 
-TODO
+This diagram gives a high level overview of how the raytracing components work together. 
+
+We have an instance buffer which is used to identify which object was hit. The vertex data of this instance is provided by the BLAS, which is essentially the geometry data.  A BLAS is a bottom level acceleration structure, and we make one for each object in the scene. These BLASSES are held by the TLAS, which holds a reference to all of them. Using the TLAS we can create an accelerations tructure, which we send to the GPU by using descriptor sets. The descriptor sets bind the resources defined in the descriptor heap to the shader, so the shader knows where in memory to find the resources. Finally the Shader Binding Table tells the program what shader stage to invoke and where in memory to find the code for it. For example when the ray dispatched from the Raygen shader hits something, the SBT tells the program where in memory to find the "closest_hit" code that it needs to execute, if the ray misses the "miss" shader stage is executed. 
 
 </div>
 <div class="project-media" markdown="1">
 
-![Froxel grid visualization](/assets/img/helmet.png)
-<p class="media-caption">Visualization of the froxel grid structure in view space</p>
+![Overview](/assets/img/projects/GodotRT/summary2.webp)
+<p class="media-caption">Engine Architechture</p>
+
+![Volumetric lighting in forest scene](/assets/img/projects/GodotRT/summary2.webp)
+<p class="media-caption">Hit and Miss shader visualized</p>
 
 </div>
 </div>
@@ -55,7 +60,7 @@ TODO
 <div class="section-divider"></div>
 
 <!-- Another two-column section -->
-<div class="project-section">
+<div class="project-section reverse">
 <div class="project-text" markdown="1">
 
 ## Bindless
@@ -72,11 +77,9 @@ implementation details can be found on my [blog](https://timethyh.github.io/blog
 </div>
 <div class="project-media" markdown="1">
 
-![Volumetric lighting in forest scene](/assets/img/helmet.png)
-<p class="media-caption">God rays streaming through trees in a forest environment</p>
 
-![Debug view of light scattering](/assets/img/helmet.png)
-<p class="media-caption">Debug visualization showing light scattering values</p>
+<video controls preload="metadata" src="/assets/img/projects/GodotRT/materials.webm" title="Title"></video>
+<p class="media-caption">Individual textures for each mesh</p>
 
 </div>
 </div>
