@@ -8,6 +8,7 @@ summary: "Intergeating DLSS into the Traverse framework"
 tags:
   - Traverse Research
   - DX12
+  - Vulkan
   - Custom Engine
   - Rendering
 ---

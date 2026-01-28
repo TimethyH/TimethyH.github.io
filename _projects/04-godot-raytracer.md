@@ -7,6 +7,7 @@ thumbnail: /assets/img/projects/Y3A/materials.png
 summary: "Godot Raytracing Extension"
 tags:
   - Vulkan
+  - RayTracing
   - Rendering
   - University Project
 category: year3
