@@ -2,7 +2,12 @@
 layout: default
 ---
 
-<div class="project-container">
+{% if page.thumbnail %}
+<!-- Background image with fade effect -->
+<div class="project-background" style="--project-bg-image: url('{{ page.thumbnail | relative_url }}');"></div>
+{% endif %}
+
+<div class="project-container {% if page.thumbnail %}with-background{% endif %}">
   <a href="{{ '/projects/' | relative_url }}" class="project-back-button">
     ← Back to Projects
   </a>

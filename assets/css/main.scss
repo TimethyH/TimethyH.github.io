@@ -435,3 +435,149 @@
     }
   }
 }
+
+// project Background overlay
+
+/* === Project Page Background Image === */
+.project-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh; /* Full viewport height for natural fade */
+  z-index: -1;
+  
+  background: 
+    /* Natural gradient fade from transparent to dark background */
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.25) 0%,
+      rgba(0, 0, 0, 0.25) 30%,
+      rgba(28, 28, 30, 0.4) 45%,
+      rgba(28, 28, 30, 0.6) 60%,
+      rgba(28, 28, 30, 0.75) 70%,
+      rgba(28, 28, 30, 0.85) 80%,
+      rgba(28, 28, 30, 0.93) 88%,
+      rgba(28, 28, 30, 0.97) 94%,
+      #1c1c1e 100%
+    ),
+    var(--project-bg-image);
+  
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Body background matches the dark page color */
+body:has(.project-background) {
+  background-color: #1c1c1e;
+}
+
+/* Adjust project container spacing */
+.project-container.with-background {
+  position: relative;
+  padding-top: 30vh; /* Start content to overlap with background nicely */
+  min-height: 100vh;
+}
+
+/* Style the back button for visibility over background */
+.project-container.with-background .project-back-button {
+  position: relative;
+  z-index: 10;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 16px;
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+  }
+}
+
+/* Style the header for visibility over background */
+.project-container.with-background .project-header {
+  position: relative;
+  z-index: 10;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  margin-bottom: 40px;
+  
+  h1 {
+    color: #fff;
+  }
+  
+  .project-subtitle {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Project tags with better visibility */
+.project-container.with-background .project-tags {
+  .project-tag {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* Main content card with border overlay */
+.project-container.with-background article {
+  background: rgba(255, 255, 255, 0.98);
+  border: 3px solid rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 5;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body:has(.project-background) {
+    background-color: #1c1c1e;
+  }
+
+  .project-background {
+    background: 
+      /* Natural gradient fade from transparent to dark background */
+      linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.25) 0%,
+        rgba(0, 0, 0, 0.25) 30%,
+        rgba(28, 28, 30, 0.4) 45%,
+        rgba(28, 28, 30, 0.6) 60%,
+        rgba(28, 28, 30, 0.75) 70%,
+        rgba(28, 28, 30, 0.85) 80%,
+        rgba(28, 28, 30, 0.93) 88%,
+        rgba(28, 28, 30, 0.97) 94%,
+        #1c1c1e 100%
+      ),
+      var(--project-bg-image);
+    
+    background-size: cover;
+    background-position: center;
+  }
+
+  .project-container.with-background article {
+    background: rgba(30, 30, 30, 0.98);
+    border: 3px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .project-background {
+    height: 50vh;
+  }
+  
+  .project-container.with-background {
+    padding-top: 20vh;
+  }
+  
+  .project-container.with-background article {
+    padding: 30px 20px;
+  }
+}
