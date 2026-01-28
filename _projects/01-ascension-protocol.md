@@ -58,10 +58,10 @@ The project was completed over 16 weeks: 8 weeks for VR integration and engine d
 <div class="project-section reverse">
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" poster="/assets/img/projects/Y2VR/fog-poster.jpg" src="/assets/img/projects/Y2VR/fog.webm" title="Volumetrics used as dust"></video>
+<video controls preload="metadata" src="/assets/img/projects/Y2VR/fog.webm"></video>
 <p class="media-caption">Volumetrics used as dust</p>
 
-<video controls preload="metadata" poster="/assets/img/projects/Y2VR/CloudUI-poster.jpg" src="/assets/img/projects/Y2VR/CloudUI.webm" title="Cloud parameters UI"></video>
+<video controls preload="metadata" src="/assets/img/projects/Y2VR/CloudUI.webm"></video>
 <p class="media-caption">Real-time cloud parameter adjustment</p>
 
 </div>
@@ -99,7 +99,7 @@ Additionally, I optimized the rendering resolution for bloom and fog effects, de
 </div>
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" poster="/assets/img/projects/Y2VR/lowResFog-poster.jpg" src="/assets/img/projects/Y2VR/lowResFog.webm" title="Half resolution fog"></video>
+<video controls preload="metadata" src="/assets/img/projects/Y2VR/lowResFog.webm"></video>
 <p class="media-caption">Fog quality at half resolution</p>
 
 </div>
