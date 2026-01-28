@@ -21,7 +21,8 @@ category: year3
 
 During my self study block in Year 3,  I worked together with 2 other programmers to create a **raytracing extension** for **Godot**.
 
-**What did I do**
+### Key Contributions
+
   - Setup the raytracing pipeline.
   - Added functionality to create BLAS and TLAS acceleration structures.
   - Created the Raygen, Hit and Miss shaders.

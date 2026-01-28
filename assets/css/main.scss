@@ -547,3 +547,32 @@ body:has(.project-background) {
     padding: 30px 20px;
   }
 }
+
+/* Reverse layout for alternating sections */
+.project-section.reverse {
+  grid-template-columns: 1fr 1fr;
+  
+  .project-text {
+    order: 2;
+    padding-right: 0;
+    padding-left: 20px;
+  }
+  
+  .project-media {
+    order: 1;
+  }
+}
+
+/* Responsive - stack normally on mobile */
+@media (max-width: 992px) {
+  .project-section.reverse {
+    .project-text {
+      order: 1;
+      padding-left: 0;
+    }
+    
+    .project-media {
+      order: 2;
+    }
+  }
+}

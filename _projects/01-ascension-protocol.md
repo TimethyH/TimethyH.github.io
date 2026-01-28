@@ -19,21 +19,21 @@ tags:
 
 ## Overview
 
-Ascension Protocol is a VR game created in our custom engine in year 2 at Breda University. 
+Ascension Protocol is a VR game developed using our custom engine during my second year at Breda University of Applied Sciences.
 
-In this game, you are elevated through the clouds and met with hordes of robots. Your goal is to evade, deflect and shoot them while keeping your balance on the collapsing platform till you reach the mountain peak.
+In this game, players ascend through the clouds while facing waves of hostile robots. The objective is to evade, deflect, and eliminate threats while maintaining balance on a collapsing platform until reaching the mountain peak.
 
-The team consisted of 8 developers. My role in the team was **Graphics Programmer** and **Optimization**.
+The development team consisted of eight developers. My role focused on **Graphics Programming** and **Performance Optimization**.
 
-### What did I do?
+### Key Contributions
 
-- I was in charge of the skybox and IBL reflections.
-- Created the volumetric fog used for the dust and clouds, as well as the depth fog.
-- Created the bloom postprocessing effect and HDR color support.
-- I was in charge of the **Optimizations** so the game stays within budget of 16.6 ms
-- I made improvements to the shadows in the game
+- Implemented skybox rendering and Image-Based Lighting (IBL) reflections
+- Developed volumetric fog system for atmospheric dust and clouds, including depth fog
+- Created bloom post-processing effects with HDR color support
+- Optimized rendering pipeline to maintain target performance of 16.6ms per frame
+- Enhanced shadow rendering quality and performance
 
-The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itself.
+The project was completed over 16 weeks: 8 weeks for VR integration and engine development, followed by 8 weeks of game production.
 
 </div>
 <div class="project-media" markdown="1">
@@ -54,50 +54,52 @@ The game was made in 16 weeks: 8 for the VR/engine setup and 8 for the game itse
 
 <div class="section-divider"></div>
 
-<!-- Two-column section: Text left, Image right -->
-<div class="project-section">
+<!-- Two-column section: Media left, Text right (REVERSED) -->
+<div class="project-section reverse">
+<div class="project-media" markdown="1">
+
+<video controls preload="metadata" poster="/assets/img/projects/Y2VR/fog-poster.jpg" src="/assets/img/projects/Y2VR/fog.webm" title="Volumetrics used as dust"></video>
+<p class="media-caption">Volumetrics used as dust</p>
+
+<video controls preload="metadata" poster="/assets/img/projects/Y2VR/CloudUI-poster.jpg" src="/assets/img/projects/Y2VR/CloudUI.webm" title="Cloud parameters UI"></video>
+<p class="media-caption">Real-time cloud parameter adjustment</p>
+
+</div>
 <div class="project-text" markdown="1">
 
 ## Volumetric Fog
 
-The core of the volumetric fog system is built around a 3D noise texture and 2 render passes.  
-The shader that handles the 3D noise generation has 2 interesting functions: the **noise(vec3 p)** function which generates 2D tilable noise based on the world position of the ray, and the **fbm(vec3 p)** function which uses the generated noise to add layers of detail at multiple frequencies.  The result of which looks like puffy, layered clouds. 
+The volumetric fog system is built upon a 3D noise texture and a two-pass rendering approach.
 
-The main function samples the density at a world position by generating a plane, multiplying the plane position with the fbm and stores this value into the 2D texture. This is repeated 256 times to generate a 256x256x256 3D texture.
+The shader responsible for 3D noise generation utilizes two key functions: **noise(vec3 p)**, which generates tileable 2D noise based on the ray's world position, and **fbm(vec3 p)** (Fractal Brownian Motion), which layers noise at multiple frequencies to create detailed, cloud-like structures.
 
-The 2nd pass raymarches through every slice of the noise texture and samples the cloud density at the ray's world position. It then calculates the cloud color using the density and sun parameters.
+The main function samples density values at world-space positions by generating a plane and multiplying its position with the fbm output, storing the result in a 2D texture. This process is repeated 256 times to generate a complete 256×256×256 3D texture.
 
-*I will go more into detail on how I achieved this in my blog. (linked once it's online)*
+The second pass raymarches through each slice of the noise texture, sampling cloud density at the ray's world position and calculating cloud color based on density values and sun parameters.
 
-</div>
-<div class="project-media" markdown="1">
-
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/fog.webm" title="Title"></video>
-<p class="media-caption">Volumetrics used as dust</p>
-
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/CloudUI.webm" title="Title"></video>
-<p class="media-caption">The clouds with tweakable parameters</p>
+*A detailed technical breakdown of this implementation will be available in my upcoming blog post.*
 
 </div>
 </div>
 
 <div class="section-divider"></div>
 
-<!-- Another two-column section -->
+<!-- Another two-column section: Text left, Media right -->
 <div class="project-section">
 <div class="project-text" markdown="1">
 
-## Optimizations
+## Performance Optimization
 
-After profiling I concluded that our project was memory bound and took a lot of time rendering objects that were not visible on screen. To solve this I added frustum culling which allowed the forward pass to go from 2.30ms to 0.74ms. I also reduced the resolutions used for bloom and fog which led the fog renderpass go from 3.32ms to 0.93ms.
+Performance profiling revealed that the project was memory-bound, with significant time spent rendering off-screen objects. To address this, I implemented frustum culling, reducing the forward pass time from 2.30ms to 0.74ms.
 
-*I will go more into detail on how I achieved this in my blog. (linked once it's online)*
+Additionally, I optimized the rendering resolution for bloom and fog effects, decreasing the fog render pass from 3.32ms to 0.93ms while maintaining visual quality.
+
+*Detailed optimization techniques and profiling methodologies will be covered in my upcoming blog post.*
 
 </div>
 <div class="project-media" markdown="1">
 
-
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/lowResFog.webm" title="Title"></video>
+<video controls preload="metadata" poster="/assets/img/projects/Y2VR/lowResFog-poster.jpg" src="/assets/img/projects/Y2VR/lowResFog.webm" title="Half resolution fog"></video>
 <p class="media-caption">Fog quality at half resolution</p>
 
 </div>
@@ -105,30 +107,29 @@ After profiling I concluded that our project was memory bound and took a lot of 
 
 <div class="section-divider"></div>
 
-<!-- Example with code -->
-<div class="project-section">
+<!-- Example with code: Media left, Text right (REVERSED) -->
+<div class="project-section reverse">
+<div class="project-media" markdown="1">
+
+<video controls preload="metadata" poster="/assets/img/projects/Y2VR/bloomCrab-poster.jpg" src="/assets/img/projects/Y2VR/bloomCrab.webm" title="Bloom effect on crab enemy"></video>
+<p class="media-caption">Bloom effect highlighting the crab enemy's eye</p>
+
+<video controls preload="metadata" poster="/assets/img/projects/Y2VR/FlyerParticles-poster.jpg" src="/assets/img/projects/Y2VR/FlyerParticles.webm" title="Particle effects with bloom"></video>
+<p class="media-caption">Flying drone and particle systems with bloom</p>
+
+</div>
 <div class="project-text" markdown="1">
 
 ## Bloom and HDR
 
-Bloom makes the game feel more alive. To get bloom working I first needed to make sure the render targets support HDR.
+Bloom post-processing significantly enhances visual impact. Implementing bloom required ensuring render targets supported High Dynamic Range (HDR).
 
-HDR is needed since bloom requires values to be above the 1.0 threshold. This allows us to do lighting calculations with bright colors and tonemap them back to the 0.0 - 1.0 threshold.
+HDR is essential for bloom, as it enables values exceeding the 1.0 threshold, allowing accurate lighting calculations with bright colors before tone mapping back to the 0.0-1.0 range.
 
-The bloom is seperated into 3 parts, first I separate the brighter colors into a separate color buffer and keep the original scene colors separate in another color buffer.  
-Then using dual kawase blur, I down sample the bright color buffer. To do this, I take 4 samples per pixel and blur them together. I do this for n amount of mips, in my case 4. Each time with a smaller render target.  
-Then I upsample the final downsampled buffer in a forloop aswel for every mip, which results in a bright blurred texture of our original resulution.
+The bloom implementation consists of three stages: First, bright colors are separated into a dedicated buffer while preserving the original scene in another. Second, using dual Kawase blur, the bright buffer is downsampled by taking four samples per pixel and blurring them together across multiple mip levels (four in this case), each with progressively smaller render targets. Third, the final downsampled buffer is upsampled through each mip level, producing a bright, blurred texture at the original resolution.
 
-Finally in the postprocessing shader, I add the fog, the scene and the brightcolors together. Using ACESFILM tonemapping and gamma correction to bring the values to sRGB space (0-1).
+In the final post-processing shader, fog, scene, and bright colors are combined. ACES filmic tone mapping and gamma correction convert the values to the sRGB color space (0-1).
 
-</div>
-<div class="project-media" markdown="1">
-
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/bloomCrab.webm" title="Title"></video>
-<p class="media-caption">The crab enemy has bloom on its eye</p>
-
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/FlyerParticles.webm" title="Title"></video>
-<p class="media-caption">The flying drone and particles using bloom</p>
 </div>
 </div>
 
@@ -137,8 +138,8 @@ Finally in the postprocessing shader, I add the fog, the scene and the brightcol
 <!-- Final full-width section -->
 <div class="project-full-width" markdown="1">
 
-## Dive Deeper
+## Further Reading
 
-This is a summary of what I did on for the project during the 8 weeks I had. If you'd like to know more on how I implemented the fog, bloom or optimization steps, take a look at the full article: [not online yet](https://timethyh.github.io/blog/#/)
+This article provides an overview of my contributions to the project during the 8 weeks of development. For in depth technical details on fog implementation, bloom effects, and optimization strategies, stay tuned for my upcoming blog post!
 
 </div>

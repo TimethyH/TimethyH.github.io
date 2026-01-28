@@ -22,7 +22,8 @@ DLSS is NVIDIA's AI supersampling algorithm.
 
 During my Summer of Code internship at Traverse Research, I was asked to integrate this upscaler into their framework.
 
-**What did I do**
+### Key Contributions
+
   - Created a module in **Rust** that abstracts the **DX12** and **Vulkan** functions.
   - Generated Rust bindings so the C and C++ functions can be called externally.
   - Created a system that detects if the user is running **Vulkan** or **DX12** to then generate the correct bindings, find the corresponding API headers and link the libraries.

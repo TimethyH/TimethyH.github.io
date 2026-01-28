@@ -23,7 +23,8 @@ Wasteland walkers is a local co-op game where you control Shelly the robot. Work
 
 The game was made in 8 weeks during my first year at Breda University.  The game was made using UnrealEngine 5 by a team of 12 developers.
 
-**What did I do**
+### Key Contributions
+
   - Created a reinforcement learning system which controls all enemy behaviour.
   - I was in charge of all audio: Custom made music for the game, audio implementations and transitions.
   - Created the rotating start menu + widgets

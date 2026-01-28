@@ -21,7 +21,7 @@ During my time at Traverse Research, I was asked to implement a AAA volumetric f
 
 The implementation is voxel based and uses shadowmaps to speedup the raymarching pass. 
 
-### What did I do?
+### Key Contributions
 
 - Created a voxel data structure to store fog data.
 - Created a froxel grid with exponential depth on the GPU.

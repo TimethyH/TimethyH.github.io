@@ -21,7 +21,7 @@ category: year2
 
 The PS5 renderer was my introduction to Rendering. This renderer was created in 16 weeks time. 8 weeks for the base render backend and 8 weeks for the deferred rendering aspect.
 
-**What did I do**
+### Key Contributions
 
 I built a render backend for the PS5 that has:
   - GLTF model loading
