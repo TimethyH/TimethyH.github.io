@@ -1,3 +1,44 @@
+<style>
+/* Mobile header adjustments */
+@media (max-width: 991px) {
+  #topNav {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  /* Keep hamburger on left */
+  .navbar-toggler {
+    order: 1;
+  }
+  
+  /* Center the brand name */
+  .navbar-brand {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  /* Center social icons below */
+  #topNav > .nav.justify-content-end {
+    order: 3;
+    width: 100%;
+    justify-content: center !important;
+    margin-top: 10px;
+    padding-bottom: 10px;
+  }
+  
+  /* Collapsed menu */
+  #navbarNav {
+    order: 4;
+    width: 100%;
+  }
+}
+</style>
+
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="topNav">
+  <!-- rest of your header code... -->
+
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="topNav">
   <button
     class="navbar-toggler"
