@@ -111,10 +111,10 @@ Additionally, I optimized the rendering resolution for bloom and fog effects, de
 <div class="project-section reverse">
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" poster="/assets/img/projects/Y2VR/bloomCrab-poster.jpg" src="/assets/img/projects/Y2VR/bloomCrab.webm" title="Bloom effect on crab enemy"></video>
+<video controls preload="metadata" src="/assets/img/projects/Y2VR/bloomCrab.webm"></video>
 <p class="media-caption">Bloom effect highlighting the crab enemy's eye</p>
 
-<video controls preload="metadata" poster="/assets/img/projects/Y2VR/FlyerParticles-poster.jpg" src="/assets/img/projects/Y2VR/FlyerParticles.webm" title="Particle effects with bloom"></video>
+<video controls preload="metadata" src="/assets/img/projects/Y2VR/FlyerParticles.webm"></video>
 <p class="media-caption">Flying drone and particle systems with bloom</p>
 
 </div>

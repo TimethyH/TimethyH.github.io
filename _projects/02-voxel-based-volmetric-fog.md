@@ -46,7 +46,7 @@ This project is still on going.
 <div class="section-divider"></div>
 
 <!-- Two-column section: Text left, Image right -->
-<div class="project-section">
+<div class="project-section reverse">
 <div class="project-text" markdown="1">
 
 ## Froxel Grid
