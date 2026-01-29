@@ -50,7 +50,7 @@ The game was made in 8 weeks during my first year at Breda University.  The game
 <div class="section-divider"></div>
 
 <!-- Two-column section: Text left, Image right -->
-<div class="project-section">
+<div class="project-section reverse">
 <div class="project-text" markdown="1">
 
 ## Reinforcement Learning
