@@ -66,7 +66,7 @@ A froxel (frustum aligned voxel) represents a volumetric element defined in came
 The froxel grid construction begins by subdividing the screen into 8×8 pixel tiles in the XY plane. 
 The depth dimension uses an exponential distribution based on Naughty Dog's formula, concentrating froxels near the camera where volumetric detail is more relevant. This distribution is computed as:
 
-```h
+```hlsl
 pow(2.0, (slice + q * c) / c) - pow(2.0, q);
 ```
 
@@ -106,8 +106,8 @@ The accumulation phase integrates all stored froxel data along the view rays thr
 <!-- Final full-width section -->
 <div class="project-full-width" markdown="1">
 
-## Technical Details & Future Work
+## Dive Deeper
 
-This is a very brief summary of what I’ve been working on at Traverse. It is still a work in progress so stay tuned if the topic sparked your interest!
+This is a very brief summary of what I’ve been working on at Traverse. It is still a work in progress with lots of improvements yet to be made. As the project develops, I'll write a detailed blogpost about it. Stay tuned!
 
 </div>
