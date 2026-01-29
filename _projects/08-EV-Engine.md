@@ -3,7 +3,7 @@ layout: project
 title: "EV Engine"
 subtitle: "Timethy Hyman"
 date: 2025-11-23
-thumbnail: /assets/img/cube.png
+thumbnail: /assets/img/projects/EV/SponzaPrototype.webp
 summary: "DirectX 12 Renderer"
 tags:
   - DX12
@@ -34,7 +34,7 @@ The engine is still in early development. I started the engine in November 2025.
 <div class="project-media" markdown="1">
 
 
-![alt text](/assets/img/cube.png)
+![alt text](/assets/img/projects/EV/SponzaPrototype.webp)
 <p class="media-caption">Simple Cube</p>
 
 </div>
