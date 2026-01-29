@@ -12,10 +12,9 @@ tags:
   - University Project
 category: year1
 ---
-
-
-<!-- Full-width introduction section -->
-<div class="project-full-width" markdown="1">
+<!-- Two-column section: Overview text left, Video right -->
+<div class="project-section">
+<div class="project-text" markdown="1">
 
 ## Overview
 
