@@ -86,7 +86,7 @@ This approach allocates more froxels to the near field while still covering the 
 
 The volumetric lighting calculation separates into two distinct phases: scattering computation and accumulation integration.
 
-During the scattering phase, each froxel evaluates participating media properties. Specifically the extinction coefficient and scattering coefficient to determine light interaction.  I raymarch from the froxel center toward the light, sampling shadow maps to determine occlusion. 
+During the scattering phase, each froxel evaluates participating media properties. Specifically the extinction coefficient and scattering coefficient, to determine light interaction.  I raymarch from the froxel center toward the light, sampling shadow maps to determine occlusion. 
 
 In scattered light is computed by integrating the phase function multiplied by light transmittance at each sample point. For the phase function, I'm using the Henyey Greenstein approximation.
 
