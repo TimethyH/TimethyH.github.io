@@ -142,4 +142,6 @@ In the final post-processing shader, fog, scene, and bright colors are combined.
 
 This article provides an overview of my contributions to the project during the 8 weeks of development. For in depth technical details on fog implementation, bloom effects, and optimization strategies, stay tuned for my upcoming blog post!
 
+<i class="fab fa-itch-io" style="color: #ff8c00; font-size: 20px;"></i> Check out the game on [Itch](https://buas.itch.io/ascension-protocol).
+
 </div>

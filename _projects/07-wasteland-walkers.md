@@ -31,6 +31,23 @@ The game was made in 8 weeks during my first year at Breda University.  The game
   - Added bloom + day/night cycles.
 </div>
 
+<div class="project-media" markdown="1">
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <iframe 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+    src="https://www.youtube.com/embed/GzBfxlUhx4Q" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+</div>
+<p class="media-caption">Gameplay footage of Wasteland Walkers</p>
+
+</div>
+</div>
+
+
 <div class="section-divider"></div>
 
 <!-- Two-column section: Text left, Image right -->
