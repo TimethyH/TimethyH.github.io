@@ -2,7 +2,7 @@
 layout: project
 title: "Voxel Software Raytracer"
 subtitle: "Timethy Hyman"
-date: 2025-09-23
+date: 2024-02-23
 thumbnail: /assets/img/projects/Y1Raytracer/sphereGLASS.webp
 summary: "A raytracer fully developed on the CPU."
 tags:
