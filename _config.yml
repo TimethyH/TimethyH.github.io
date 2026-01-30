@@ -16,8 +16,8 @@ urls:
       url: /projects
     - text: Blogs
       url: /blog
-    - text: Gallery
-      url: /gallery
+    - text: Resume
+      url: /assets/CV.pdf
 #    - text: Contact
 #      url : /contact
 
