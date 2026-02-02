@@ -576,3 +576,9 @@ body:has(.project-background) {
     }
   }
 }
+
+/* Make bold text white in introduction card */
+.card-body strong {
+  color: #ffffff;
+  font-weight: 600;
+}
