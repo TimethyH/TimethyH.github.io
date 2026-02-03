@@ -597,18 +597,9 @@ body:has(.project-background) {
 }
 
 .card strong {
-  color:white
+  color: #ff8c00
 }
 
-.project-media a.glightbox {
-  display: block;
-  cursor: zoom-in;
-  
-  img {
-    transition: opacity 0.2s ease;
-  }
-  
-  &:hover img {
-    opacity: 0.9;
-  }
+.card p {
+  color: #fff;
 }
