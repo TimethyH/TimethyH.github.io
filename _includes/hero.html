@@ -2,11 +2,14 @@
 /* change cover_img in config.yml */
 .jumbotron {
     background-color: var(--main-background-color) !important;
-    background-image: url('/assets/img/{{site.hero_cover_img}}');
+    background-image: none !important; /* Remove the old background */
     text-align: center;
     background-attachment: fixed;
     background-size: cover;
     background-position: center center;
+    position: relative; /* Important for positioning */
+    overflow: hidden; /* Contain the canvas */
+    min-height: 500px; /* Ensure it has height */
 }
 .jumbotron-btns {
   display: block;
@@ -18,11 +21,11 @@
 }
 </style>
 
-<!-- Add Three.js background -->
-{%- include threejs-hero-background.html -%}
-
 <!-- home hero section -->
 <div class="jumbotron">
+  <!-- Three.js background inside jumbotron -->
+  {%- include threejs-hero-background.html -%}
+  
   <img class="author-profile-img" src="{{site.url}}{{site.baseurl}}/assets/img/{{site.author_logo}}" />
   <p class="jumbotron-heading">Hi, I am {{site.author}} !</p>
 
