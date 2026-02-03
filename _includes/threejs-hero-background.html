@@ -50,7 +50,7 @@
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(container.offsetWidth, container.offsetHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setClearColor(0x000510);
+    renderer.setClearColor(0x1c1c1e);
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     
@@ -58,7 +58,7 @@
     
     const groundGeo = new THREE.PlaneGeometry(100, 100);
     const groundMat = new THREE.MeshStandardMaterial({ 
-      color: 0x0a0a1a,
+      color: 0x1c1c1e,
       roughness: 0.8,
       metalness: 0.2
     });
