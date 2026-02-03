@@ -83,6 +83,11 @@ It's important to be very strict and careful with the rules you set and the way 
 </div>
 <div class="project-media" markdown="1">
 
+
+<a href="/assets/img/projects/Y1D/enemy.webp" class="image">
+  ![Volumetric Fog Scene](/assets/img/projects/Traverse/fogThumb.webp)
+</a>
+
 <video controls preload="metadata" src="/assets/img/projects/Y1D/enemy.webm" title="RL Enemies"></video>
 <p class="media-caption">Early prototype of enemies spawn and behaviour</p>
 
