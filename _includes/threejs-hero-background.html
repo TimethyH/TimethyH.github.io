@@ -44,7 +44,7 @@
       scene.fog = new THREE.Fog(0x000510, 1, 100);
       
       camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-      camera.position.set(0, 5, 15); // Moved closer from 20 to 15
+      camera.position.set(0, 5, 15);
       camera.lookAt(0, 0, 0);
       
       renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -84,7 +84,6 @@
       const ambient = new THREE.AmbientLight(0x222244, 0.3);
       scene.add(ambient);
       
-      // Orange letters
       const letterMaterial = new THREE.MeshStandardMaterial({
         color: 0xcc5500,
         emissive: 0xff4400,
@@ -114,7 +113,7 @@
       
       const tGeometry = new THREE.ExtrudeGeometry(tShape, extrudeSettings);
       const tMesh = new THREE.Mesh(tGeometry, letterMaterial.clone());
-      tMesh.position.set(-13, 0, -1); // Moved further left from -10 to -13
+      tMesh.position.set(-13, 2, -1); // Raised from 0 to 2
       tMesh.castShadow = true;
       tMesh.receiveShadow = true;
       scene.add(tMesh);
@@ -159,7 +158,7 @@
       const hRightMesh = new THREE.Mesh(hRightGeo, letterMaterial.clone());
       hGroup.add(hRightMesh);
       
-      hGroup.position.set(13, 0, -1); // Moved further right from 10 to 13
+      hGroup.position.set(13, 2, -1); // Raised from 0 to 2
       hGroup.castShadow = true;
       hGroup.children.forEach(mesh => {
         mesh.castShadow = true;
@@ -189,7 +188,6 @@
         dustPositions[i3 + 1] = Math.random() * 40 - 5;
         dustPositions[i3 + 2] = (Math.random() - 0.5) * 80;
         
-        // Blue/cyan particles
         dustColors[i3] = 0.7;
         dustColors[i3 + 1] = 0.7;
         dustColors[i3 + 2] = 0.8;
@@ -239,7 +237,7 @@
       camera.lookAt(0, 0, 0);
       
       cubes.forEach((letter, i) => {
-        letter.position.y = Math.sin(time * 2 + i) * 0.3;
+        letter.position.y = 2 + Math.sin(time * 2 + i) * 0.3; // Float around y=2
       });
       
       const dustSystem = lightRays[lightRays.length - 1];
