@@ -43,7 +43,9 @@
 /* === Project Layout Styles === */
 .project-container {
   max-width: 1800px;
-  margin: 0 auto;
+  margin: 0 
+  
+  o;
   padding: 40px 20px;
 }
 
@@ -577,8 +579,13 @@ body:has(.project-background) {
   }
 }
 
+<<<<<<< HEAD
 /* Make bold text white in introduction card  */
 .card-body strong {
   color: #ffffff;
   font-weight: 600;
+=======
+.card strong {
+  color:white
+>>>>>>> 6839203 (profile and strong)
 }
