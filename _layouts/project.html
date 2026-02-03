@@ -59,4 +59,14 @@ layout: default
       </div>
     </div>
   </div>
+
+  <!-- Initialize lightGallery for project images -->
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $(".project-media").lightGallery({
+        thumbnail: false,
+        selector: '.image'
+      });
+    });
+  </script>
 </div>

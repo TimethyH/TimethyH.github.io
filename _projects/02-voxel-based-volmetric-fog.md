@@ -36,10 +36,13 @@ This project is currently in active development, with ongoing optimizations and 
 </div>
 <div class="project-media" markdown="1">
 
-[![God Rays Through Trees](/assets/img/projects/Traverse/fogTree.webp)](/assets/img/projects/Traverse/fogThumb.webp)
-<!-- ![Volumetric Fog Scene](/assets/img/projects/Traverse/fogThumb.webp) -->
+<a href="/assets/img/projects/Traverse/fogThumb.webp" class="image">
+  ![Volumetric Fog Scene](/assets/img/projects/Traverse/fogThumb.webp)
+</a>
 
-[![God Rays Through Trees](/assets/img/projects/Traverse/fogTree.webp)](/assets/img/projects/Traverse/fogTree.webp)
+<a href="/assets/img/projects/Traverse/fogTree.webp" class="image">
+  ![God Rays Through Trees](/assets/img/projects/Traverse/fogTree.webp)
+</a>
 <p class="media-caption">Volumetric fog with god rays demonstrating single scattering and shadow occlusion</p>
 
 </div>
@@ -51,7 +54,9 @@ This project is currently in active development, with ongoing optimizations and 
 <div class="project-section reverse">
 <div class="project-media" markdown="1">
 
-![Froxel Grid Visualization](/assets/img/projects/Traverse/Froxels.webp)
+<a href="/assets/img/projects/Traverse/Froxels.webp" class="image">
+  ![Froxel Grid Visualization](/assets/img/projects/Traverse/Froxels.webp)
+</a>
 <p class="media-caption">The froxel grid aligned to the camera frustum</p>
 
 <video controls preload="metadata" src="/assets/img/projects/Traverse/GPUDepthFroxelDebug.webm" title="Froxel depth slices"></video>
