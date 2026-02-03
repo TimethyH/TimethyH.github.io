@@ -146,27 +146,38 @@
   }
 
   pre {
-    background: var(--code-bg, #2d2d2d);
-    color: var(--code-text, #f8f8f2);
-    padding: 16px;
-    border-radius: 6px;
-    overflow-x: auto;
-    margin-bottom: 20px;
-  }
+  background: var(--code-bg, #2d2d2d);
+  color: var(--code-text, #f8f8f2);
+  padding: 16px;
+  border-radius: 6px;
+  overflow-x: auto;  // Allows horizontal scrolling
+  margin-bottom: 20px;
+  max-width: 100%;   // NEW: Prevents expanding beyond container
+  width: 100%;       // NEW: Ensures full width usage
+  white-space: pre;  // NEW: Preserves formatting but enables scroll
+  
+  /* Make scrollbar prettier on mobile */
+  -webkit-overflow-scrolling: touch;
+}
 
-  code {
-    background: var(--code-bg, rgba(45, 45, 45, 0.5));
-    color: var(--code-text, #f8f8f2);
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 14px;
-  }
+code {
+  background: var(--code-bg, rgba(45, 45, 45, 0.5));
+  color: var(--code-text, #f8f8f2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 14px;
+  word-wrap: break-word;      // NEW: Wraps long words in inline code
+  overflow-wrap: break-word;   // NEW: Modern version of word-wrap
+}
 
-  pre code {
-    background: none;
-    padding: 0;
-    color: inherit;
-  }
+pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+  word-wrap: normal;           // NEW: Prevents wrapping inside pre blocks
+  overflow-wrap: normal;       // NEW: Lets pre handle scrolling instead
+  white-space: pre;            // NEW: Preserves code formatting
+}
 }
 
 .project-media {
@@ -601,4 +612,24 @@ body:has(.project-background) {
 
 .card p {
   color: #cecece;
+}
+
+/* === Code Block Mobile Fixes === */
+@media (max-width: 768px) {
+  .project-text pre {
+    padding: 12px;           // Slightly less padding on mobile
+    font-size: 13px;         // Smaller font for more content visibility
+    border-radius: 4px;
+  }
+  
+  .project-text code {
+    font-size: 13px;         // Consistent smaller size
+    padding: 1px 4px;        // Tighter padding
+  }
+  
+  /* Ensure article container doesn't overflow */
+  .project-container article {
+    padding: 20px 15px;      // Reduce side padding on mobile
+    overflow-x: hidden;       // Contain children
+  }
 }
