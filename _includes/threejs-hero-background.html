@@ -16,14 +16,12 @@
     display: block;
   }
   
-  /* Make jumbotron position relative so the canvas is contained */
   .jumbotron {
     position: relative;
     overflow: hidden;
     background-image: none !important;
   }
   
-  /* Ensure jumbotron content appears above canvas */
   .jumbotron > * {
     position: relative;
     z-index: 10;
@@ -58,7 +56,6 @@
       
       container.appendChild(renderer.domElement);
       
-      // Add ground plane
       const groundGeo = new THREE.PlaneGeometry(100, 100);
       const groundMat = new THREE.MeshStandardMaterial({ 
         color: 0x0a0a1a,
@@ -71,7 +68,6 @@
       ground.receiveShadow = true;
       scene.add(ground);
       
-      // Main light source positioned to cast shadows behind objects
       const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
       sunLight.position.set(0, 25, 30);
       sunLight.castShadow = true;
@@ -85,20 +81,17 @@
       sunLight.shadow.camera.bottom = -30;
       scene.add(sunLight);
       
-      // Ambient light
       const ambient = new THREE.AmbientLight(0x222244, 0.3);
       scene.add(ambient);
       
-      // Create letters
       const letterMaterial = new THREE.MeshStandardMaterial({
-        color: 0xcc5500,
-        emissive: 0xff4400,
-        emissiveIntensity: 0.3,
-        roughness: 0.5,
-        metalness: 0.5
+        color: 0x0a0a1a,
+        emissive: 0x000510,
+        emissiveIntensity: 0.2,
+        roughness: 0.8,
+        metalness: 0.3
       });
       
-      // Create 3D "T" shape
       const tShape = new THREE.Shape();
       tShape.moveTo(-5, 4);
       tShape.lineTo(5, 4);
@@ -126,7 +119,6 @@
       scene.add(tMesh);
       cubes.push(tMesh);
       
-      // Create 3D "H" shape
       const hGroup = new THREE.Group();
       const hExtrudeSettings = {
         depth: 2,
@@ -175,7 +167,6 @@
       scene.add(hGroup);
       cubes.push(hGroup);
       
-      // Create atmospheric particles
       createVolumetricRays();
       
       window.addEventListener('resize', onWindowResize);
@@ -196,9 +187,12 @@
         dustPositions[i3] = (Math.random() - 0.5) * 80;
         dustPositions[i3 + 1] = Math.random() * 40 - 5;
         dustPositions[i3 + 2] = (Math.random() - 0.5) * 80;
-        dustColors[i3] = 0.7;
-        dustColors[i3 + 1] = 0.7;
-        dustColors[i3 + 2] = 0.8;
+        
+        const brightness = Math.random() * 0.3 + 0.7;
+        dustColors[i3] = 1.0 * brightness;
+        dustColors[i3 + 1] = 0.5 * brightness;
+        dustColors[i3 + 2] = 0.1 * brightness;
+        
         dustSizes[i] = Math.random() * 2 + 0.5;
       }
       
@@ -207,10 +201,10 @@
       dustGeo.setAttribute('size', new THREE.BufferAttribute(dustSizes, 1));
       
       const dustMat = new THREE.PointsMaterial({
-        size: 1,
+        size: 1.5,
         vertexColors: true,
         transparent: true,
-        opacity: 0.2,
+        opacity: 0.4,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       });
@@ -228,7 +222,6 @@
     function onWindowResize() {
       const container = document.getElementById('threejs-hero-container');
       if (!container) return;
-      
       camera.aspect = container.offsetWidth / container.offsetHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.offsetWidth, container.offsetHeight);
@@ -238,20 +231,16 @@
       requestAnimationFrame(animate);
       
       const time = Date.now() * 0.0003;
-      
-      // Mouse interaction
       const targetX = mouseX * 15;
       const targetY = mouseY * 10 + 5;
       camera.position.x += (targetX - camera.position.x) * 0.05;
       camera.position.y += (targetY - camera.position.y) * 0.05;
       camera.lookAt(0, 0, 0);
       
-      // Floating letters
       cubes.forEach((letter, i) => {
         letter.position.y = Math.sin(time * 2 + i) * 0.3;
       });
       
-      // Animate dust
       const dustSystem = lightRays[lightRays.length - 1];
       if (dustSystem) {
         const dustPositions = dustSystem.geometry.attributes.position.array;
