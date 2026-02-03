@@ -83,8 +83,8 @@ It's important to be very strict and careful with the rules you set and the way 
 </div>
 <div class="project-media" markdown="1">
 
-![Froxel grid visualization](/assets/img/helmet.png)
-<p class="media-caption">Visualization of the froxel grid structure in view space</p>
+<video controls preload="metadata" src="/assets/img/projects/Y1D/enemies.webm " title="RL Enemies"></video>
+<p class="media-caption">Early prototype of enemies spawn and behaviour</p>
 
 </div>
 </div>
