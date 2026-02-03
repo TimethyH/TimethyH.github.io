@@ -36,9 +36,10 @@ This project is currently in active development, with ongoing optimizations and 
 </div>
 <div class="project-media" markdown="1">
 
-![Volumetric Fog Scene](/assets/img/projects/Traverse/fogThumb.webp)
+[![God Rays Through Trees](/assets/img/projects/Traverse/fogTree.webp)](/assets/img/projects/Traverse/fogThumb.webp)
+<!-- ![Volumetric Fog Scene](/assets/img/projects/Traverse/fogThumb.webp) -->
 
-![God Rays Through Trees](/assets/img/projects/Traverse/fogTree.webp)
+[![God Rays Through Trees](/assets/img/projects/Traverse/fogTree.webp)](/assets/img/projects/Traverse/fogTree.webp)
 <p class="media-caption">Volumetric fog with god rays demonstrating single scattering and shadow occlusion</p>
 
 </div>
