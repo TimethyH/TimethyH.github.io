@@ -33,8 +33,9 @@ The engine is still in early development. I started the engine in November 2025.
 </div>
 <div class="project-media" markdown="1">
 
-
-![alt text](/assets/img/projects/EV/SponzaPrototype.webp)
+<a href="/assets/img/projects/EV/SponzaPrototype.webp" class="image">
+  ![Volumetric Fog Scene](/assets/img/projects/EV/SponzaPrototype.webp)
+</a>
 <p class="media-caption">Simple Cube</p>
 
 </div>

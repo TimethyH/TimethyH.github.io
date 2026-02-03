@@ -35,7 +35,9 @@ During my Summer of Code internship at Traverse Research, I was asked to integra
 </div>
 <div class="project-media" markdown="1">
 
-![alt text](/assets/img/projects/Traverse/dlssLogo.webp)
+<a href="/assets/img/projects/Traverse/dlssLogo.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Traverse/dlssLogo.webp)
+  </a>
 
 </div>
 </div>
@@ -78,10 +80,14 @@ Here DLSS reconstructs fine details that would alias or shimmer with traditional
 </div>
 <div class="project-media" markdown="1">
 
-![Froxel grid visualization](/assets/img/projects/Traverse/DLSS/dlssOFF.webp)
+<a href="/assets/img/projects/Traverse/DLSS/dlssOFF.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Traverse/DLSS/dlssOFF.webp)
+  </a>
 <p class="media-caption">DLSS Off</p>
 
-![Froxel grid visualization](/assets/img/projects/Traverse/DLSS/dlssON.webp)
+<a href="/assets/img/projects/Traverse/DLSS/dlssON.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Traverse/DLSS/dlssON.webp)
+  </a>
 <p class="media-caption">DLSS On</p>
 
 </div>

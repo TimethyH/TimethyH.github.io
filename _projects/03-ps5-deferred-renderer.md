@@ -37,7 +37,9 @@ I built a render backend for the PS5 that has:
 </div>
 <div class="project-media" markdown="1">
 
-![alt text](/assets/img/helmet.webp)
+<a href="/assets/img/helmet.web" class="image">
+  ![Helmet](/assets/img/helmet.web)
+</a>
 
 </div>
 </div>

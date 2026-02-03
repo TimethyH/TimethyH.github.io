@@ -35,10 +35,14 @@ The raytracer is software based, and written entirely on the CPU.
 </div>
 <div class="project-media" markdown="1">
 
-![alt text](/assets/img/projects/Y1Raytracer/sphereGLASS.webp)
+<a href="/assets/img/projects/Y1Raytracer/sphereGLASS.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Y1Raytracer/sphereGLASS.webp)
+</a>
 <p class="media-caption">Reflection and Refraction</p>
 
-![alt text](/assets/img/projects/Y1Raytracer/softShadowLights.webp)
+<a href="/assets/img/projects/Y1Raytracer/softShadowLights.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Y1Raytracer/softShadowLights.webp)
+</a>
 <p class="media-caption">Global Illumination and Reflection</p>
 
 </div>
@@ -63,10 +67,14 @@ The result of debugging was worth it.
 </div>
 <div class="project-media" markdown="1">
 
-![Overview](/assets/img/projects/Y1Raytracer/main.webp)
+<a href="/assets/img/projects/Y1Raytracer/main.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Y1Raytracer/main.webp)
+</a>
 <p class="media-caption">The Scene</p>
 
-![Volumetric lighting in forest scene](/assets/img/projects/Y1Raytracer/glass.webp)
+<a href="/assets/img/projects/Y1Raytracer/glass.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/Y1Raytracer/glass.webp)
+</a>
 <p class="media-caption">The glass puzzle</p>
 
 </div>
