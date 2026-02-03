@@ -85,7 +85,7 @@ It's important to be very strict and careful with the rules you set and the way 
 
 
 <a href="/assets/img/projects/Y1D/enemy.webp" class="image">
-  ![Volumetric Fog Scene](/assets/img/projects/Traverse/fogThumb.webp)
+  ![Volumetric Fog Scene](/assets/img/projects/Y1D/enemy.webp)
 </a>
 
 <video controls preload="metadata" src="/assets/img/projects/Y1D/enemy.webm" title="RL Enemies"></video>
