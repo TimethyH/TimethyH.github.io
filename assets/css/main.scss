@@ -602,3 +602,8 @@ body:has(.project-background) {
 .card p {
   color: #cecece;
 }
+
+.skills-grid {
+  max-width: 100%;
+  overflow-x: hidden;
+}
