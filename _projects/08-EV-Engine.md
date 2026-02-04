@@ -77,6 +77,6 @@ This of course is still only the base of what I intend to achieve with this engi
 
 This project is still a work in progress. Once it has more content the webpage will be updated!
 
-The next step is to have a fully rendered scene.
+Check it out on [Github](https://github.com/TimethyH/EV).
 
 </div>
