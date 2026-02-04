@@ -32,6 +32,7 @@ By implementing these concepts, I hope to build a scene that reminds me of home.
 The engine is still in early development. I started the engine in November 2025.
 
 </div>
+
 <div class="project-media" markdown="1">
 
 <a href="/assets/img/projects/EV/SponzaPrototype.webp" class="image">
@@ -45,10 +46,10 @@ The engine is still in early development. I started the engine in November 2025.
 <div class="section-divider"></div>
 
 <!-- Two-column section: Text left, Image right -->
-<div class="project-section">
+<div class="project-section reverse">
 <div class="project-text" markdown="1">
 
-## What I did.
+## What I did so far
 
 All work so far is done by simply following along with Jeremiah's tutorial. The result of which gave me a good base of understanding the concepts that are required to build a DX12 renderer from scratch, such as:
 
@@ -60,13 +61,19 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 
 By applying what I learned, I managed to set the base for this project. An engine that loads any model and renders it with PBR. 
 
+This ofcourse is still only the base of what I intend to achieve with this engine. With this done, I can focus on researching **Fast Fourier Transforms** for the **Ocean Rendering**!
+
+
+</div>
+<div class="project-media" markdown="1">
+
 <a href="/assets/img/projects/EV/ev-base.webp" class="image">
   ![Volumetric Fog Scene](/assets/img/projects/EV/ev-base.webp)
 </a>
 <p class="media-caption">A chessboard within sponza with PBR.</p>
 
-This ofcourse is still only the base of what I intend to achieve with this engine. With this done, I can focus on researching **Fast Fourier Transforms** for the **Ocean Rendering**!
 
+</div>
 </div>
 
 <div class="section-divider"></div>
