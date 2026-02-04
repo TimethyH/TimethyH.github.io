@@ -292,13 +292,13 @@ html, body {
 
   // Color coding for specific tags
   &[data-tag="vulkan"] {
-    background: rgba(97, 4, 4, 0.15);
+    background: rgba(172, 8, 8, 0.274);
     color: #ffffff;
     &:hover, &.active { background: #bb0707; color: white; }
   }
 
   &[data-tag="directx 12"], &[data-tag="dx12"] {
-    background: rgba(4, 88, 4, 0.15);
+    background: rgba(4, 145, 4, 0.288);
     color: #ffffff;
     &:hover, &.active { background: #107c10; color: white; }
   }
@@ -340,8 +340,8 @@ html, body {
   }
 
   &[data-tag="custom engine"], &[data-tag="engine"] {
-    background: rgba(10, 7, 185, 0.1);
-    color: #ffffff;
+    background: rgba(176, 159, 238, 0.384);
+    color: #601be0;
     &:hover, &.active { background: #052874; color: white; }
   }
 
