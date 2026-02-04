@@ -12,15 +12,13 @@ tags:
 category: year3
 ---
 
-
-<!-- Two-column section: Overview text left, Video right -->
+<!-- Two-column section: Overview text left, Image right -->
 <div class="project-section">
-<div class="project-text" markdown="1">
+  <div class="project-text" markdown="1">
 
 ## Overview
 
-EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general.  It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)!
-
+EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general. It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)!
 
 The goal of this engine is to have basic functionality to **render full scenes** for example Sponza with **PBR**, **IBL** and a **skybox**. From there the goal is to implement the following ideas:
 
@@ -29,25 +27,22 @@ The goal of this engine is to have basic functionality to **render full scenes**
 
 By implementing these concepts, I hope to build a scene that reminds me of home.
 
-The engine is still in early development. I started the engine in November 2025.
+The engine is still in early development. I started the engine in November 2024.
 
-</div>
+  </div>
 
-<div class="project-media" markdown="1">
-
-<a href="/assets/img/projects/EV/SponzaPrototype.webp" class="image">
-  ![Volumetric Fog Scene](/assets/img/projects/EV/SponzaPrototype.webp)
-</a>
-
-
-</div>
+  <div class="project-media">
+    <a href="/assets/img/projects/EV/SponzaPrototype.webp" class="image">
+      <img src="/assets/img/projects/EV/SponzaPrototype.webp" alt="Sponza Scene Prototype">
+    </a>
+  </div>
 </div>
 
 <div class="section-divider"></div>
 
 <!-- Two-column section: Text left, Image right -->
 <div class="project-section reverse">
-<div class="project-text" markdown="1">
+  <div class="project-text" markdown="1">
 
 ## What I did so far
 
@@ -59,21 +54,18 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 - Root signatures
 - Descriptors
 
-By applying what I learned, I managed to set the base for this project. An engine that loads any model and renders it with PBR. 
+By applying what I learned, I managed to set the base for this project. An engine that loads any model and renders it with PBR.
 
-This ofcourse is still only the base of what I intend to achieve with this engine. With this done, I can focus on researching **Fast Fourier Transforms** for the **Ocean Rendering**!
+This of course is still only the base of what I intend to achieve with this engine. With this done, I can focus on researching **Fast Fourier Transforms** for the **Ocean Rendering**!
 
-
-</div>
-<div class="project-media" markdown="1">
-
-<a href="/assets/img/projects/EV/ev-base.webp" class="image">
-  ![Volumetric Fog Scene](/assets/img/projects/EV/ev-base.webp)
-</a>
-<p class="media-caption">A chessboard within sponza with PBR.</p>
-
-
-</div>
+  </div>
+  
+  <div class="project-media">
+    <a href="/assets/img/projects/EV/ev-base.webp" class="image">
+      <img src="/assets/img/projects/EV/ev-base.webp" alt="Chessboard with PBR">
+    </a>
+    <p class="media-caption">A chessboard within sponza with PBR.</p>
+  </div>
 </div>
 
 <div class="section-divider"></div>
@@ -86,6 +78,5 @@ This ofcourse is still only the base of what I intend to achieve with this engin
 This project is still a work in progress. Once it has more content the webpage will be updated!
 
 The next step is to have a fully rendered scene.
-
 
 </div>
