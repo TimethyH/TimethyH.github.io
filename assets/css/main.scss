@@ -352,8 +352,8 @@ html, body {
   }
 
   &[data-tag="vr"] {
-    background: rgba(255, 255, 255, 0.712);
-    color: #000000;
+    background: rgba(0, 0, 0, 0.712);
+    color: #ffffff;
     &:hover, &.active { background: #030303; color: white; }
   }
 }
