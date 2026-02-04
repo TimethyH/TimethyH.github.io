@@ -37,7 +37,7 @@ The engine is still in early development. I started the engine in November 2025.
 <a href="/assets/img/projects/EV/SponzaPrototype.webp" class="image">
   ![Volumetric Fog Scene](/assets/img/projects/EV/SponzaPrototype.webp)
 </a>
-<p class="media-caption">Simple Cube</p>
+
 
 </div>
 </div>
@@ -58,6 +58,14 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 - Root signatures
 - Descriptors
 
+By applying what I learned, I managed to set the base for this project. An engine that loads any model and renders it with PBR. 
+
+<a href="/assets/img/projects/EV/ev-base.webp" class="image">
+  ![Volumetric Fog Scene](/assets/img/projects/EV/ev-base.webp)
+</a>
+<p class="media-caption">A chessboard within sponza with PBR.</p>
+
+This ofcourse is still only the base of what I intend to achieve with this engine. With this done, I can focus on researching **Fast Fourier Transforms** for the **Ocean Rendering**!
 
 </div>
 
