@@ -8,7 +8,6 @@ summary: "VR game fully made in our own custom engine."
 tags:
   - Custom Engine
   - University Project
-  - Rendering
   - VR
   - Game
 ---
