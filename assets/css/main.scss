@@ -292,7 +292,7 @@ html, body {
 
   // Color coding for specific tags
   &[data-tag="vulkan"] {
-    background: rgba(190, 41, 41, 0.1);
+    background: rgba(138, 6, 6, 0.788);
     color: #ffffff;
     &:hover, &.active { background: #ac3232; color: white; }
   }
@@ -340,9 +340,9 @@ html, body {
   }
 
   &[data-tag="custom engine"], &[data-tag="engine"] {
-    background: rgba(68, 65, 218, 0.1);
-    color: #e48a15;
-    &:hover, &.active { background: #1258f0; color: rgb(247, 145, 11); }
+    background: rgba(9, 8, 116, 0.1);
+    color: #ffffff;
+    &:hover, &.active { background: #052874; color: rgb(247, 145, 11); }
   }
 
   &[data-tag="game"] {
