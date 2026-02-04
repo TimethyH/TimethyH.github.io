@@ -310,8 +310,8 @@ html, body {
   }
 
   &[data-tag="raytracing"], &[data-tag="ray tracing"] {
-    background: rgba(136, 23, 152, 0.15);
-    color: #881798;
+    background: rgba(0, 0, 0, 0.15);
+    color: #0edf88;
     &:hover, &.active { background: #881798; color: white; }
   }
 
@@ -352,9 +352,9 @@ html, body {
   }
 
   &[data-tag="vr"] {
-    background: rgba(156, 39, 176, 0.1);
-    color: #9c27b0;
-    &:hover, &.active { background: #9c27b0; color: white; }
+    background: rgba(255, 255, 255, 0.712);
+    color: #600fbd;
+    &:hover, &.active { background: #030303; color: white; }
   }
 }
 
