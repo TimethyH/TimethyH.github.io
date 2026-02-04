@@ -19,7 +19,7 @@ tags:
 
 During my time at Traverse Research, I was tasked with implementing a production quality AAA volumetric fog system. The implementation is heavily inspiredby industry leading techniques presented by Naughty Dog's *The Last of Us Part II* and DICE's Frostbite engine, adapting their approaches in Traverse's rendering pipeline.
 
-The system makes use of a froxel based (frustum aligned voxel) data structure to efficiently store and process volumetric lighting data. Shadow maps are leveraged during the raymarching pass to accelerate light occlusion calculations, enabling real time performance while maintaining visual fidelity.
+The system makes use of a froxel based (frustum aligned voxel) data structure to efficiently store and process volumetric lighting data. Shadow maps are sampled during the raymarching pass to accelerate light occlusion calculations, this greatly improved performance while maintaining visual quality.
 
 ### Key Contributions
 
