@@ -616,37 +616,3 @@ body:has(.project-background) {
   justify-content: center;
   padding: 20px 10px; /* Add padding so tooltips don't get cut off */
 }
-
-.skill-item {
-  position: relative;
-  
-  // Tooltip - prevent it from causing overflow
-  &[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 8px 12px;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    border-radius: 6px;
-    white-space: normal;
-    max-width: 200px; /* Limit width */
-    width: max-content;
-    z-index: 1000;
-    font-size: 13px;
-    margin-bottom: 8px;
-    pointer-events: none;
-    text-align: center;
-    
-    /* Prevent tooltip from going off-screen */
-    @media (max-width: 768px) {
-      left: auto;
-      right: auto;
-      transform: none;
-      margin-left: -100px;
-      margin-right: -100px;
-    }
-  }
-}
