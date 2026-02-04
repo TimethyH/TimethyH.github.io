@@ -292,31 +292,31 @@ html, body {
 
   // Color coding for specific tags
   &[data-tag="vulkan"] {
-    background: rgba(138, 6, 6, 0.788);
+    background: rgba(97, 4, 4, 0.15);
     color: #ffffff;
-    &:hover, &.active { background: #ac3232; color: white; }
+    &:hover, &.active { background: #bb0707; color: white; }
   }
 
   &[data-tag="directx 12"], &[data-tag="dx12"] {
-    background: rgba(16, 124, 16, 0.1);
-    color: #107c10;
+    background: rgba(4, 88, 4, 0.15);
+    color: #ffffff;
     &:hover, &.active { background: #107c10; color: white; }
   }
 
   &[data-tag="personal project"] {
-    background: rgba(255, 140, 0, 0.1);
+    background: rgba(255, 140, 0, 0.15);
     color: #ff8c00;
     &:hover, &.active { background: #ff8c00; color: white; }
   }
 
   &[data-tag="raytracing"], &[data-tag="ray tracing"] {
-    background: rgba(136, 23, 152, 0.1);
+    background: rgba(136, 23, 152, 0.15);
     color: #881798;
     &:hover, &.active { background: #881798; color: white; }
   }
 
   &[data-tag="real-time"], &[data-tag="real time"] {
-    background: rgba(0, 153, 188, 0.1);
+    background: rgba(0, 153, 188, 0.15);
     color: #0099bc;
     &:hover, &.active { background: #0099bc; color: white; }
   }
@@ -340,9 +340,9 @@ html, body {
   }
 
   &[data-tag="custom engine"], &[data-tag="engine"] {
-    background: rgba(9, 8, 116, 0.1);
+    background: rgba(10, 7, 185, 0.1);
     color: #ffffff;
-    &:hover, &.active { background: #052874; color: rgb(247, 145, 11); }
+    &:hover, &.active { background: #052874; color: white; }
   }
 
   &[data-tag="game"] {
