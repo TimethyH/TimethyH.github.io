@@ -10,7 +10,6 @@ tags:
   - DX12
   - Vulkan
   - Custom Engine
-  - Rendering
 ---
 
 <!-- Two-column section: Overview text left, Video right -->

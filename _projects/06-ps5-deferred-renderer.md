@@ -8,7 +8,6 @@ summary: "My first rendering project."
 tags:
   - PS5
   - Custom Engine
-  - Rendering
   - University Project
 category: year2
 ---

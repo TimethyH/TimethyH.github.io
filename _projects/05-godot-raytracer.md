@@ -8,7 +8,7 @@ summary: "Godot Raytracing Extension"
 tags:
   - Vulkan
   - RayTracing
-  - Rendering
+  - Personal Project
   - University Project
 category: year3
 ---

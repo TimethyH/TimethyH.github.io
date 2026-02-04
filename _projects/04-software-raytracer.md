@@ -8,7 +8,6 @@ summary: "A raytracer fully developed on the CPU."
 tags:
   - RayTracing
   - Custom Engine
-  - Rendering
   - University Project
 category: year1
 ---

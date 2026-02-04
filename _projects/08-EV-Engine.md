@@ -7,7 +7,6 @@ thumbnail: /assets/img/projects/EV/SponzaPrototype.webp
 summary: "DirectX 12 Renderer"
 tags:
   - DX12
-  - Rendering
   - Custom Engine
   - Personal Project
 category: year3
@@ -22,11 +21,13 @@ category: year3
 
 EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general.  It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)!
 
+
 The goal of this engine is to have basic functionality to **render full scenes** for example Sponza with **PBR**, **IBL** and a **skybox**. From there the goal is to implement the following ideas:
 
-- Volumetric clouds inspired by [Nubis](https://www.guerrilla-games.com/read/nubis-cubed)
 - Ocean rendering
-- Grass rendering 
+- Volumetric clouds inspired by [Nubis](https://www.guerrilla-games.com/read/nubis-cubed)
+
+By implementing these concepts, I hope to build a scene that reminds me of home.
 
 The engine is still in early development. I started the engine in November 2025.
 
@@ -56,6 +57,7 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 - Mip Generation
 - Root signatures
 - Descriptors
+
 
 </div>
 

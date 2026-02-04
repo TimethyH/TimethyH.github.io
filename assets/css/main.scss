@@ -293,7 +293,7 @@
     &:hover, &.active { background: #107c10; color: white; }
   }
 
-  &[data-tag="rendering"] {
+  &[data-tag="personal project"] {
     background: rgba(255, 140, 0, 0.1);
     color: #ff8c00;
     &:hover, &.active { background: #ff8c00; color: white; }
@@ -309,12 +309,6 @@
     background: rgba(0, 153, 188, 0.1);
     color: #0099bc;
     &:hover, &.active { background: #0099bc; color: white; }
-  }
-
-  &[data-tag="personal project"], &[data-tag="personal"] {
-    background: rgba(194, 57, 179, 0.1);
-    color: #c239b3;
-    &:hover, &.active { background: #c239b3; color: white; }
   }
 
   &[data-tag="university project"], &[data-tag="university"] {

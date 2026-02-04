@@ -9,7 +9,6 @@ tags:
   - Traverse Research
   - DX12
   - Custom Engine
-  - Rendering
 ---
 <!-- Two-column section: Overview text left, Video right -->
 <div class="project-section">
