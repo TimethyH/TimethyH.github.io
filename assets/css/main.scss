@@ -312,7 +312,7 @@ html, body {
   &[data-tag="raytracing"], &[data-tag="ray tracing"] {
     background: rgba(0, 0, 0, 0.15);
     color: #0edf88;
-    &:hover, &.active { background: #881798; color: white; }
+    &:hover, &.active { background: #000000; color: #0edf88; }
   }
 
   &[data-tag="real-time"], &[data-tag="real time"] {
@@ -353,7 +353,7 @@ html, body {
 
   &[data-tag="vr"] {
     background: rgba(255, 255, 255, 0.712);
-    color: #600fbd;
+    color: #000000;
     &:hover, &.active { background: #030303; color: white; }
   }
 }
