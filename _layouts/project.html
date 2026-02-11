@@ -69,4 +69,49 @@ layout: default
       });
     });
   </script>
+
+  <!-- Lazy load videos with autoplay only on desktop -->
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+      const isMobile = window.innerWidth <= 768;
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      
+      // Intersection Observer for lazy video loading
+      const videoObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          const video = entry.target;
+          
+          if (entry.isIntersecting) {
+            // Video is visible in viewport
+            if (!isMobile && !isIOS && video.hasAttribute('autoplay')) {
+              // Only autoplay on desktop
+              video.play().catch(err => {
+                console.log('Autoplay prevented:', err);
+              });
+            }
+          } else {
+            // Video is out of viewport - pause it to save resources
+            if (video.hasAttribute('autoplay')) {
+              video.pause();
+            }
+          }
+        });
+      }, { 
+        threshold: 0.25, // Trigger when 25% of video is visible
+        rootMargin: '50px' // Start loading slightly before it enters viewport
+      });
+
+      // Observe all videos on the page
+      document.querySelectorAll('video').forEach(video => {
+        // Disable autoplay on mobile/iOS immediately
+        if (isMobile || isIOS) {
+          video.removeAttribute('autoplay');
+          video.pause();
+        }
+        
+        // Start observing
+        videoObserver.observe(video);
+      });
+    });
+  </script>
 </div>
