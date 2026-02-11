@@ -29,6 +29,41 @@ permalink: /projects/
   margin-top: 80px;
 }
 
+/* Make entire card clickable */
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  height: 100%;
+}
+
+.card-link:hover {
+  text-decoration: none;
+}
+
+.card-link .card {
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-link:hover .card {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Remove pointer events from nested button */
+.card-link .btn {
+  pointer-events: none;
+}
+
+/* Keep tag functionality */
+.project-tag {
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+}
+
 @media (max-width: 768px) {
   .projects-grid { 
     grid-template-columns: 1fr; 
@@ -48,41 +83,41 @@ permalink: /projects/
       <div class="projects-grid">
         {% assign sorted_projects = site.projects | sort: "path" %}
         {% for project in sorted_projects %}
-        <article class="card blog-post" data-tags="{{ project.tags | join: ',' | downcase }}">
-          {% if project.thumbnail %}
-          <a href="{{ project.url | prepend: site.baseurl }}">
+        <a href="{{ project.url | prepend: site.baseurl }}" class="card-link">
+          <article class="card blog-post" data-tags="{{ project.tags | join: ',' | downcase }}">
+            {% if project.thumbnail %}
             <img src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" 
                  alt="{{ project.title }}" 
                  class="project-thumbnail">
-          </a>
-          {% endif %}
-          
-          <div class="card-body">
-            <div class="project-tags">
-              {% if project.tags %}
-                {% for tag in project.tags %}
-                <span class="project-tag" data-tag="{{ tag | downcase }}">{{ tag }}</span>
-                {% endfor %}
+            {% endif %}
+            
+            <div class="card-body">
+              <div class="project-tags">
+                {% if project.tags %}
+                  {% for tag in project.tags %}
+                  <span class="project-tag" data-tag="{{ tag | downcase }}">{{ tag }}</span>
+                  {% endfor %}
+                {% endif %}
+              </div>
+              
+              <h3 class="card-title">{{ project.title }}</h3>
+              
+              {% if project.date %}
+              <h6 class="card-subtitle mb-2 text-muted">
+                {{ project.date | date: "%B %Y" }}
+              </h6>
               {% endif %}
+              
+              {% if project.summary %}
+              <p class="card-text">{{ project.summary }}</p>
+              {% endif %}
+              
+              <span class="btn btn-dark btn-lg">
+                View Project →
+              </span>
             </div>
-            
-            <h3 class="card-title">{{ project.title }}</h3>
-            
-            {% if project.date %}
-            <h6 class="card-subtitle mb-2 text-muted">
-              {{ project.date | date: "%B %Y" }}
-            </h6>
-            {% endif %}
-            
-            {% if project.summary %}
-            <p class="card-text">{{ project.summary }}</p>
-            {% endif %}
-            
-            <a href="{{ project.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg">
-              View Project →
-            </a>
-          </div>
-        </article>
+          </article>
+        </a>
         {% endfor %}
       </div>
 
@@ -95,7 +130,7 @@ permalink: /projects/
   'use strict';
   
   document.addEventListener('DOMContentLoaded', function() {
-    var projectCards = document.querySelectorAll('.blog-post');
+    var projectCards = document.querySelectorAll('.card-link');
     var allTags = document.querySelectorAll('.project-tag');
     var activeTag = null;
     
@@ -112,7 +147,7 @@ permalink: /projects/
         if (activeTag === selectedTag) {
           console.log('Showing all');
           allTags.forEach(function(t) { t.classList.remove('active'); });
-          projectCards.forEach(function(c) { c.style.display = 'flex'; });
+          projectCards.forEach(function(c) { c.style.display = 'block'; });
           activeTag = null;
           return;
         }
@@ -129,9 +164,10 @@ permalink: /projects/
         
         var count = 0;
         projectCards.forEach(function(card) {
-          var cardTags = card.getAttribute('data-tags');
+          var article = card.querySelector('.blog-post');
+          var cardTags = article.getAttribute('data-tags');
           if (cardTags && cardTags.indexOf(selectedTag) !== -1) {
-            card.style.display = 'flex';
+            card.style.display = 'block';
             count++;
           } else {
             card.style.display = 'none';
