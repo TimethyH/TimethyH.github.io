@@ -4,7 +4,7 @@ title: "DLSS Integration"
 subtitle: "Timethy Hyman"
 date: 2025-07-23
 thumbnail: /assets/img/projects/Traverse/dlss.jpg
-summary: "Integrating DLSS into the Traverse framework"
+summary: "👥 1 developer | Integrating DLSS into the Traverse framework"
 tags:
   - Traverse Research
   - DX12

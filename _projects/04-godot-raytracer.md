@@ -4,7 +4,7 @@ title: "Raytracing in Godot"
 subtitle: "Timethy Hyman"
 date: 2025-09-23
 thumbnail: /assets/img/projects/GodotRT/materials.png
-summary: "Godot Raytracing Extension"
+summary: "👥 3 developers | Godot Raytracing Extension"
 tags:
   - Vulkan
   - RayTracing

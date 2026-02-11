@@ -4,7 +4,7 @@ title: "EV Engine"
 subtitle: "Timethy Hyman"
 date: 2025-11-23
 thumbnail: /assets/img/projects/EV/SponzaPrototype.webp
-summary: "DirectX 12 Renderer"
+summary: "👥 1 developer | DirectX 12 Renderer"
 tags:
   - DX12
   - Custom Engine
