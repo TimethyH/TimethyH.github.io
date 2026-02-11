@@ -89,7 +89,7 @@ The second pass raymarches through each slice of the noise texture, sampling clo
 
 ## Performance Optimization
 
-Performance profiling revealed that the project was memory-bound, with significant time spent rendering off-screen objects. To address this, I implemented frustum culling, reducing the forward pass time from 2.30ms to 0.74ms.
+Performance profiling revealed that the project was memory bound, with significant time spent rendering off-screen objects. To address this, I implemented software frustum culling, reducing the forward pass time from 2.30ms to 0.74ms.
 
 Additionally, I optimized the rendering resolution for bloom and fog effects, decreasing the fog render pass from 3.32ms to 0.93ms while maintaining visual quality.
 
