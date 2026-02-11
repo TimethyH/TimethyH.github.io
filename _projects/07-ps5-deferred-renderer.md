@@ -61,7 +61,7 @@ To keep track of all the geometry and their data, deferred rendering uses a G-Bu
 </div>
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" src="/assets/img/projects/PS5/lampLights.webm" title="Title"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/PS5/lampLights.webm" title="Title"></video>
 <p class="media-caption">256 small light volumes illuminating the object</p>
 
 </div>

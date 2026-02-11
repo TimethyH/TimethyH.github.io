@@ -88,7 +88,7 @@ It's important to be very strict and careful with the rules you set and the way 
   ![Volumetric Fog Scene](/assets/img/projects/Y1D/enemy.webp)
 </a>
 
-<video controls preload="metadata" src="/assets/img/projects/Y1D/enemy.webm" title="RL Enemies"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Y1D/enemy.webm" title="RL Enemies"></video>
 <p class="media-caption">Early prototype of enemies spawn and behaviour</p>
 
 </div>

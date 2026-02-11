@@ -58,7 +58,7 @@ This project is currently in active development, with ongoing optimizations and 
 </a>
 <p class="media-caption">The froxel grid aligned to the camera frustum</p>
 
-<video controls preload="metadata" src="/assets/img/projects/Traverse/GPUDepthFroxelDebug.webm" title="Froxel depth slices"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Traverse/GPUDepthFroxelDebug.webm" title="Froxel depth slices"></video>
 <p class="media-caption">Debug visualization showing exponential depth distribution across froxel slices</p>
 
 </div>
@@ -100,7 +100,7 @@ The accumulation phase integrates all stored froxel data along the view rays thr
 </div>
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" src="/assets/img/projects/Traverse/tempFog.webm" title="Temporal fog integration"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Traverse/tempFog.webm" title="Temporal fog integration"></video>
 <p class="media-caption">Real-time volumetric fog with temporal integration demonstrating god rays</p>
 
 </div>

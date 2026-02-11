@@ -82,7 +82,7 @@ implementation details can be found on my [blog](https://timethyh.github.io/blog
 <div class="project-media" markdown="1">
 
 
-<video controls preload="metadata" src="/assets/img/projects/GodotRT/materials.webm" title="Title"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/GodotRT/materials.webm" title="Title"></video>
 <p class="media-caption">Individual textures for each mesh</p>
 
 </div>

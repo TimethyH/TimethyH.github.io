@@ -141,7 +141,7 @@ Learning regex patterns, managing conditional compilation, and correctly linking
 </div>
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" src="/assets/img/projects/Traverse/DLSS/house.webm" title="Title"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Traverse/DLSS/house.webm" title="Title"></video>
 <p class="media-caption">Toggling DLSS On and Off</p>
 
 </div>

@@ -57,10 +57,10 @@ The project was completed over 16 weeks: 8 weeks for VR integration and engine d
 <div class="project-section reverse">
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/fog.webm"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Y2VR/fog.webm"></video>
 <p class="media-caption">Volumetrics used as dust</p>
 
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/CloudUI.webm"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Y2VR/CloudUI.webm"></video>
 <p class="media-caption">Real-time cloud parameter adjustment</p>
 
 </div>
@@ -98,7 +98,7 @@ Additionally, I optimized the rendering resolution for bloom and fog effects, de
 </div>
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/lowResFog.webm"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Y2VR/lowResFog.webm"></video>
 <p class="media-caption">Fog quality at half resolution</p>
 
 </div>
@@ -110,10 +110,10 @@ Additionally, I optimized the rendering resolution for bloom and fog effects, de
 <div class="project-section reverse">
 <div class="project-media" markdown="1">
 
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/bloomCrab.webm"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Y2VR/bloomCrab.webm"></video>
 <p class="media-caption">Bloom effect highlighting the crab enemy's eye</p>
 
-<video controls preload="metadata" src="/assets/img/projects/Y2VR/FlyerParticles.webm"></video>
+<video controls autoplay loop muted preload="metadata" src="/assets/img/projects/Y2VR/FlyerParticles.webm"></video>
 <p class="media-caption">Flying drone and particle systems with bloom</p>
 
 </div>
