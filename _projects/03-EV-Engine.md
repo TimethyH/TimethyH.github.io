@@ -6,9 +6,9 @@ date: 2025-11-23
 thumbnail: /assets/img/projects/EV/SponzaPrototype.webp
 summary: "👥 1 developer | DirectX 12 Renderer"
 tags:
-  - DX12
-  - Custom Engine
   - Personal Project
+  - Custom Engine
+  - DX12
 category: year3
 ---
 

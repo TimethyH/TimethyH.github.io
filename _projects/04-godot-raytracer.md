@@ -6,10 +6,10 @@ date: 2025-09-23
 thumbnail: /assets/img/projects/GodotRT/materials.png
 summary: "👥 3 developers | Godot Raytracing Extension"
 tags:
-  - Vulkan
-  - RayTracing
   - Personal Project
   - University Project
+  - Vulkan
+  - RayTracing
 category: year3
 ---
 

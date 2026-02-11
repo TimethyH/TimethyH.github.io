@@ -6,9 +6,9 @@ date: 2024-02-23
 thumbnail: /assets/img/projects/Y1Raytracer/sphereGLASS.webp
 summary: "👥 1 developer | A raytracer fully developed on the CPU."
 tags:
-  - RayTracing
-  - Custom Engine
   - University Project
+  - Custom Engine
+  - RayTracing
 category: year1
 ---
 <!-- Two-column section: Overview text left, Video right -->

@@ -7,9 +7,9 @@ thumbnail: /assets/img/projects/Y1D/thumb.webp
 summary: "👥 12 developers | Maneuver through the desert wasteland in search of the Oasis"
 tags:
   - Unreal Engine
+  - University Project
   - Machine Learning
   - Game
-  - University Project
 category: year1
 ---
 <!-- Two-column section: Overview text left, Video right -->

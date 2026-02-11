@@ -6,8 +6,8 @@ date: 2025-06-27
 thumbnail: /assets/img/projects/Y2VR/VR.webp
 summary: "👥 9 developers | VR game fully made in our own custom engine."
 tags:
-  - Custom Engine
   - University Project
+  - Custom Engine
   - VR
   - Game
 ---

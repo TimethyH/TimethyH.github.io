@@ -6,9 +6,10 @@ date: 2024-09-23
 thumbnail: /assets/img/helmet.webp
 summary: "👥 1 developer | My first rendering project."
 tags:
-  - PS5
-  - Custom Engine
+  - Personal Project
   - University Project
+  - Custom Engine
+  - PS5
 category: year2
 ---
 

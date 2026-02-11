@@ -7,9 +7,9 @@ thumbnail: /assets/img/projects/Traverse/dlss.jpg
 summary: "👥 1 developer | Integrating DLSS into the Traverse framework"
 tags:
   - Traverse Research
+  - Custom Engine
   - DX12
   - Vulkan
-  - Custom Engine
 ---
 
 <!-- Two-column section: Overview text left, Video right -->
