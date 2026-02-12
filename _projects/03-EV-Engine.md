@@ -32,9 +32,10 @@ The engine is still in early development. I started the engine in November 2024.
   </div>
 
   <div class="project-media">
-    <a href="/assets/img/projects/EV/SponzaPrototype.webp" class="image">
-      <img src="/assets/img/projects/EV/SponzaPrototype.webp" alt="Sponza Scene Prototype">
-    </a>
+
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/waterPrototype.webm"></video>
+  <p class="media-caption">Water Prototype!!</p>
+
   </div>
 </div>
 
