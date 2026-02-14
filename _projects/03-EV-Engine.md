@@ -3,7 +3,7 @@ layout: project
 title: "EV Engine"
 subtitle: "Timethy Hyman"
 date: 2025-11-23
-thumbnail: /assets/img/projects/EV/SponzaPrototype.webp
+thumbnail: /assets/img/projects/EV/water.webp
 summary: "👥 1 developer | DirectX 12 Renderer"
 tags:
   - Personal Project
