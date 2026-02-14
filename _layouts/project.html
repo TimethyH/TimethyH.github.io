@@ -75,41 +75,70 @@ layout: default
     document.addEventListener('DOMContentLoaded', function() {
       const isMobile = window.innerWidth <= 768;
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      
-      // Intersection Observer for lazy video loading
+
+      // On mobile/iOS: move src to data-src so nothing loads upfront
+      document.querySelectorAll('video').forEach(video => {
+        if (isMobile || isIOS) {
+          const src = video.getAttribute('src');
+          if (src) {
+            video.setAttribute('data-src', src);
+            video.removeAttribute('src');
+          }
+          video.querySelectorAll('source').forEach(source => {
+            const s = source.getAttribute('src');
+            if (s) {
+              source.setAttribute('data-src', s);
+              source.removeAttribute('src');
+            }
+          });
+          video.removeAttribute('autoplay');
+          video.setAttribute('preload', 'none');
+          video.pause();
+        }
+      });
+
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           const video = entry.target;
-          
+
           if (entry.isIntersecting) {
-            // Video is visible in viewport
+            // Lazy-load the source if not yet set
+            const dataSrc = video.getAttribute('data-src');
+            if (dataSrc && !video.getAttribute('src')) {
+              video.setAttribute('src', dataSrc);
+              video.load();
+            }
+            video.querySelectorAll('source').forEach(source => {
+              const ds = source.getAttribute('data-src');
+              if (ds && !source.getAttribute('src')) {
+                source.setAttribute('src', ds);
+              }
+            });
+
             if (!isMobile && !isIOS && video.hasAttribute('autoplay')) {
-              // Only autoplay on desktop
-              video.play().catch(err => {
-                console.log('Autoplay prevented:', err);
-              });
+              video.play().catch(err => console.log('Autoplay prevented:', err));
             }
           } else {
-            // Video is out of viewport - pause it to save resources
-            if (video.hasAttribute('autoplay')) {
-              video.pause();
+            // Pause when out of view
+            video.pause();
+
+            // On mobile: also unload to free memory
+            if (isMobile || isIOS) {
+              const src = video.getAttribute('src');
+              if (src) {
+                video.setAttribute('data-src', src);
+                video.removeAttribute('src');
+                video.load(); // resets the video element, freeing memory
+              }
             }
           }
         });
-      }, { 
-        threshold: 0.25, // Trigger when 25% of video is visible
-        rootMargin: '50px' // Start loading slightly before it enters viewport
+      }, {
+        threshold: 0.1,
+        rootMargin: '200px'
       });
 
-      // Observe all videos on the page
       document.querySelectorAll('video').forEach(video => {
-        // Disable autoplay on mobile/iOS immediately
-        if (isMobile || isIOS) {
-          video.removeAttribute('autoplay');
-          video.pause();
-        }
-        
-        // Start observing
         videoObserver.observe(video);
       });
     });
