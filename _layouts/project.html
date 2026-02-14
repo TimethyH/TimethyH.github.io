@@ -70,32 +70,51 @@ layout: default
     });
   </script>
 
+  <!-- Intercept videos ASAP before browser starts buffering -->
+  <script type="text/javascript">
+    (function() {
+      const isMobile = window.innerWidth <= 768;
+      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      if (!isMobile && !isIOS) return; // Only intervene on mobile
+
+      // Use MutationObserver to catch videos as they're added to the DOM
+      const observer = new MutationObserver(mutations => {
+        mutations.forEach(m => {
+          m.addedNodes.forEach(node => {
+            if (node.nodeName === 'VIDEO') stripVideo(node);
+            if (node.querySelectorAll) {
+              node.querySelectorAll('video').forEach(stripVideo);
+            }
+          });
+        });
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+
+      function stripVideo(video) {
+        const src = video.getAttribute('src');
+        if (src) {
+          video.setAttribute('data-src', src);
+          video.removeAttribute('src');
+        }
+        video.querySelectorAll('source').forEach(source => {
+          const s = source.getAttribute('src');
+          if (s) {
+            source.setAttribute('data-src', s);
+            source.removeAttribute('src');
+          }
+        });
+        video.removeAttribute('autoplay');
+        video.setAttribute('preload', 'none');
+        video.pause();
+      }
+    })();
+  </script>
+
   <!-- Lazy load videos with autoplay only on desktop -->
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
       const isMobile = window.innerWidth <= 768;
       const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-
-      // On mobile/iOS: move src to data-src so nothing loads upfront
-      document.querySelectorAll('video').forEach(video => {
-        if (isMobile || isIOS) {
-          const src = video.getAttribute('src');
-          if (src) {
-            video.setAttribute('data-src', src);
-            video.removeAttribute('src');
-          }
-          video.querySelectorAll('source').forEach(source => {
-            const s = source.getAttribute('src');
-            if (s) {
-              source.setAttribute('data-src', s);
-              source.removeAttribute('src');
-            }
-          });
-          video.removeAttribute('autoplay');
-          video.setAttribute('preload', 'none');
-          video.pause();
-        }
-      });
 
       const videoObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
