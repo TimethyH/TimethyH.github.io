@@ -7,7 +7,6 @@ layout: default
   (function() {
     var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
     var isMobile = window.innerWidth <= 768;
-    if (!isIOS && !isMobile) return;
 
     function stripVideo(video) {
       var src = video.getAttribute('src');
@@ -23,8 +22,16 @@ layout: default
           sources[i].removeAttribute('src');
         }
       }
-      video.removeAttribute('autoplay');
-      video.removeAttribute('loop');
+      // Store original attributes before removing
+      if (video.hasAttribute('autoplay')) {
+        video.setAttribute('data-autoplay', 'true');
+        video.removeAttribute('autoplay');
+      }
+      if (video.hasAttribute('loop')) {
+        video.setAttribute('data-loop', 'true');
+        // Keep loop on desktop, remove on iOS
+        if (isIOS || isMobile) video.removeAttribute('loop');
+      }
       video.setAttribute('preload', 'none');
     }
 
@@ -113,18 +120,19 @@ layout: default
     });
   </script>
 
-  <!-- Lazy load videos: autoplay+loop on desktop, manual play on mobile/iOS -->
+  <!-- Lazy load all videos, autoplay+loop on desktop, manual on mobile/iOS -->
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
       var isMobile = window.innerWidth <= 768;
       var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      var isDesktop = !isMobile && !isIOS;
 
       var videoObserver = new IntersectionObserver(function(entries) {
         entries.forEach(function(entry) {
           var video = entry.target;
 
           if (entry.isIntersecting) {
-            // Load video source if it was stripped
+            // Load video source if stripped
             var dataSrc = video.getAttribute('data-src');
             if (dataSrc && !video.getAttribute('src')) {
               video.setAttribute('src', dataSrc);
@@ -138,29 +146,32 @@ layout: default
               }
             }
 
-            // Desktop only: autoplay
-            if (!isMobile && !isIOS && video.hasAttribute('autoplay')) {
+            // Desktop: restore autoplay + loop
+            if (isDesktop && video.getAttribute('data-autoplay') === 'true') {
+              if (video.getAttribute('data-loop') === 'true') {
+                video.setAttribute('loop', '');
+              }
               video.play().catch(function(err) {
                 console.log('Autoplay prevented:', err);
               });
             }
           } else {
+            // Pause when out of view
             video.pause();
 
-            // Mobile/iOS: unload to free memory
-            if (isMobile || isIOS) {
-              var src = video.getAttribute('src');
-              if (src) {
-                video.setAttribute('data-src', src);
-                video.removeAttribute('src');
-                video.load();
-              }
+            // Unload to free memory (desktop keeps src cached by browser, 
+            // but releasing the element helps with decode overhead)
+            var src = video.getAttribute('src');
+            if (src) {
+              video.setAttribute('data-src', src);
+              video.removeAttribute('src');
+              video.load(); // resets decoder, frees GPU memory
             }
           }
         });
       }, {
         threshold: 0.1,
-        rootMargin: '200px'
+        rootMargin: '300px' // desktop: preload a bit earlier for smoother experience
       });
 
       document.querySelectorAll('video').forEach(function(video) {
