@@ -32,7 +32,15 @@ During my self study block in Year 3,  I worked together with 2 other programmer
 
 
 </div>
+<div class="project-media" markdown="1">
 
+<a href="/assets/img/projects/GodotRT/raytraced.gif" class="image">
+  ![ReflectionRefraction](/assets/img/projects/GodotRT/raytraced.gif)
+</a>
+
+
+</div>
+</div>
 <div class="section-divider"></div>
 
 <!-- Two-column section: Text left, Image right -->

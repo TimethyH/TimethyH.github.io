@@ -33,7 +33,7 @@ The engine is still in early development. I started the engine in November 2024.
 
   <div class="project-media">
 
-  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/waterPrototype.webm"></video>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/water.mp4"></video>
   <p class="media-caption">Water Prototype!!</p>
 
   </div>
