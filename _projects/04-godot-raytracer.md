@@ -14,8 +14,9 @@ category: year3
 ---
 
 
-<!-- Full-width introduction section -->
-<div class="project-full-width" markdown="1">
+<!-- Two-column section: Overview text left, Image right -->
+<div class="project-section">
+  <div class="project-text" markdown="1">
 
 ## Overview
 
