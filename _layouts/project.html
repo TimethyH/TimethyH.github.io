@@ -2,6 +2,49 @@
 layout: default
 ---
 
+<!-- MUST run before any video content is parsed by the browser -->
+<script type="text/javascript">
+  (function() {
+    var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    var isMobile = window.innerWidth <= 768;
+    if (!isIOS && !isMobile) return;
+
+    function stripVideo(video) {
+      var src = video.getAttribute('src');
+      if (src) {
+        video.setAttribute('data-src', src);
+        video.removeAttribute('src');
+      }
+      var sources = video.querySelectorAll('source');
+      for (var i = 0; i < sources.length; i++) {
+        var s = sources[i].getAttribute('src');
+        if (s) {
+          sources[i].setAttribute('data-src', s);
+          sources[i].removeAttribute('src');
+        }
+      }
+      video.removeAttribute('autoplay');
+      video.removeAttribute('loop');
+      video.setAttribute('preload', 'none');
+    }
+
+    // Catch videos as soon as they appear in the DOM
+    var observer = new MutationObserver(function(mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var nodes = mutations[i].addedNodes;
+        for (var j = 0; j < nodes.length; j++) {
+          if (nodes[j].nodeName === 'VIDEO') stripVideo(nodes[j]);
+          if (nodes[j].querySelectorAll) {
+            var videos = nodes[j].querySelectorAll('video');
+            for (var k = 0; k < videos.length; k++) stripVideo(videos[k]);
+          }
+        }
+      }
+    });
+    observer.observe(document.documentElement, { childList: true, subtree: true });
+  })();
+</script>
+
 {% if page.thumbnail %}
 <!-- Background image with fade effect -->
 <div class="project-background" style="--project-bg-image: url('{{ page.thumbnail | relative_url }}');"></div>
@@ -70,84 +113,47 @@ layout: default
     });
   </script>
 
-  <!-- Intercept videos ASAP before browser starts buffering -->
-  <script type="text/javascript">
-    (function() {
-      const isMobile = window.innerWidth <= 768;
-      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-      if (!isMobile && !isIOS) return; // Only intervene on mobile
-
-      // Use MutationObserver to catch videos as they're added to the DOM
-      const observer = new MutationObserver(mutations => {
-        mutations.forEach(m => {
-          m.addedNodes.forEach(node => {
-            if (node.nodeName === 'VIDEO') stripVideo(node);
-            if (node.querySelectorAll) {
-              node.querySelectorAll('video').forEach(stripVideo);
-            }
-          });
-        });
-      });
-      observer.observe(document.documentElement, { childList: true, subtree: true });
-
-      function stripVideo(video) {
-        const src = video.getAttribute('src');
-        if (src) {
-          video.setAttribute('data-src', src);
-          video.removeAttribute('src');
-        }
-        video.querySelectorAll('source').forEach(source => {
-          const s = source.getAttribute('src');
-          if (s) {
-            source.setAttribute('data-src', s);
-            source.removeAttribute('src');
-          }
-        });
-        video.removeAttribute('autoplay');
-        video.setAttribute('preload', 'none');
-        video.pause();
-      }
-    })();
-  </script>
-
-  <!-- Lazy load videos with autoplay only on desktop -->
+  <!-- Lazy load videos: autoplay+loop on desktop, manual play on mobile/iOS -->
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {
-      const isMobile = window.innerWidth <= 768;
-      const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+      var isMobile = window.innerWidth <= 768;
+      var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
 
-      const videoObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          const video = entry.target;
+      var videoObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          var video = entry.target;
 
           if (entry.isIntersecting) {
-            // Lazy-load the source if not yet set
-            const dataSrc = video.getAttribute('data-src');
+            // Load video source if it was stripped
+            var dataSrc = video.getAttribute('data-src');
             if (dataSrc && !video.getAttribute('src')) {
               video.setAttribute('src', dataSrc);
               video.load();
             }
-            video.querySelectorAll('source').forEach(source => {
-              const ds = source.getAttribute('data-src');
-              if (ds && !source.getAttribute('src')) {
-                source.setAttribute('src', ds);
+            var sources = video.querySelectorAll('source');
+            for (var i = 0; i < sources.length; i++) {
+              var ds = sources[i].getAttribute('data-src');
+              if (ds && !sources[i].getAttribute('src')) {
+                sources[i].setAttribute('src', ds);
               }
-            });
+            }
 
+            // Desktop only: autoplay
             if (!isMobile && !isIOS && video.hasAttribute('autoplay')) {
-              video.play().catch(err => console.log('Autoplay prevented:', err));
+              video.play().catch(function(err) {
+                console.log('Autoplay prevented:', err);
+              });
             }
           } else {
-            // Pause when out of view
             video.pause();
 
-            // On mobile: also unload to free memory
+            // Mobile/iOS: unload to free memory
             if (isMobile || isIOS) {
-              const src = video.getAttribute('src');
+              var src = video.getAttribute('src');
               if (src) {
                 video.setAttribute('data-src', src);
                 video.removeAttribute('src');
-                video.load(); // resets the video element, freeing memory
+                video.load();
               }
             }
           }
@@ -157,7 +163,7 @@ layout: default
         rootMargin: '200px'
       });
 
-      document.querySelectorAll('video').forEach(video => {
+      document.querySelectorAll('video').forEach(function(video) {
         videoObserver.observe(video);
       });
     });
