@@ -3,7 +3,7 @@ subtitle: Graphics Programmer.
 description: >- # this means to ignore newlines until "baseurl:"
   Portofolio of Timethy Hyman, a graphics programmer interested in Math, Custom Engines and cool effects.
 
-url: "https://timethyh.github.io" # the base hostname & protocol for your site, e.g. https://example.github.io
+url: "https://timethy.com" # the base hostname & protocol for your site, e.g. https://example.github.io
 baseurl: "" # the subpath of your site, e.g. /blog
 
 # Navigation
@@ -25,10 +25,10 @@ urls:
 
 author_logo: TimmyThumb.webp
 author: Timmy
-author_bio: Hi, my name is Timethy. I am currently a Year 2 student at Breda University, specializing in Graphics.
+author_bio: Hi, my name is Timethy. I am currently a Year 3 student at Breda University, specializing in Graphics.
 author_email: "timethy.hyman@gmail.com"
 author_location: Netherlands
-author_website_url: "https://timethyh.github.io"
+author_website_url: "https://timethy.com"
 typewrite-text: Welcome to my digital diary.  
 hero_cover_img: helmet.webp # replace this for changing homepage cover (eg. try cover.jpeg). Image should be in /assets/img
 
