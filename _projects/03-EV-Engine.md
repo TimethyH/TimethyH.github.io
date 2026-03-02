@@ -3,7 +3,7 @@ layout: project
 title: "EV Engine"
 subtitle: "Timethy Hyman"
 date: 2025-11-23
-thumbnail: /assets/img/projects/EV/water.webp
+thumbnail: /assets/img/projects/EV/thumb2.webp
 summary: "👥 1 developer | DirectX 12 Renderer"
 tags:
   - Personal Project
@@ -33,7 +33,7 @@ The engine is still in early development. I started the engine in November 2024.
 
   <div class="project-media">
 
-  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/waterStages.mp4"></video>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/IBL-SSS-water.mp4"></video>
   <p class="media-caption">Water Prototype!!</p>
 
   </div>
@@ -62,11 +62,12 @@ This of course is still only the base of what I intend to achieve with this engi
   </div>
   
   <div class="project-media">
-    <a href="/assets/img/projects/EV/ev-base.webp" class="image">
-      <img src="/assets/img/projects/EV/ev-base.webp" alt="Chessboard with PBR">
+    <a href="/assets/img/projects/EV/iblHelmet.webp" class="image">
+      <img src="/assets/img/projects/EV/iblHelmet.webp" alt="Chessboard with PBR">
     </a>
-    <p class="media-caption">A chessboard within sponza with PBR.</p>
+    <p class="media-caption">IBL and reflections.</p>
   </div>
+  
 </div>
 
 <div class="section-divider"></div>
