@@ -61,13 +61,18 @@ This of course is still only the base of what I intend to achieve with this engi
 
   </div>
   
-  <div class="project-media">
-    <a href="/assets/img/projects/EV/iblHelmet.webp" class="image">
-      <img src="/assets/img/projects/EV/iblHelmet.webp" alt="Chessboard with PBR">
-    </a>
-    <p class="media-caption">IBL and reflections.</p>
-  </div>
-  
+<div class="project-media" markdown="1">
+
+<a href="/assets/img/projects/EV/iblHelmet.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/EV/iblHelmet.webp)
+</a>
+
+<a href="/assets/img/projects/EV/chess.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/EV/chess.webp)
+  </a>
+<p class="media-caption">IBL</p>
+
+</div>
 </div>
 
 <div class="section-divider"></div>
