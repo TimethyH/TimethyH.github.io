@@ -63,9 +63,8 @@ This of course is still only the base of what I intend to achieve with this engi
   
 <div class="project-media" markdown="1">
 
-<a href="/assets/img/projects/EV/iblHelmet.webp" class="image">
-  ![ReflectionRefraction](/assets/img/projects/EV/iblHelmet.webp)
-</a>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/ocean.mp4"></video>
+  <p class="media-caption">FFT Generated ocean with 4 frequency bands</p>
 
 <a href="/assets/img/projects/EV/chess.webp" class="image">
   ![ReflectionRefraction](/assets/img/projects/EV/chess.webp)
