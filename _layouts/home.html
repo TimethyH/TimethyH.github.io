@@ -92,3 +92,254 @@ layout: full-width
     </div>
   </div>
 </div>  <!-- ✅ Close the row -->
+
+<!-- Featured Projects Section -->
+<style>
+  .featured-projects-section {
+    padding: 20px 0 60px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .featured-projects-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 0 20px;
+  }
+
+  .featured-projects-header h2 {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #888 !important;
+    margin: 0;
+  }
+
+  .featured-project-bar {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    height: 220px;
+    margin: 0 20px 18px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.35s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+
+  .featured-project-bar:hover {
+    transform: translateY(-4px) scale(1.005);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    text-decoration: none;
+  }
+
+  .featured-project-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .featured-project-bar:hover .featured-project-bg {
+    transform: scale(1.04);
+  }
+
+  /* Dark gradient overlay */
+  .featured-project-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.88) 0%,
+      rgba(0,0,0,0.5) 40%,
+      rgba(0,0,0,0.15) 70%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .featured-project-content {
+    position: relative;
+    z-index: 2;
+    padding: 22px 26px;
+    width: 100%;
+  }
+
+  .featured-project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .featured-project-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .featured-project-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff !important;
+    margin: 0 0 6px;
+    line-height: 1.2;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  .featured-project-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.72);
+    margin: 0;
+    line-height: 1.5;
+    max-width: 560px;
+  }
+
+  .featured-project-arrow {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.25s, transform 0.25s;
+    backdrop-filter: blur(6px);
+  }
+
+  .featured-project-bar:hover .featured-project-arrow {
+    background: rgba(255,255,255,0.22);
+    transform: translate(2px, -2px);
+  }
+
+  .featured-project-arrow svg {
+    width: 14px;
+    height: 14px;
+    stroke: #fff;
+    fill: none;
+  }
+
+  .featured-projects-footer {
+    text-align: center;
+    margin-top: 28px;
+    padding: 0 20px;
+  }
+
+  .featured-projects-footer a {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #888 !important;
+    text-decoration: none;
+    border-bottom: 1px solid #444;
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .featured-projects-footer a:hover {
+    color: #fff !important;
+    border-color: #888;
+    text-decoration: none;
+  }
+
+  @media (max-width: 768px) {
+    .featured-project-bar {
+      height: 180px;
+      margin: 0 10px 14px;
+    }
+    .featured-project-title {
+      font-size: 17px;
+    }
+    .featured-project-desc {
+      display: none;
+    }
+  }
+</style>
+
+<div class="row">
+  <div class="col-lg-10 offset-md-1">
+    <section class="featured-projects-section">
+      <div class="featured-projects-header">
+        <h2>Featured Projects</h2>
+      </div>
+
+      <!-- Project 1: Volumetric Fog -->
+      <a href="{{site.url}}{{site.baseurl}}/projects/02-voxel-based-volmetric-fog" class="featured-project-bar">
+        <div class="featured-project-bg" style="background-image: url('{{site.url}}{{site.baseurl}}/assets/img/projects/Traverse/fogTree.webp');"></div>
+        <div class="featured-project-content">
+          <div class="featured-project-tags">
+            <span class="featured-project-tag">Traverse Research</span>
+            <span class="featured-project-tag">DX12</span>
+            <span class="featured-project-tag">Custom Engine</span>
+          </div>
+          <h3 class="featured-project-title">Voxel-Based Volumetric Fog</h3>
+          <p class="featured-project-desc">Production-quality AAA froxel fog system with god rays, temporal integration, and shadowmap accelerated light scattering.</p>
+        </div>
+        <div class="featured-project-arrow">
+          <svg viewBox="0 0 14 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12 L12 2 M5 2 L12 2 L12 9"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Project 2: EV -->
+      <a href="{{site.url}}{{site.baseurl}}/projects/03-EV-Engine" class="featured-project-bar">
+        <div class="featured-project-bg" style="background-image: url('{{site.url}}{{site.baseurl}}/assets/img/projects/EV/thumb2.webp');"></div>
+        <div class="featured-project-content">
+          <div class="featured-project-tags">
+            <span class="featured-project-tag">Personal Project</span>
+            <span class="featured-project-tag">DX12</span>
+            <span class="featured-project-tag">Custom Engine</span>
+          </div>
+          <h3 class="featured-project-title">DX12 Ocean Render</h3>
+          <p class="featured-project-desc">Custom DX12 renderer, started as a project to build a stable DX12 foundation, transformed into a project to help advance the digital advancements of my Island.</p>
+        </div>
+        <div class="featured-project-arrow">
+          <svg viewBox="0 0 14 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12 L12 2 M5 2 L12 2 L12 9"/>
+          </svg>
+        </div>
+      </a>
+
+      <!-- Project 3: VR: Ascension Protocol -->
+      <a href="{{site.url}}{{site.baseurl}}/projects/01-ascension-protocol" class="featured-project-bar">
+        <div class="featured-project-bg" style="background-image: url('{{site.url}}{{site.baseurl}}/assets/img/projects/Y2VR/VR.webp'); background-position: center 30%;"></div>
+        <div class="featured-project-content">
+          <div class="featured-project-tags">
+            <span class="featured-project-tag">University Project</span>
+            <span class="featured-project-tag">VR</span>
+            <span class="featured-project-tag">Custom Engine</span>
+          </div>
+          <h3 class="featured-project-title">VR: Ascension Protocol</h3>
+          <p class="featured-project-desc">A custom made VR engine. The engine utilizes rendering techniques such as Volumetric Fog, Bloom, Frustum Culling and IBL.</p>
+        </div>
+        <div class="featured-project-arrow">
+          <svg viewBox="0 0 14 14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12 L12 2 M5 2 L12 2 L12 9"/>
+          </svg>
+        </div>
+      </a>
+
+      <div class="featured-projects-footer">
+        <a href="{{site.url}}{{site.baseurl}}/projects">View all projects →</a>
+      </div>
+    </section>
+  </div>
+</div>
