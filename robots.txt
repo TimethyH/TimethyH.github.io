@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /todo/
+Disallow: /blog/authors/
+Disallow: /blog/categories/
+Disallow: /gallery/
+Disallow: /SECURITY/
+
+Sitemap: https://timethy.com/sitemap.xml
