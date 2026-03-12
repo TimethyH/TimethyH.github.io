@@ -83,6 +83,8 @@ This of course is still only the base of what I intend to achieve with this engi
 
 This project is still a work in progress. Once it has more content the webpage will be updated!
 
-Check it out on [Github](https://github.com/TimethyH/EV).
+<a href="https://github.com/TimethyH/EV" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
+  <i class="fab fa-github" style="margin-right: 8px;"></i> View on GitHub
+</a>
 
 </div>
