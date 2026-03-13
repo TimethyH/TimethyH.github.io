@@ -99,6 +99,8 @@ It's important to be very strict and careful with the rules you set and the way 
 <!-- Final full-width section -->
 <div class="project-full-width" markdown="1">
 
-**Check it out on Itch!**: [Wasteland Walkers](https://buas.itch.io/team-mace)
+<a href="https://buas.itch.io/team-mace" target="_blank" class="btn btn-lg btn-itch" style="text-decoration: none;">
+  <i class="fab fa-itch-io" style="margin-right: 8px;"></i> Check it out on  Itch.io
+</a>
 
 </div>
