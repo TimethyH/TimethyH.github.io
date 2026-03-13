@@ -1,8 +1,8 @@
 ---
 name: Timethy Hyman # Name of the Author
 username: Timmy # Username of the Author
-bio: "Timmy, an aspiring grahics programmer." # Author Bio
-site: https://timethyh.github.io # Author Website URL
+bio: "Timethy, an aspiring grahics programmer." # Author Bio
+site: https://timethy.com/#/ # Author Website URL
 avatar: TimmyThumb.webp  # Profile Image (img path will be /assets/img/authors/johndoe.png)
 email: timethy.hyman@gmail.com  # Author Email address
 social:  # Author Social profile links
