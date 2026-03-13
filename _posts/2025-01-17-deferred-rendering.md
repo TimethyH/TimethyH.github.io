@@ -5,7 +5,7 @@ summary: "A tutorial explaining how you can implement your own deferred renderer
 author: Timethy Hyman
 date: '2025-01-17 14:35:23 +0530'
 category: Tutorial
-thumbnail: /assets/img/1028Lights.png
+thumbnail: /assets/img/1028Lights.webp
 keywords: Deferred Renderer, how to implement deferred, deferred, renderer, c++ tutorial, deferred shading
 permalink: /blog/deferred-implementation/
 usemathjax: true
