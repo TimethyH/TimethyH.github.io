@@ -2,7 +2,7 @@
 layout: post
 title:  "Real Time FFT Ocean Rendering in DirectX 12"
 summary: "A deep dive into building a real time physically based ocean renderer from scratch. Covering FFT wave simulation, JONSWAP spectra, wave cascades, PBR shading, subsurface scattering, and foam detection."
-author: Timethy Hyman
+author: Timethy
 date: '2026-03-08 13:23:23 +0000'
 category: Project
 thumbnail: /assets/img/projects/EV/cascadeThumb.webp
