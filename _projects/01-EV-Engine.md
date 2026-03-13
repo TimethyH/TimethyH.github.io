@@ -29,7 +29,7 @@ The engine is still in early development. I started the engine in November 2024.
   </div>
   <div class="project-media" markdown="1">
 
-  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/IBL-SSS-water.mp4"></video>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/scene.mp4"></video>
   <p class="media-caption">Water Prototype!!</p>
 
   </div>
