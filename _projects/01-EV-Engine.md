@@ -20,7 +20,7 @@ category: year3
 
 EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general. It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)! Following this tutorial I laid the foundation of the engine.
 
-A wise man at Nixxies gave me the suggestion to build something I would be passionate about. Following his advice, I decided to build EV Engine, an Ocean Rendering application. 
+A wise man at [Nixxies](https://www.nixxes.com/) gave me the suggestion to build something I would be passionate about. Following his advice, I decided to build EV Engine, an Ocean Rendering application. 
 The application's purpose is to help my dad's company simulate the carribean seas as a background of their architectural 
 renders. On top of that, I hope it can play a small part in advancing the digital scene of my island.
 
@@ -46,15 +46,17 @@ The engine is still in early development. I started the engine in November 2024.
 
 All work so far is done by simply following along with Jeremiah's tutorial. The result of which gave me a good base of understanding the concepts that are required to build a DX12 renderer from scratch, such as:
 
-- Memory management / allocation system
-- Resource barriers and transitions
-- Mip Generation
-- Root signatures
-- Descriptors
-
-By applying what I learned, I managed to set the base for this project. An engine that loads any model and renders it with PBR.
-
-This of course is still only the base of what I intend to achieve with this engine. With this done, I can focus on researching **Fast Fourier Transforms** for the **Ocean Rendering**!
+- Engine Foundation
+  - DirectX 12 renderer from scratch: memory management, resource barriers, descriptor heaps, root signatures, and mip generation
+  - HDR render target with HDR→SDR tonemapping pass and a skybox pipeline
+- Implemented real time FFT ocean simulation using the JONSWAP wave spectrum
+  - 4 wave cascades running simultaneously to cover large swells and fine surface detail at the same time
+  - Per cascade frequency band cutoffs derived from Nyquist limits
+  - Compute shaders that handle the butterfly FFT, outputting displacement and slope textures per cascade
+- Water Shading
+  - PBR water shading with GGX specular, Fresnel Schlick, and split sum IBL reflections
+  - Approximated subsurface scattering
+  - Foam detection using the Jacobian determinant
 
   </div>
   
