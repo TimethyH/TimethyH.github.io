@@ -3,7 +3,7 @@ layout: project
 title: "EV Engine"
 subtitle: "Timethy Hyman"
 date: 2025-11-23
-thumbnail: /assets/img/projects/EV/thumb2.webp
+thumbnail: /assets/img/projects/EV/cascadeThumb.png
 summary: "👥 1 developer | DirectX 12 Renderer"
 tags:
   - Personal Project
@@ -47,7 +47,7 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 
 **Engine Foundation**
   - DirectX 12 renderer from scratch: memory management, resource barriers, descriptor heaps, root signatures, and mip generation
-  - HDR render target with HDR→SDR tonemapping pass and a skybox pipeline
+  - HDR skybox pipeline with HDR to SDR tonemapping 
 
 **Implemented real time FFT ocean simulation using the JONSWAP wave spectrum**
   - 4 wave cascades running simultaneously to cover large swells and fine surface detail at the same time
