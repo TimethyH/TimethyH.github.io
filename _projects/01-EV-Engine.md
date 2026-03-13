@@ -3,7 +3,7 @@ layout: project
 title: "EV Engine"
 subtitle: "Timethy Hyman"
 date: 2025-11-23
-thumbnail: /assets/img/projects/EV/cascadeThumb.png
+thumbnail: /assets/img/projects/EV/cascadeThumb.webp
 summary: "👥 1 developer | DirectX 12 Ocean Renderer"
 tags:
   - Personal Project
