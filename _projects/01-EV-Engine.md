@@ -18,14 +18,11 @@ category: year3
 
 ## Overview
 
-EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general. It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)!
+EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general. It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)! Following this tutorial I laid the foundation of the engine.
 
-The goal of this engine is to have basic functionality to **render full scenes** for example Sponza with **PBR**, **IBL** and a **skybox**. From there the goal is to implement the following ideas:
-
-- Ocean rendering
-- Volumetric clouds inspired by [Nubis](https://www.guerrilla-games.com/read/nubis-cubed)
-
-By implementing these concepts, I hope to build a scene that reminds me of home.
+A wise man at Nixxies gave me the suggestion to build something I would be passionate about. Following his advice, I decided to build EV Engine, an Ocean Rendering application. 
+The application's purpose is to help my dad's company simulate the carribean seas as a background of their architectural 
+renders. On top of that, I hope it can play a small part in advancing the digital scene of my island.
 
 The engine is still in early development. I started the engine in November 2024.
 
