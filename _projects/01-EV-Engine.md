@@ -29,7 +29,7 @@ The engine is still in early development. I started the engine in November 2024.
   </div>
   <div class="project-media" markdown="1">
 
-  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/scene.mp4"></video>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/sceneCompressed.mp4"></video>
   <p class="media-caption">Water Prototype!!</p>
 
   </div>
@@ -62,7 +62,7 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
   </div>
   <div class="project-media" markdown="1">
 
-  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/calmWaves.mp4"></video>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/calmWavesCompressed.mp4"></video>
   <p class="media-caption">FFT Generated ocean with 4 frequency bands</p>
 
 <a href="/assets/img/projects/EV/chess.webp" class="image">
