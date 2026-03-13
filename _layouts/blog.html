@@ -32,6 +32,31 @@ layout: default
   margin-top: 40px;
 }
 
+.card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.card-link:hover {
+  text-decoration: none;
+}
+
+.card-link .card {
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-link:hover .card {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-link .btn {
+  pointer-events: none;
+}
+
 @media (max-width: 768px) {
   .blog-grid { 
     grid-template-columns: 1fr; 
@@ -50,33 +75,33 @@ layout: default
 
       <div class="blog-grid">
         {% for post in paginator.posts %}
-        <article class="card blog-post">
-          {% if post.thumbnail %}
-          <a href="{{ post.url | prepend: site.baseurl }}">
+        <a href="{{ post.url | prepend: site.baseurl }}" class="card-link">
+          <article class="card blog-post">
+            {% if post.thumbnail %}
             <img src="{{ site.url }}{{ site.baseurl }}{{ post.thumbnail }}" 
                  alt="{{ post.title }}" 
                  class="blog-thumbnail">
-          </a>
-          {% endif %}
-          
-          <div class="card-body">
-            <h3 class="card-title">{{ post.title }}</h3>
-            
-            {% if post.date %}
-            <h6 class="card-subtitle mb-2 text-muted">
-              {{ post.date | date: "%B %d, %Y" }}
-            </h6>
             {% endif %}
             
-            {% if post.summary %}
-            <p class="card-text">{{ post.summary }}</p>
-            {% endif %}
-            
-            <a href="{{ post.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg">
-              Read Article →
-            </a>
-          </div>
-        </article>
+            <div class="card-body">
+              <h3 class="card-title">{{ post.title }}</h3>
+              
+              {% if post.date %}
+              <h6 class="card-subtitle mb-2 text-muted">
+                {{ post.date | date: "%B %d, %Y" }}
+              </h6>
+              {% endif %}
+              
+              {% if post.summary %}
+              <p class="card-text">{{ post.summary }}</p>
+              {% endif %}
+              
+              <span class="btn btn-dark btn-lg">
+                Read Article →
+              </span>
+            </div>
+          </article>
+        </a>
         {% endfor %}
       </div>
 
