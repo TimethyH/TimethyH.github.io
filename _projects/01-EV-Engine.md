@@ -48,10 +48,12 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 **Engine Foundation**
   - DirectX 12 renderer from scratch: memory management, resource barriers, descriptor heaps, root signatures, and mip generation
   - HDR render target with HDR→SDR tonemapping pass and a skybox pipeline
+
 **Implemented real time FFT ocean simulation using the JONSWAP wave spectrum**
   - 4 wave cascades running simultaneously to cover large swells and fine surface detail at the same time
   - Per cascade frequency band cutoffs derived from Nyquist limits
   - Compute shaders that handle the butterfly FFT, outputting displacement and slope textures per cascade
+
 **Water Shading**
   - PBR water shading with GGX specular, Fresnel Schlick, and split sum IBL reflections
   - Approximated subsurface scattering
