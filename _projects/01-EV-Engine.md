@@ -24,7 +24,11 @@ A wise man at [Nixxies](https://www.nixxes.com/) gave me the suggestion to build
 The application's purpose is to help my dad's company simulate the carribean seas as a background of their architectural 
 renders. On top of that, I hope it can play a small part in advancing the digital scene of my island.
 
-The engine is still in early development. I started the engine in November 2024.
+I started the engine in November 2025.
+
+Core engine implementation: 3 months.  
+Ocean implementation: 1 month.
+
 
   </div>
   <div class="project-media" markdown="1">
