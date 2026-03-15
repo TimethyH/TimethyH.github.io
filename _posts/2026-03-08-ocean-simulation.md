@@ -19,9 +19,9 @@ usemathjax: true
 
 Oceans can be one of the most relaxing phenomena that nature provides us. Hearing the crashing waves, seeing small water ripples and light refraction through the water surface can take hours of my day when sitting at a beach. This is one of the reasons why this project came to life. 
 
-As a graphics programmer, I often ask myself how real life scenarios would translate to a digital implementation. Usually I have a rough idea... but oceans seemed so complex, non-uniform and variable dependent that I decided to ask google instead. This led to a rabbit hole of papers and math which I will be elaborating on in this blogpost. 
+As a graphics programmer, I often ask myself how real life scenarios would translate to a digital implementation. Usually I have a rough idea, but oceans seemed so complex, non-uniform and variable dependent that I decided to ask google instead. This led to a rabbit hole of papers regarding Fourier Transforms, Euler's formula and scary math which I will be elaborating on in this blogpost. 
 
-If you've ever looked at an ocean and wondered how film companies such as [Titanic](https://youtu.be/BTff04cFsRw?t=99) and AAA game companies such as [Horizon Forbidden West](https://www.youtube.com/watch?v=XT-xhCNalPc) recreated it, then this blogpost is for you. 
+So if you've ever looked at an ocean and wondered how films such as [Titanic](https://youtu.be/BTff04cFsRw?t=99), AAA games such as [Horizon Forbidden West](https://www.youtube.com/watch?v=XT-xhCNalPc) and [Sea of Thieves](https://www.reddit.com/r/Seaofthieves/comments/184f1le/the_ocean_of_sea_of_thieves_is_insane_enjoy_it/) recreated it, then this blogpost is for you. 
 
 ## Table of Contents
 
