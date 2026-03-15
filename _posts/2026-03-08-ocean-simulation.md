@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Real Time FFT Ocean Rendering in DirectX 12"
-summary: "A deep dive into building a real time physically based ocean renderer from scratch. Covering FFT wave simulation, JONSWAP spectra, wave cascades, PBR shading, subsurface scattering, and foam detection."
+summary: "A deep dive into building a real time physically based ocean renderer from scratch."
 author: Timethy
 date: '2026-03-08 13:23:23 +0000'
 thumbnail: /assets/img/projects/EV/cascadeThumb.webp
@@ -17,9 +17,12 @@ usemathjax: true
 
 ## Introduction
 
-<!-- [ Write 2–3 paragraphs introducing the project. What drew you to ocean rendering? What did you set out to build, and what will the reader learn from this post? ] -->
+Oceans can be one of the most relaxing fenomena that nature provides us. Hearing the crashing waves, seeing small water ripples and light refraction through the water surface can take hours of my day when sitting at a beach. This is one of the reasons how this project came to life. 
 
-<!-- Suggested angle: you intentionally took a theory-first approach — understanding the math before touching code — to avoid surface-level pattern matching. This shapes how you approached every system described below and is worth mentioning up front. -->
+As a graphics programmer, I often ask myself how real life scenarios would translate to a digital implementation. Usually I have a rough idea... but oceans seemed so complex, non-uniform and variable dependent that I decided to ask google instead. This led to a rabbit hole of papers and math which I will be elaborating on in this blogpost. 
+
+If like me, you ever wondered what goes into simulating an ocean, how AAA game and movie companies such as [Titanic](https://youtu.be/BTff04cFsRw?t=99) and [Horizon Forbidden West](https://www.youtube.com/watch?v=XT-xhCNalPc) did it, then you're in the right spot. In this blog post I will be covering: FFT wave simulation, JONSWAP spectra, wave cascades, PBR shading, subsurface scattering, and foam detection. 
+
 
 ### Project Overview
 
