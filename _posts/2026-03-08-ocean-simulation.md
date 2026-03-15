@@ -17,12 +17,21 @@ usemathjax: true
 
 ## Introduction
 
-Oceans can be one of the most relaxing fenomena that nature provides us. Hearing the crashing waves, seeing small water ripples and light refraction through the water surface can take hours of my day when sitting at a beach. This is one of the reasons how this project came to life. 
+Oceans can be one of the most relaxing phenomena that nature provides us. Hearing the crashing waves, seeing small water ripples and light refraction through the water surface can take hours of my day when sitting at a beach. This is one of the reasons why this project came to life. 
 
 As a graphics programmer, I often ask myself how real life scenarios would translate to a digital implementation. Usually I have a rough idea... but oceans seemed so complex, non-uniform and variable dependent that I decided to ask google instead. This led to a rabbit hole of papers and math which I will be elaborating on in this blogpost. 
 
-If like me, you ever wondered what goes into simulating an ocean, how AAA game and movie companies such as [Titanic](https://youtu.be/BTff04cFsRw?t=99) and [Horizon Forbidden West](https://www.youtube.com/watch?v=XT-xhCNalPc) did it, then you're in the right spot. In this blog post I will be covering: FFT wave simulation, JONSWAP spectra, wave cascades, PBR shading, subsurface scattering, and foam detection. 
+If you've ever looked at an ocean and wondered how film companies such as [Titanic](https://youtu.be/BTff04cFsRw?t=99) and AAA game companies such as [Horizon Forbidden West](https://www.youtube.com/watch?v=XT-xhCNalPc) recreated it, then this blogpost is for you. 
 
+## Table of Contents
+
+1. [Wave Simulation: JONSWAP & the FFT Pipeline](#chapter-1-wave-simulation-jonswap--the-fft-pipeline)
+2. [Wave Cascades: Multi Scale Detail](#chapter-2-wave-cascades-multi-scale-detail)
+3. [Rendering & Shading](#chapter-3-rendering--shading)
+4. [Foam](#chapter-4-foam)
+5. [Skybox & Environment](#chapter-5-skybox--environment)
+7. [Major Struggles & Lessons Learned](#chapter-7-major-struggles--lessons-learned)
+8. [Results & Next Steps](#chapter-8-results--next-steps)
 
 ### Project Overview
 
@@ -44,7 +53,7 @@ This renderer is built inside **EV-Engine**, a custom C++ / DirectX 12 engine, t
 
 ---
 
-## Chapter 1 — Wave Simulation: JONSWAP & the FFT Pipeline
+## Chapter 1 Wave Simulation: JONSWAP & the FFT Pipeline
 
 ### 1.1 The Wave Spectrum (JONSWAP + TMA)
 
@@ -86,7 +95,7 @@ A 2D IFFT converts the frequency-domain spectrum into a real-space displacement 
 
 ---
 
-## Chapter 2 — Wave Cascades: Multi-Scale Detail
+## Chapter 2 Wave Cascades: Multi Scale Detail
 
 ### 2.1 Why Multiple Cascades?
 
@@ -116,7 +125,7 @@ In the vertex shader, each cascade is sampled using `worldPos.xz / patchSize[i]`
 
 ---
 
-## Chapter 3 — Rendering & Shading
+## Chapter 3 Rendering & Shading
 
 ### 3.1 Physically-Based Shading (PBR)
 
@@ -177,7 +186,7 @@ The scene renders into an `R16G16B16A16_FLOAT` HDR render target. A separate SDR
 
 ---
 
-## Chapter 4 — Foam
+## Chapter 4 Foam
 
 ### 4.1 Jacobian-Based Foam Detection
 
@@ -210,7 +219,7 @@ Applying identical foam parameters to all four cascades produces under-foamed la
 
 ---
 
-## Chapter 5 — Skybox & Environment
+## Chapter 5 Skybox & Environment
 
 ### 5.1 HDR Cubemap Pipeline
 
@@ -228,31 +237,7 @@ All three IBL assets are computed as GPU compute dispatches during `Init()` befo
 
 ---
 
-## Chapter 6 — Engine Integration & Tooling
-
-### 6.1 DX12 Architecture
-
-<!-- [ Describe the command queue structure (Direct / Compute / Copy queues), descriptor allocator per heap type, and how resource state transitions are managed across the compute pipeline and graphics pipeline each frame. ] -->
-
-### 6.2 Ocean Mesh
-
-The ocean surface is a **4096m × 4096m** plane at **512×512 subdivisions**. Vertices store only XZ position (Y = 0) — all displacement is applied in the vertex shader by sampling the FFT output textures.
-
-<!-- [ Describe the mesh generation path — CreateScene(), VertexPositionNormalTangentBitangentTexture, and how the WRAP sampler is bound for cascade texture sampling. ] -->
-
-<!-- BUG TO MENTION: Upgrading from 256×256 to 512×512 subdivisions caused half the ocean to vanish — 16-bit index buffer overflow (max 65535 indices, but 512×512 needs 263169 vertices). Fixed by switching to 32-bit indices. Also: incorrect backface culling from winding order — ocean was only visible from below. -->
-
-### 6.3 ImGui Debug Panel
-
-A full ImGui parameter panel provides live control over all JONSWAP parameters, per-cascade foam tuning, lighting, and rendering options.
-
-<!-- [ Describe the ImGuiTextureRegistry solution for DX12 — why raw CPU descriptor handles don't work as ImTextureID, and how a dedicated shader-visible descriptor heap with CopyDescriptorsSimple solves it. The registry creates a D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE heap, copies descriptors in, and returns GPU handle pointers as ImTextureID. GUI.cpp's Render() must then call SetDescriptorHeaps with this heap before ImGui draw calls. ] -->
-
-<!-- Also mention: BeginDisabled/EndDisabled was unavailable in the project's older ImGui version — used TextDisabled as a workaround for read-only parameter display. -->
-
----
-
-## Chapter 7 — Major Struggles & Lessons Learned
+## Chapter 7 Major Struggles & Lessons Learned
 
 ### 7.1 DX12 Resource Barriers & Synchronisation
 
@@ -272,7 +257,7 @@ A full ImGui parameter panel provides live control over all JONSWAP parameters, 
 
 ---
 
-## Chapter 8 — Results & Next Steps
+## Chapter 8 Results & Next Steps
 
 ### 8.1 Final Results
 
