@@ -634,3 +634,37 @@ a.btn-itch {
 article h1, article h2, article h3, article h4, article h5, article h6 {
   color: white !important;
 }
+
+// For expanding details
+details {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 16px 0;
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    list-style: none;
+    padding: 4px 0;
+
+    &::before {
+      content: "▶  ";
+      font-size: 12px;
+      color: #f69801;
+    }
+  }
+
+  &[open] summary::before {
+    content: "▼  ";
+  }
+
+  // Add spacing when open
+  &[open] summary {
+    margin-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 12px;
+  }
+}

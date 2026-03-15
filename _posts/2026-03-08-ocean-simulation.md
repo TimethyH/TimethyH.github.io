@@ -2,7 +2,7 @@
 layout: post
 title:  "Real Time FFT Ocean Rendering in DirectX 12"
 summary: "A deep dive into building a real time physically based ocean renderer from scratch."
-author: Timethy
+author: Timethy Hyman
 date: '2026-03-08 13:23:23 +0000'
 thumbnail: /assets/img/projects/EV/cascadeThumb.webp
 keywords: ocean rendering, FFT ocean, DirectX 12, HLSL, JONSWAP, wave simulation, PBR, subsurface scattering, foam, EV-Engine, graphics programming
@@ -33,27 +33,26 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 7. [Major Struggles & Lessons Learned](#chapter-7-major-struggles--lessons-learned)
 8. [Results & Next Steps](#chapter-8-results--next-steps)
 
-### Project Overview
 
-This renderer is built inside **EV-Engine**, a custom C++ / DirectX 12 engine, targeting 60+ fps at 1920×1080. The ocean simulation is a standalone scene within the engine.
+## Understanding the basics
 
-| | |
-|---|---|
-| **Language / API** | C++ 17 + DirectX 12 + HLSL |
-| **Engine** | EV-Engine (custom) |
-| **Debug tooling** | RenderDoc, ImGui |
-| **Timeline** | 8 weeks |
+The ocean wave implementation is heavily based on using multiple sine wave frequencies to get interesting displacements. 
 
-**Key references used throughout:**
-- Tessendorf, J. (2001). *Simulating Ocean Water.* SIGGRAPH Course Notes.
-- NVIDIA. (2015). *Ocean Surface Simulation.* CGDC 2015.
-- FXGuide. (2012). *The Technology Behind Assassin's Creed III's Ocean.*
-- GarrettGunnell — FFT Water (Unity). GitHub.
-- gasgiant — FFT-Ocean (Unity). GitHub.
+<details>
+<summary>How does a sine wave work?</summary>
 
----
+A sine waves are oscillators, which means they generate a repetitive wave signal that stays within its amplitude. 3 important terms regarding each wave is its amplitude, its wavelength and its frequency.  
+Amplitude is the peak of the wave, the highest value the that can be sampled. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. By using the wavelength, we can calculate the frequency of the wave. Frequency refers to how often a wave repeats every second. We can calculate it using the following formula:
+
+$$freq = \frac{2}{waveLength}$$
+
+
+</details>
+
+Simulating the ocean can seem daunting, but oceanographers across the world measured the frequencies found within waves.  
 
 ## Chapter 1 Wave Simulation: JONSWAP & the FFT Pipeline
+
 
 ### 1.1 The Wave Spectrum (JONSWAP + TMA)
 
