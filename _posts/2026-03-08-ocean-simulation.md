@@ -36,15 +36,13 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 
 ## Understanding the basics
 
-The ocean wave implementation is heavily based on using multiple sine wave frequencies to get interesting displacements. 
 
 <details>
 <summary>How does a sine wave work?</summary>
 
+The ocean wave implementation is heavily based on using multiple sine waves to get interesting displacements. 
 A sine waves are oscillators, which means they generate a repetitive wave signal that stays within its amplitude. 3 important terms regarding each wave is its amplitude, its wavelength and its frequency.  
-Amplitude is the peak of the wave, the highest value the that can be sampled. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. By using the wavelength, we can calculate the frequency of the wave. Frequency refers to how often a wave repeats every second. We can calculate it using the following formula:
-
-$$freq = \frac{2}{waveLength}$$
+Amplitude is the peak of the wave, the highest value the that can be sampled. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. To shape the wave using a desired wavelength, we can use certain formulas that will be discussed below.
 
 
 </details>
