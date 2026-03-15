@@ -50,11 +50,9 @@ Amplitude is the peak of the wave, the highest value the that can be sampled. Wa
 <details>
 <summary>What are complex numbers?</summary>
 
-<p>
 A complex number is simply two numbers packed into one. It has a real part and an imaginary part. Its form is \(c = a + bi\)
-You can think of it like a 2D coordinate. Instead of writing \(p = (3,4)\), you'd write \(p = 3 + 4i\). The <em>i</em> is the imaginary part of the number, which lives on the axis perpendicular to the real number line.
-When any number is multiplied by the imaginary <em>i</em>, it is essentially "rotated" by 90° counter clockwise. Interesting note, multiplying a number by <em>i</em> twice, brings it to -1, which leads to a whole other discussion on why \(i = \sqrt{-1}\). But that is out of the scope of this blogpost.
-</p>
+You can think of it like a 2D coordinate. Instead of writing \(p = (3,4)\), you'd write \(p = 3 + 4i\). The \(i\) is the imaginary part of the number, which lives on the axis perpendicular to the real number line.
+When any number is multiplied by the imaginary \(i\), it is essentially "rotated" by 90° counter clockwise. Interesting note, multiplying a number by \(i\) twice, brings it to -1, which leads to a whole other discussion on why \(i = \sqrt{-1}\). But that is out of the scope of this blogpost.
 
 </details>
 
