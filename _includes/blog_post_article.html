@@ -5,7 +5,9 @@
     <p class="post-summary">
       Posted by : {% if page.author %}
       <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <span itemprop="name">{{ page.author }}</span>
+        <a href="{{ site.baseurl }}/blog/authors/{{ page.author | slugify }}" itemprop="url">
+          <span itemprop="name">{{ page.author }}</span>
+        </a>
       {% endif %} on
       <time datetime="{{ page.date }}" itemprop="datePublished"
         >{{ page.date | date: "%b %-d, %Y" }}</time
