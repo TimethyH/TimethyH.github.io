@@ -42,8 +42,7 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 
 The ocean wave implementation is heavily based on using multiple sine waves to get interesting displacements. 
 Sine waves are oscillators, which means they generate a repetitive wave signal that stays within its amplitude. 3 important terms regarding a wave is its amplitude, its wavelength and its frequency.  
-Amplitude is the peak of the wave, the highest value the that can be sampled. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. To shape the wave using a desired wavelength, we can use certain formulas that will be discussed below.
-
+Amplitude is the peak of the wave, the highest value that the signal can reach. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. Frequency is how often a signal repeats within a second. A short wavelength correlates to a high frequency, a long wavelength correlates to a low frequency. To shape the wave using a desired wavelength, we can use certain formulas that will be discussed in this article. 
 
 </details>
 
@@ -52,12 +51,21 @@ Amplitude is the peak of the wave, the highest value the that can be sampled. Wa
 
 A complex number is simply two numbers packed into one. It has a real part and an imaginary part. Its form is \(c = a + bi\)
 You can think of it like a 2D coordinate. Instead of writing \(p = (3,4)\), you'd write \(p = 3 + 4i\). The \(i\) is the imaginary part of the number, which lives on the axis perpendicular to the real number line.
-When any number is multiplied by the imaginary \(i\), it is essentially "rotated" by 90° counter clockwise. Interesting note, multiplying a number by \(i\) twice, brings it to -1, which leads to a whole other discussion on why \(i = \sqrt{-1}\). But that is out of the scope of this blogpost.
+
+When any number is multiplied by the imaginary \(i\), it is essentially "rotated" by 90° counter clockwise. This rotation property is what lets Euler's formula describe circular motion. Interesting note, multiplying a number by \(i\) twice, brings it to -1, which leads to a whole other discussion on why \(i = \sqrt{-1}\). But that is out of scope for this blogpost.
 
 </details>
 
 <details>
 <summary>  What is Euler's formula? </summary>
+
+Euler's formula states that any point on a unit circle can be written as:
+
+\[e^{i\theta} = \cos\theta + i\sin\theta\]
+
+This tells us that if you take e to the power of an imaginary number, you would get a point on a circle. Here the \(cos\theta\) is the x coordinate, and the \(sin\theta\) is the y coordinate.
+
+This is very useful for our ocean simulation since as theta increases over time, the point spins around the circle. This spinning around the circle causes the x and y values to oscillate up and down which drive the displacement of the ocean over time. Euler's formula is a compact way to represent the oscillation of the sin and cosine components packed into one expression. 
 
 </details>
 
