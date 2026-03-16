@@ -99,12 +99,21 @@ The ocean surface is made up of thousands of waves, all travelling in different 
 
 This is where oceanographers come in. Over decades, researchers measured real ocean surfaces using buoys, photographs and radar measurements to figure out exactly how wave energy is distributed across different frequencies in a fully developed ocean. A fully developed ocean simply means the ocean has had enough time and distance to reach an equilibrium with the wind blowing over it. The result of this research is a spectrum function, which tells us how much energy each wave frequency should have given a set of wind conditions.
 
-Now, evaluating thousands of sine waves individually for every point on the ocean every frame would be far too slow even for a modern GPU. This is where the FFT comes in. Instead of working in the spatial domain (the real world positions of the waves), we work in the frequency domain, where each point represents a wave frequency rather than a world position. The FFT then converts the entire frequency domain into real world displacements in one efficient pass. // TODO explain this a bit better
+Now, evaluating thousands of sine waves individually for every point on the ocean every frame would be far too slow even for a modern GPU. This is where the FFT comes in. Before we dive into how FFT works, we need to understand the two relevant domains. *The Spatial Domain and the Frequency Domain.*
+
+The spatial domain is our usual graph that has a value Y on the vertical axis, and a constantly increasing value X usually representing time or position, on the horizontal axis. The frequency domain exposes frequency on the horizontal axis and amplitude on the vertical axis. This produces a graph that visualizes the link between frequencies and their amplitudes.
+
+![alt text](../assets/img/posts/OceanRender/freqTimeDomain.webp)
+*Source: [Why Measuring in the Time Domain and Frequency Domain Is the Same, but Not](https://docs.keysight.com/kkbopen/why-measuring-in-the-time-domain-and-frequency-domain-is-the-same-but-not-603167255.html)*
+
+
+FFT works in the frequency domain, where each point represents a wave frequency rather than a world position. The FFT algorithm then converts the entire frequency domain into real world displacements (which live in the spatial domain) in one efficient pass. The beautiful thing about this, is that it's a lossless operation. We can convert our data between domains without losing any information. This is neat since we can remove certain frequencies from the equation, convert the data back to the spatial domain and have the exact same wave minus the removed frequency. You can imagine this like having a musical chord, say *C Major 7*. This chord contains the notes *C, E, G and B.* Using the FFT, you would be able to see every note that this chord signal contains, remove the B for example and convert it back to the spatial domain. The result would be a simple C Major chord which has the notes *C, E and G.*  
+With this understanding of the FFT, we can now look at how Tessendorf uses it to build the ocean spectrum.
 
 In his paper, Jerry Tessendorf describes the Phillips Spectrum as the model for defining wave energy. After implementing it I found it too limiting since its only parameters were wind speed and direction. So I switched to the JONSWAP spectrum, a more widely adopted model that gives much more creative freedom.
 With JONSWAP you can control things like how many waves follow the wind direction, the choppiness of the waves, the distance over which the wind affects the surface, and the sharpness of the spectrum peak. This lets you model anything from a calm open ocean to a stormy sea with large aggressive swells.
 
-Now the question, how do we setup this JONSWAP spectrum? // TODO show images of the spatial and frequency domain
+Now the question, how do we set up this JONSWAP spectrum?
 
 
 
