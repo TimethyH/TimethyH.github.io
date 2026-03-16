@@ -42,7 +42,7 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 
 The ocean wave implementation is heavily based on using multiple sine waves to get interesting displacements. 
 Sine waves are oscillators, which means they generate a repetitive wave signal that stays within its amplitude. 3 important terms regarding a wave is its amplitude, its wavelength and its frequency.  
-Amplitude is the peak of the wave, the highest value that the signal can reach. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. Frequency is how often a signal repeats within a second. A short wavelength correlates to a high frequency, a long wavelength correlates to a low frequency. To shape the wave using a desired wavelength, we can use certain formulas that will be discussed in this article. 
+Amplitude is the peak of the wave, the highest value that the signal can reach. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. Frequency is how often a signal repeats within a second. A short wavelength correlates to a high frequency, a long wavelength correlates to a low frequency. This ties together with ocean rendering because we can use this wavelength to shape the waves of our ocean, how we do this will be discussed in this article. 
 
 </details>
 
@@ -71,6 +71,25 @@ This is very useful for our ocean simulation since as theta increases over time,
 
 <details>
 <summary>  How does a compute shader work? </summary>
+
+A compute shader is a shader that runs directly on the GPU, outside of the normal rendering pipeline. Unlike vertex and pixel shaders, it has no fixed role. Instead, it runs a large grid of threads in parallel, allowing the GPU to do many calculations at the same time.
+
+A CPU has a small number of powerful cores built for sequential logic. A GPU has thousands of smaller cores built to do the same operation on many pieces of data at once. This makes the GPU much better suited for tasks like the FFT, where the same calculation needs to happen on every point of a texture every frame.
+
+The developer defines the size of the thread grid themselves. Each thread knows its own position in the grid via SV_DispatchThreadID, so it knows exactly which point on the ocean it is responsible for. This way every point on the ocean plane gets calculated in parallel.
+
+```hlsl
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    // id.xy is this thread's position in the grid
+    // each thread writes to one texel
+    OutputTexture[id.xy] = DoSomeCalculation(id.xy);
+}
+
+```
+
 
 </details>
 
