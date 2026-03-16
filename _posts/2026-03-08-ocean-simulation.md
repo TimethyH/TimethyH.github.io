@@ -92,9 +92,20 @@ void CSMain(uint3 id : SV_DispatchThreadID)
 </details>
 
 
-Simulating the ocean can seem daunting, but oceanographers across the world measured the frequencies found within waves.  
-
 ## Chapter 1 Wave Simulation: JONSWAP & the FFT Pipeline
+
+
+The ocean surface is made up of thousands of waves, all travelling in different directions with different sizes and speeds. To simulate this, we model the ocean as a sum of sine waves, each with their own frequency, direction and amplitude. The question then becomes: how do we decide how big each of those waves should be?
+
+This is where oceanographers come in. Over decades, researchers measured real ocean surfaces using buoys, photographs and radar to figure out exactly how wave energy is distributed across different frequencies in a fully developed ocean. A fully developed ocean simply means the ocean has had enough time and distance to reach an equilibrium with the wind blowing over it. The result of this research is a spectrum function, which tells us how much energy each wave frequency should have given a set of wind conditions.
+
+Now, evaluating thousands of sine waves individually for every point on the ocean every frame would be far too slow even for a modern GPU. This is where the FFT comes in. Instead of working in the spatial domain (the real world positions of the waves), we work in the frequency domain, where each point represents a wave frequency rather than a world position. The FFT then converts the entire frequency domain into real world displacements in one efficient pass.
+
+In his paper, Jerry Tessendorf describes the Phillips Spectrum as the model for defining wave energy. After implementing it I found it too limiting since its only parameters were wind speed and direction. So I switched to the JONSWAP spectrum, a more widely adopted model that gives much more creative freedom.
+With JONSWAP you can control things like how many waves follow the wind direction, the choppiness of the waves, the distance over which the wind affects the surface, and the sharpness of the spectrum peak. This lets you model anything from a calm open ocean to a stormy sea with large aggressive swells.
+
+Now the question, how do we setup this JONSWAP spectrum? // show images of the spatial and frequency domain
+
 
 
 ### 1.1 The Wave Spectrum (JONSWAP + TMA)
