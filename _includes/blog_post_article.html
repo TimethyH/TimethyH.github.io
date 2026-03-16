@@ -5,7 +5,8 @@
     <p class="post-summary">
       Posted by : {% if page.author %}
       <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-        <a href="{{ site.baseurl }}/blog/authors/{{ page.author | slugify }}" itemprop="url">
+        {% assign author_data = site.data.authors[page.author] %}
+        <a href="{{ site.baseurl }}/blog/authors/{{ author_data.username }}" itemprop="url">
           <span itemprop="name">{{ page.author }}</span>
         </a>
       {% endif %} on
