@@ -103,7 +103,7 @@ Now, evaluating thousands of sine waves individually for every point on the ocea
 
 The spatial domain is our usual graph that has a value Y on the vertical axis, and a constantly increasing value X usually representing time or position, on the horizontal axis. The frequency domain exposes frequency on the horizontal axis and amplitude on the vertical axis. This produces a graph that visualizes the link between frequencies and their amplitudes.
 
-![alt text](/assets/img/posts/OceanRender/freqTimeDomain.webp)
+![alt text](/assets/img/posts/OceanRender/freqTimeDomain.webp)  
 *Source: [Why Measuring in the Time Domain and Frequency Domain Is the Same, but Not](https://docs.keysight.com/kkbopen/why-measuring-in-the-time-domain-and-frequency-domain-is-the-same-but-not-603167255.html)*
 
 
