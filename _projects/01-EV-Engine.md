@@ -5,6 +5,7 @@ subtitle: "Timethy Hyman"
 date: 2025-11-23
 thumbnail: /assets/img/projects/EV/cascadeThumb.webp
 summary: "👥 1 developer | DirectX 12 Ocean Renderer"
+blog_url: /blog/fft-ocean-rendering/
 tags:
   - Personal Project
   - Custom Engine

@@ -35,6 +35,7 @@ permalink: /projects/
   color: inherit;
   display: block;
   height: 100%;
+  cursor: pointer;
 }
 
 .card-link:hover {
@@ -43,7 +44,6 @@ permalink: /projects/
 
 .card-link .card {
   height: 100%;
-  cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -52,16 +52,33 @@ permalink: /projects/
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Remove pointer events from nested button */
-.card-link .btn {
-  pointer-events: none;
-}
-
-/* Keep tag functionality */
-.project-tag {
+/* Keep tag and button functionality */
+.project-tag,
+.project-card-btns a {
   pointer-events: auto;
   position: relative;
   z-index: 10;
+}
+
+.project-card-btns {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.btn-blog {
+  background: rgba(246, 152, 1, 0.15) !important;
+  border: 1px solid rgba(246, 152, 1, 0.5) !important;
+  color: #f69801 !important;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-blog:hover {
+  background: rgba(246, 152, 1, 0.3) !important;
+  box-shadow: 0 0 12px rgba(246, 152, 1, 0.3);
+  color: #f69801 !important;
+  text-decoration: none;
 }
 
 @media (max-width: 768px) {
@@ -83,7 +100,7 @@ permalink: /projects/
       <div class="projects-grid">
         {% assign sorted_projects = site.projects | sort: "path" %}
         {% for project in sorted_projects %}
-        <a href="{{ project.url | prepend: site.baseurl }}" class="card-link">
+        <div class="card-link" onclick="window.location='{{ project.url | prepend: site.baseurl }}'">
           <article class="card blog-post" data-tags="{{ project.tags | join: ',' | downcase }}">
             {% if project.thumbnail %}
             <img src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" 
@@ -112,12 +129,19 @@ permalink: /projects/
               <p class="card-text">{{ project.summary }}</p>
               {% endif %}
               
-              <span class="btn btn-dark btn-lg">
-                View Project →
-              </span>
+              <div class="project-card-btns">
+                <a href="{{ project.url | prepend: site.baseurl }}" class="btn btn-dark btn-lg" onclick="event.stopPropagation()">
+                  View Project →
+                </a>
+                {% if project.blog_url %}
+                <a href="{{ project.blog_url }}" class="btn btn-blog btn-lg" onclick="event.stopPropagation()">
+                  Read Blog →
+                </a>
+                {% endif %}
+              </div>
             </div>
           </article>
-        </a>
+        </div>
         {% endfor %}
       </div>
 
