@@ -35,7 +35,6 @@ Ocean implementation: 1 month.
   <div class="project-media" markdown="1">
 
   <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/sceneCompressed.mp4"></video>
-  <p class="media-caption">Water Prototype!!</p>
 
   </div>
 </div>
