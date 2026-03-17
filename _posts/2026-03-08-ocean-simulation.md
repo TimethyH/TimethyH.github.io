@@ -26,9 +26,9 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 ## Table of Contents
 
 1. [Wave Simulation: JONSWAP & the FFT Pipeline](#chapter-1-wave-simulation-jonswap--the-fft-pipeline)
-2. [Wave Cascades: Multi Scale Detail](#chapter-2-wave-cascades-multi-scale-detail)
-3. [Rendering & Shading](#chapter-3-rendering--shading)
-4. [Foam](#chapter-4-foam)
+3. [Rendering & Shading](#chapter-2-rendering--shading)
+4. [Foam](#chapter-3-foam)
+2. [Wave Cascades: Multi Scale Detail](#chapter-4-wave-cascades-multi-scale-detail)
 5. [Skybox & Environment](#chapter-5-skybox--environment)
 7. [Major Struggles & Lessons Learned](#chapter-7-major-struggles--lessons-learned)
 8. [Results & Next Steps](#chapter-8-results--next-steps)
@@ -157,39 +157,10 @@ A 2D IFFT converts the frequency-domain spectrum into a real-space displacement 
 
 ---
 
-## Chapter 2 Wave Cascades: Multi Scale Detail
 
-### 2.1 Why Multiple Cascades?
+## Chapter 2 Rendering & Shading
 
-A single FFT patch can only represent a limited range of wave frequencies. Using one large patch loses fine ripple detail; one small patch loses large swells. Four cascades at different patch sizes solve this by each covering a unique, non-overlapping frequency band.
-
-Each cascade covers the band $$[\omega_{low},\, \omega_{high}]$$ where the cutoff is computed from the Nyquist limit of adjacent cascades:
-
-$$\omega_{cutoff} = \frac{N \cdot \pi}{L_i}$$
-
-<!-- [ Describe the band-partitioning strategy and the four final patch sizes: 1500m, 250m, 17m, 5m. Explain why cascades must be ordered largest-to-smallest for the lowCutoff chaining logic to work correctly. ] -->
-
-<!-- STRUGGLE TO MENTION: Originally started with 3 cascades at 250m / 17m / 5m — tiling was obviously visible at distance. Added the 1500m cascade to fill in the low-frequency swells. Tried reordering to smallest-to-largest which caused heavy tiling and a mirror-like ocean — the largest-to-smallest order is what the lowCutoff formula requires. -->
-
-### 2.2 Adding the 4th Cascade
-
-<!-- [ Tell the story of adding cascade 4 — the copy-paste bug in ocean_vertex.hlsl and ocean_pixel.hlsl that was sampling DisplacementTexture2/SlopeTexture2/FoamTexture2 for the new cascade instead of their cascade-3 equivalents. How did you find it? ] -->
-
-<!-- BUG TO MENTION: m_foamParameters.resize() followed by push_back() doubled the vector to 8 elements instead of 4, causing a D3D12 root constants bounds error. Fixed by replacing both calls with a direct initializer list. -->
-
-### 2.3 World-Space UV Sampling
-
-In the vertex shader, each cascade is sampled using `worldPos.xz / patchSize[i]` as UV coordinates rather than object-space UVs. This ensures all cascades tile consistently across the same world-space ocean plane regardless of mesh position.
-
-<!-- [ Describe the UV sampling strategy and the bug where &m_cascadeSizes was passed to the constant buffer instead of m_cascadeSizes.data(), producing garbage UV scaling for cascades 1 and 2. ] -->
-
-<!-- BUG TO MENTION: A CLAMP sampler was being used at first — all vertices sampled the same displacement value. Fixed by adding a WRAP sampler. -->
-
----
-
-## Chapter 3 Rendering & Shading
-
-### 3.1 Physically-Based Shading (PBR)
+### 2.1 Physically-Based Shading (PBR)
 
 The ocean surface is shaded using a full PBR BRDF:
 - **GGX** normal distribution function
@@ -200,7 +171,7 @@ The ocean surface is shaded using a full PBR BRDF:
 
 <!-- STRUGGLE TO MENTION: Early specular was broken because world-space normals were being dotted with view-space vectors — a coordinate-space mismatch producing dark spots across the surface. -->
 
-### 3.2 Image-Based Lighting (IBL) — Split-Sum Approximation
+### 2.2 Image-Based Lighting (IBL) — Split-Sum Approximation
 
 To capture ambient environment lighting, the renderer uses precomputed IBL baked at startup via compute dispatches. The specular integral is approximated using the Epic Games split-sum method:
 
@@ -221,7 +192,7 @@ float3 specular = specularColor * (fresnelIBL * envBRDF.x + envBRDF.y);
 
 <!-- CHALLENGE: Indoor HDR environments made the IBL overwhelm the SSS and directional light contribution. Switching to an appropriate sky HDR fixed the balance. -->
 
-### 3.3 Subsurface Scattering (SSS) at Wave Crests
+### 2.3 Subsurface Scattering (SSS) at Wave Crests
 
 Real ocean waves appear translucent and cyan-tinted when backlit. Light enters thin wave crests, scatters inside the water volume, and exits coloured by water's selective absorption of red wavelengths.
 
@@ -240,7 +211,7 @@ float3 sss = (1 - fresnel) * k1 * scatteredColor * DirectionalLights[0].Color;
 
 <!-- CHALLENGE: The vertex shader was initially passing incorrect height data to the pixel shader — WaveHeight was not being populated from the FFT displacement output. Also explored Beckmann vs GGX NDFs, ultimately kept GGX. -->
 
-### 3.4 HDR Pipeline & Tonemapping
+### 2.4 HDR Pipeline & Tonemapping
 
 The scene renders into an `R16G16B16A16_FLOAT` HDR render target. A separate SDR fullscreen-quad pass applies tonemapping to produce the final swapchain image.
 
@@ -248,9 +219,9 @@ The scene renders into an `R16G16B16A16_FLOAT` HDR render target. A separate SDR
 
 ---
 
-## Chapter 4 Foam
+## Chapter 3 Foam
 
-### 4.1 Jacobian-Based Foam Detection
+### 3.1 Jacobian-Based Foam Detection
 
 Foam appears where waves are breaking — where horizontal displacement causes mesh triangles to fold over on themselves. The Jacobian determinant of the displacement field detects this directly: **J < 0 means triangle inversion**.
 
@@ -265,7 +236,7 @@ The four partial derivatives D_xx, D_zz, D_xz are computed in frequency space du
 - Foam texture must be zeroed at startup to prevent first-frame garbage data.
 - The Jacobian cross-term was squaring one component instead of computing the proper mixed partial, giving incorrect foam coverage. -->
 
-### 4.2 Persistent Foam Texture
+### 3.2 Persistent Foam Texture
 
 Foam accumulates over time — once a wave breaks, foam persists and decays gradually. A dedicated `RWTexture2D<float>` stores foam state across frames and is never overwritten by the FFT passes.
 
@@ -273,11 +244,42 @@ Foam accumulates over time — once a wave breaks, foam persists and decays grad
 
 <!-- STRUGGLE: The FFT pass was overwriting the displacement texture (including its alpha channel where foam was stored) each frame, destroying accumulated foam values before the permute shader could read them. This is why a separate persistent foam texture is necessary. -->
 
-### 4.3 Per-Cascade Foam Tuning
+### 3.3 Per-Cascade Foam Tuning
 
 Applying identical foam parameters to all four cascades produces under-foamed large waves and over-foamed small ripples. The NVIDIA paper recommends per-cascade bias values in the 0.3–0.5 range.
 
 <!-- [ Describe the fix: 4 separate foamBias values, raising the bias from the initial conservative 0.096 toward the recommended range, and switching the pixel shader foam accumulation from max() to additive saturate() combining across cascades. ] -->
+
+---
+
+
+## Chapter 4 Wave Cascades: Multi Scale Detail
+
+### 4.1 Why Multiple Cascades?
+
+A single FFT patch can only represent a limited range of wave frequencies. Using one large patch loses fine ripple detail; one small patch loses large swells. Four cascades at different patch sizes solve this by each covering a unique, non-overlapping frequency band.
+
+Each cascade covers the band $$[\omega_{low},\, \omega_{high}]$$ where the cutoff is computed from the Nyquist limit of adjacent cascades:
+
+$$\omega_{cutoff} = \frac{N \cdot \pi}{L_i}$$
+
+<!-- [ Describe the band-partitioning strategy and the four final patch sizes: 1500m, 250m, 17m, 5m. Explain why cascades must be ordered largest-to-smallest for the lowCutoff chaining logic to work correctly. ] -->
+
+<!-- STRUGGLE TO MENTION: Originally started with 3 cascades at 250m / 17m / 5m — tiling was obviously visible at distance. Added the 1500m cascade to fill in the low-frequency swells. Tried reordering to smallest-to-largest which caused heavy tiling and a mirror-like ocean — the largest-to-smallest order is what the lowCutoff formula requires. -->
+
+### 4.2 Adding the 4th Cascade
+
+<!-- [ Tell the story of adding cascade 4 — the copy-paste bug in ocean_vertex.hlsl and ocean_pixel.hlsl that was sampling DisplacementTexture2/SlopeTexture2/FoamTexture2 for the new cascade instead of their cascade-3 equivalents. How did you find it? ] -->
+
+<!-- BUG TO MENTION: m_foamParameters.resize() followed by push_back() doubled the vector to 8 elements instead of 4, causing a D3D12 root constants bounds error. Fixed by replacing both calls with a direct initializer list. -->
+
+### 4.3 World-Space UV Sampling
+
+In the vertex shader, each cascade is sampled using `worldPos.xz / patchSize[i]` as UV coordinates rather than object-space UVs. This ensures all cascades tile consistently across the same world-space ocean plane regardless of mesh position.
+
+<!-- [ Describe the UV sampling strategy and the bug where &m_cascadeSizes was passed to the constant buffer instead of m_cascadeSizes.data(), producing garbage UV scaling for cascades 1 and 2. ] -->
+
+<!-- BUG TO MENTION: A CLAMP sampler was being used at first — all vertices sampled the same displacement value. Fixed by adding a WRAP sampler. -->
 
 ---
 
