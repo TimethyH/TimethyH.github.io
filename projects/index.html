@@ -68,16 +68,17 @@ permalink: /projects/
 }
 
 .btn-blog {
-  background: rgba(246, 152, 1, 0.15) !important;
-  border: 1px solid rgba(246, 152, 1, 0.5) !important;
-  color: #f69801 !important;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+  background: var(--button-background-color) !important;
+  color: var(--bold-color) !important;
+  border: 1px solid transparent !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-blog:hover {
-  background: rgba(246, 152, 1, 0.3) !important;
-  box-shadow: 0 0 12px rgba(246, 152, 1, 0.3);
-  color: #f69801 !important;
+  background: var(--button-background-color) !important;
+  color: var(--bold-color) !important;
+  border-color: #f69801 !important;
+  box-shadow: 0 0 8px rgba(246, 152, 1, 0.3);
   text-decoration: none;
 }
 
