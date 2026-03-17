@@ -22,7 +22,7 @@ category: year3
 EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general. It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)! Following this tutorial I laid the foundation of the engine.
 
 A wise man at [Nixxies](https://www.nixxes.com/) gave me the suggestion to build something I would be passionate about. Following his advice, I decided to build EV Engine, an Ocean Rendering application. 
-The application's purpose is to help my dad's company simulate the carribean seas as a background of their architectural 
+The application's purpose is to help my dad's company simulate the carribean seas as a background for their architectural 
 renders. On top of that, I hope it can play a small part in advancing the digital scene of my island.
 
 I started the engine in November 2025.
@@ -84,10 +84,20 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
 
 ## Up Next
 
-This project is still a work in progress. Once it has more content the webpage will be updated!
+The ocean currently has a LOD issue, vertices near the camera correctly display fine wave detail 
+from all four cascades, but further vertices abruptly lose that detail as only the larger cascades 
+contribute. I'm currently researching solutions, and it's looking like geometry tessellation shaders 
+will be the right approach.
+
+Beyond that, I plan to profile and optimize the simulation more thoroughly to further develop my profiling and optimization skills.
+
+A full breakdown of the implementation is covered in the blog post!
 
 <a href="https://github.com/TimethyH/EV" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
   <i class="fab fa-github" style="margin-right: 8px;"></i> View on GitHub
 </a>
 
+<a href="/blog/fft-ocean-rendering/" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
+  <i class="fas fa-book-open" style="margin-right: 8px;"></i> Read Article
+</a>
 </div>
