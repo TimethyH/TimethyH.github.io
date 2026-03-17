@@ -5,6 +5,7 @@ subtitle: "Timethy Hyman"
 date: 2024-09-23
 thumbnail: /assets/img/helmet.webp
 summary: "👥 1 developer | My first rendering project."
+blog_url: /blog/deferred-implementation/
 tags:
   - Personal Project
   - University Project
