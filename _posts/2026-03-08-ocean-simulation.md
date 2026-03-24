@@ -113,8 +113,6 @@ With this understanding of the FFT, we can now look at how Tessendorf uses it to
 In his paper, Jerry Tessendorf describes the Phillips Spectrum as the model for defining wave energy. After implementing it I found it too limiting since its only parameters were wind speed and direction. So I switched to the JONSWAP spectrum, a more widely adopted model that gives much more creative freedom.
 With JONSWAP you can control things like how many waves follow the wind direction, the choppiness of the waves, the distance over which the wind affects the surface, and the sharpness of the spectrum peak. This lets you model anything from a calm open ocean to a stormy sea with large aggressive swells.
 
-Now the question, how do we set up this JONSWAP spectrum?
-
 
 ### 1.1 The Setup
 
@@ -127,8 +125,20 @@ The dispersion relation is a function that defines the relationship between angu
 $$\omega = \sqrt{gk}$$
 
 $\omega$ - Angular frequency. How fast the wave oscillates in time (radians/sec)  
-$g$ — Gravitational acceleration (9.81 m/s²)  
+$g$ - Gravitational acceleration (9.81 m/s²)  
 $k$ - The Wavenumber. Waves per meter: $k = \frac{2\pi}{\lambda} $
+
+<details>
+<summary>  What is angular frequency? </summary>
+
+Regular frequency describes how many full cycles happen in a second. A wave that completes 3 cycles in a second has $f = 3 Hz$ for example.  
+Angular frequency comes from thinking about this cycle rotating around a unit circle rather than oscillating up and down.  
+A full rotation around a unit circle is $2\pi$. Angular frequency is simply the regular frequency multiplied by $2\pi$.
+
+$$\omega = 2\pi f$$
+
+</details>
+
 
 For this implementation, we wil be using the form that encodes a finite depth:
 
