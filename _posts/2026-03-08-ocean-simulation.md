@@ -121,20 +121,18 @@ Now the question, how do we set up this JONSWAP spectrum?
 
 The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves.  The first step towards the ocean simulation is to calculate the wave spectrum.
 
-As mentioned above, I will be implementing the JONSWAP spectrum because it gave much better results and artistic control over the ocean.  The JONSWAP spectrum formula looks like this: 
+The JONSWAP spectrum formula looks like this: 
 
 $$E(\omega) = \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\omega_p}{\omega}\right)^4\right) \gamma^{\exp\left(-\frac{(\omega - \omega_p)^2}{2\sigma^2\omega_p^2}\right)}$$
 
 Where:
 
-Where:
-
-- \(\alpha\) :  Energy scale, controls the overall wave height
-- \(g\) :   Gravitational acceleration (9.81 m/s²)
-- \(\omega\) :   Angular frequency of the wave being evaluated
-- \(\omega_p\) :   Peak frequency, the frequency with the most energy
-- \(\gamma\) :   Peak enhancement factor, controls the sharpness of the spectrum peak
-- \(\sigma\) :   Width parameter, 0.07 when \(\omega \leq \omega_p\) and 0.09 when \(\omega > \omega_p\)
+- $\alpha$ - Energy scale, controls the overall wave height
+- $g$ - Gravitational acceleration (9.81 m/s²)
+- $\omega$ - Angular frequency of the wave being evaluated
+- $\omega_p$ - Peak frequency, the frequency with the most energy
+- $\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak
+- $\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$
 
 
 
