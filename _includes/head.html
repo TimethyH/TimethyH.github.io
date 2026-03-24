@@ -135,14 +135,19 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
   <!-- MathJax support -->
-  {% if page.usemathjax %}
-  <script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      TeX: { equationNumbers: { autoNumber: "AMS" } }
-    });
-  </script>
-  <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-  {% endif %}
+{% if page.usemathjax %}
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    TeX: { equationNumbers: { autoNumber: "AMS" } },
+    tex2jax: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+{% endif %}
 
   <!-- Github Button -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
