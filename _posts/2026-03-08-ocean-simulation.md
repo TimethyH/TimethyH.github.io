@@ -118,11 +118,32 @@ With JONSWAP you can control things like how many waves follow the wind directio
 
 The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves. 
 
-To simulate the ocean, we want to use the wave spectrum in combination with a gaussian pseudo random number generator to generate an initial representation of the heightfield in 2D space.  // explain gausians
+To simulate the ocean, the general idea is that we want to start by generating the initial representation of the heightfield in 2D space. We do this by using the wave spectrum in combination with a gaussian pseudo random number generator.  The gaussian random number is used to ensure that each wave component starts at a different point in its cycle. This way two oceans with the same parameters will still look different from each other.
+
+Tessendorf expresses the ocean height field as a sum of complex wave contributions across all frequencies. 
+We represent the ocean surface using the formula:
+
+$$h(\mathbf{x}, t) = \sum_{\mathbf{k}} \tilde{h}(\mathbf{k}, t) \exp(i\mathbf{k} \cdot \mathbf{x})$$
+
+Where:
+
+$t$ - time  
+$\mathbf{x}$ - horizontal position on the ocean surface  
+$\mathbf{k}$ - a 2D wave vector with components $\mathbf{k} = (k_x, k_z)$  
+$k_x = \frac{2\pi n}{L_x}$   
+$k_z = \frac{2\pi m}{L_z}$  
+$n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  
+$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  
+$N, M$ - the resolution of the FFT grid  
+
+The FFT then generates the height field at discrete positions $\mathbf{x} = \left(\frac{nL_x}{N}, \frac{mL_z}{M}\right)$  
+**The phase is the position of a wave within its cycle at any point in time. It is measured in radians, phase of 0 means the wave is at its peak, phase of $frac{\pi}{2}$, means that the wave is halfway between the peak and zero.*
+
 
 Then using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
 
-The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$. In deep water, formula is defined like this: 
+The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$.  
+In deep water, its formula is defined like this: 
 
 $$\omega = \sqrt{gk}$$
 
@@ -142,7 +163,7 @@ $$\omega = 2\pi f$$
 </details>
 
 
-For this implementation, we will be using the form that encodes a finite depth:
+For our implementation, we will be using the form that encodes a finite depth:
 
 $$\omega = \sqrt{gk\tanh(kD)}$$
 
@@ -150,32 +171,18 @@ $D$ - Ocean Depth. Large values for D simplifies back to the base form while sma
 
 The dispersion relation formula is an approximation. There are many [different relationships](https://en.wikipedia.org/wiki/Dispersion_(water_waves)) you can choose to fit your ocean. 
 
-With the dispersion relation understood, we can now look at how the full ocean surface is constructed using these wave components.
+
+With the general idea understood, we can now look at how the wave spectrum is constructed.
+
 
 ### 1.2 The Wave Spectrum
 
-The wave spectrum is essentially a function that describes how the wave energy is distributed across combinations of angular frequencies $\omega$ and wind directions $\theta$.  Tessendorf expresses the ocean height field as a sum of complex wave contributions across all frequencies. 
-We represent the ocean surface using the formula:
+The wave spectrum is essentially a function that describes how the wave energy is distributed across combinations of angular frequencies $\omega$ and wind directions $\theta$.  
 
-$$h(\mathbf{x}, t) = \sum_{\mathbf{k}} \tilde{h}(\mathbf{k}, t) \exp(i\mathbf{k} \cdot \mathbf{x})$$
-
-Where:
-
-$t$ - time  
-$\mathbf{x}$ - horizontal position on the ocean surface  
-$\mathbf{k}$ - a 2D wave vector with components $\mathbf{k} = (k_x, k_z)$  
-$k_x = \frac{2\pi n}{L_x}$ - wave vector x component  
-$k_z = \frac{2\pi m}{L_z}$ - wave vector z component  
-$n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  
-$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and phase of the wave at frequency $\mathbf{k}$ and time $t$  
-$N, M$ - the resolution of the FFT grid  
-
-The FFT then generates the height field at discrete positions $\mathbf{x} = \left(\frac{nL_x}{N}, \frac{mL_z}{M}\right)$  
-**The phase is the position of a wave within its cycle at any point in time. It is measured in radians, phase of 0 means the wave is at its peak, phase of $frac{\pi}{2}$, means that the wave is halfway between the peak and zero.*
 
 The JONSWAP spectrum formula looks like this: 
 
-$$E(\omega) = \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\omega_p}{\omega}\right)^4\right) \gamma^{\exp\left(-\frac{(\omega - \omega_p)^2}{2\sigma^2\omega_p^2}\right)}$$
+$$S_{\text{JONSWAP}}(\omega) = \text{scale} \cdot \phi_{TMA}(\omega) \cdot \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\omega_p}{\omega}\right)^4\right) \gamma^{\exp\left(-\frac{(\omega - \omega_p)^2}{2\sigma^2\omega_p^2}\right)}$$
 
 Where:
 
@@ -185,6 +192,7 @@ $\omega$ - Angular frequency of the wave being evaluated
 $\omega_p$ - Peak frequency, the frequency with the most energy  
 $\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak  
 $\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  
+$\phi_{TMA}$ | TMA shallow water correction factor. Reduces the wave speed at shallow depths.   
 
 
 
