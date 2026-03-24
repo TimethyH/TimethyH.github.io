@@ -198,7 +198,7 @@ $\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\ome
 $\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave speed at shallow depths.   
 
 
-Before diving into each component of the JONSWAP, lets define a struct that will hold all our parameters.
+Before diving into each component of the JONSWAP, lets define a struct that will hold all the parameters that we will be populating.
 
 ```cpp
 	struct JonswapParameters
