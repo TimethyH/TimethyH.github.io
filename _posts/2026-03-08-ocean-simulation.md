@@ -136,8 +136,6 @@ $n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].
 $\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  
 $N, M$ - the resolution of the FFT grid  
 
-The complex amplitude $\tilde{h}(\mathbf{k}, t)$ is the heart of this formula. It is what we need to construct for every wave vector $\mathbf{k}$ on our grid. To do this we need two things: the JONSWAP spectrum, which tells us how much energy each wave frequency should carry, and the dispersion relation, which tells us how fast each wave travels. We will cover both of these now.
-
 <details>
 <summary>  What is the phase of a wave? </summary>
 
@@ -145,10 +143,9 @@ The phase is the position of a wave within its cycle at any point in time. It is
 
 </details>
 
+The complex amplitude $\tilde{h}(\mathbf{k}, t)$ is the heart of this formula. It is what we need to construct for every wave vector $\mathbf{k}$ on our grid. To do this we need two things: the JONSWAP spectrum, which tells us how much energy each wave frequency should carry, and the dispersion relation, which tells us how fast each wave travels. 
 
-By using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
-
-The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$.  
+The dispersion relation allows us to propagate this heightfield forward in time, animating the waves. This will need to be recalculated every frame to update the heightfield accordingly. The dispersion relation defines the relationship between angular frequency $\omega$ and the wave number $k$.  
 In deep water, its formula is defined like this: 
 
 $$\omega = \sqrt{gk}$$
@@ -225,10 +222,7 @@ Before diving into each component of the JONSWAP, lets define a struct that will
 ```
 
 
-### 1.2 Initial Spectrum Generation: H₀
-
-
-
+### 1.3 Initial Spectrum Generation: H₀
 
 
 $$\tilde{h}_0(\mathbf{k}) = \frac{1}{\sqrt{2}}(\xi_r + i\xi_i)\sqrt{P_h(\mathbf{k})}$$
@@ -239,7 +233,7 @@ H₀(**k**) is generated once on the CPU and uploaded to the GPU. Each texel sto
 
 <!-- STRUGGLE TO MENTION: Early bug — the conjugate was being generated with new random numbers instead of the actual complex conjugate of h₀(k), breaking real-output symmetry entirely. -->
 
-### 1.3 Time Evolution: Animating the Waves
+### 1.4 Time Evolution: Animating the Waves
 
 $$\tilde{h}(\mathbf{k}, t) = \tilde{h}_0(\mathbf{k})\,e^{i\omega(k)t} + \tilde{h}_0^*(-\mathbf{k})\,e^{-i\omega(k)t}$$
 
@@ -247,7 +241,7 @@ Each frame, H₀ is evolved in frequency space using the dispersion relation, pr
 
 <!-- [ Explain how animate_waves.hlsl works — the dispersion relation ω = √(g·k), Euler's formula for complex exponentials, and why you accumulate total time rather than per-frame deltaTime. ] -->
 
-### 1.4 The Butterfly FFT
+### 1.5 The Butterfly FFT
 
 A 2D IFFT converts the frequency-domain spectrum into a real-space displacement field each frame. The FFT is implemented as a GPU compute shader using the Cooley-Tukey butterfly algorithm.
 
