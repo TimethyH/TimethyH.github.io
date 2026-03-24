@@ -41,7 +41,7 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 <summary>  How does a sine wave work?</summary>
 
 The ocean wave implementation is heavily based on using multiple sine waves to get interesting displacements. 
-Sine waves are oscillators, which means they generate a repetitive wave signal that stays within its amplitude. 3 important terms regarding a wave is its amplitude, its wavelength and its frequency.  
+Sine waves are oscillators, which means they generate a repetitive wave signal that stays within its amplitude. Three important terms regarding a wave is its amplitude, its wavelength and its frequency.  
 Amplitude is the peak of the wave, the highest value that the signal can reach. Wavelength is the distance between two of these peaks, you can imagine this like a spring. A spring that is compressed would represent a short wavelength while a spring that is stretched out would represent a long wavelength. Frequency is how often a signal repeats within a second. A short wavelength correlates to a high frequency, a long wavelength correlates to a low frequency. This ties together with ocean rendering because we can use this wavelength to shape the waves of our ocean, how we do this will be discussed in this article. 
 
 </details>
@@ -118,7 +118,7 @@ With JONSWAP you can control things like how many waves follow the wind directio
 
 The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves. 
 
-To simulate the ocean, the general idea is that we want to start by generating the initial representation of the heightfield in 2D space. We do this by using the wave spectrum in combination with a gaussian pseudo random number generator.  The gaussian random number is used to ensure that each wave component starts at a different point in its cycle. This way two oceans with the same parameters will still look different from each other.
+To simulate the ocean, the general idea is that we want to start by generating the initial representation of the heightfield in 2D space. We do this by using the wave spectrum in combination with a gaussian pseudo random number generator.  The gaussian random number is used to ensure that each wave component starts at a different point in its cycle. This way two oceans with the same parameters will still look different from each other. This random number becomes the $\xi_r + i\xi_i$ term in the H₀ formula, which we will see in section 1.2.
 
 Tessendorf expresses the ocean height field as a sum of complex wave contributions across all frequencies. 
 We represent the ocean surface using the formula:
@@ -136,11 +136,17 @@ $n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].
 $\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  
 $N, M$ - the resolution of the FFT grid  
 
-The FFT then generates the height field at discrete positions $\mathbf{x} = \left(\frac{nL_x}{N}, \frac{mL_z}{M}\right)$  
-**The phase is the position of a wave within its cycle at any point in time. It is measured in radians, phase of 0 means the wave is at its peak, phase of $frac{\pi}{2}$, means that the wave is halfway between the peak and zero.*
+The complex amplitude $\tilde{h}(\mathbf{k}, t)$ is the heart of this formula. It is what we need to construct for every wave vector $\mathbf{k}$ on our grid. To do this we need two things: the JONSWAP spectrum, which tells us how much energy each wave frequency should carry, and the dispersion relation, which tells us how fast each wave travels. We will cover both of these now.
+
+<details>
+<summary>  What is the phase of a wave? </summary>
+
+The phase is the position of a wave within its cycle at any point in time. It is measured in radians, a phase value of 0 means the wave is at its peak, while a phase value of $\frac{\pi}{2}$, means that the wave is halfway between the peak and zero.
+
+</details>
 
 
-Then using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
+By using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
 
 The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$.  
 In deep water, its formula is defined like this: 
@@ -154,7 +160,7 @@ $k$ - The Wavenumber. Waves per meter: $k = \frac{2\pi}{\lambda} $
 <details>
 <summary>  What is angular frequency? </summary>
 
-Regular frequency describes how many full cycles happen in a second. For example: A wave that completes 3 cycles in a second has $f = 3 H$z.  
+Regular frequency describes how many full cycles happen in a second. For example: A wave that completes 3 cycles in a second has $f = 3$Hz.  
 Angular frequency comes from thinking about this cycle rotating around a unit circle rather than oscillating up and down.  
 A full rotation around a unit circle is $2\pi$. Angular frequency is simply the regular frequency multiplied by $2\pi$.
 
@@ -192,15 +198,38 @@ $\omega$ - Angular frequency of the wave being evaluated
 $\omega_p$ - Peak frequency, the frequency with the most energy  
 $\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak  
 $\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  
-$\phi_{TMA}$ | TMA shallow water correction factor. Reduces the wave speed at shallow depths.   
+$\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave speed at shallow depths.   
 
 
+Before diving into each component of the JONSWAP, lets define a struct that will hold all our parameters.
 
-<!-- [ Describe the JONSWAP spectrum in your own words. What does each parameter control — windSpeed, fetch, gamma, swell, spreadBlend, shortWavesFade? Why did you choose JONSWAP+TMA over a simpler Phillips spectrum? ] -->
+```cpp
+	struct JonswapParameters
+	{
+		float scale = 0.0f; // Used to scale the Spectrum [1.0f, 5.0f] 
+		float spreadBlend = 0.0f; // Used to blend between agitated water motion, and windDirection [0.0f, 1.0f]
+		float swell = 0.0f; // Influences wave choppines, the bigger the swell, the longer the wave length [0.0f, 1.0f]
+		float gamma = 0.0f; // Defines the Spectrum Peak [0.0f, 7.0f]
+		float shortWavesFade = 0.0f; // [0.0f, 1.0f]
 
-<!-- STRUGGLE TO MENTION: Getting swell and shortWavesFade tuned — initial waves looked like "boiling water" until parameters were dialled in. Low wind speed caused large slow swells from the 1500m cascade that looked like bouncing, but is physically correct behaviour. -->
+		float windDirection = 0.0f; // [0.0f, 360.0f]
+		float fetch = 0.0f; // Distance over which Wind impacts Wave Formation [0.0f, 10000.0f]
+		float windSpeed = 0.0f; // [0.0f, 100.0f]
+
+        // These values get calculated using the metrics above.
+		float angle = 0.0f;
+		float alpha = 0.0f;
+		float peakOmega = 0.0f;
+	}m_jonswapParams;
+
+```
+
 
 ### 1.2 Initial Spectrum Generation: H₀
+
+
+
+
 
 $$\tilde{h}_0(\mathbf{k}) = \frac{1}{\sqrt{2}}(\xi_r + i\xi_i)\sqrt{P_h(\mathbf{k})}$$
 
