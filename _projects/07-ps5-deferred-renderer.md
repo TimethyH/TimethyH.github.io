@@ -7,7 +7,6 @@ thumbnail: /assets/img/helmet.webp
 summary: "👥 1 developer | My first rendering project."
 blog_url: /blog/deferred-implementation/
 tags:
-  - Personal Project
   - University Project
   - Custom Engine
   - PS5
