@@ -116,10 +116,30 @@ With JONSWAP you can control things like how many waves follow the wind directio
 Now the question, how do we set up this JONSWAP spectrum?
 
 
+### 1.1 The Setup
 
-### 1.1 The Wave Spectrum
+The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves. 
 
-The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves.  The first step towards the ocean simulation is to calculate the wave spectrum.
+To simulate the ocean, we want to use the wave spectrum in combination with a gaussian psuedo random number generator to generate an initial representation of the heightfield in 2D space. Then using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
+
+The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$. The base form is defined like this: 
+
+$$\omega = \sqrt{gk}$$
+
+$\omega$ - Angular frequency. How fast the wave oscillates in time (radians/sec)  
+$g$ — Gravitational acceleration (9.81 m/s²)  
+$k$ - The Wavenumber. Waves per meter: $k = \frac{2\pi}{\lambda} $
+
+For this implementation, we wil be using the form that encodes a finite depth:
+
+$$\omega = \sqrt{gk\tanh(kD)}$$
+
+$D$ - Ocean Depth. Large values for D simplifies back to the base form while smaller values for D reduce the wave speed.
+
+The dispersion relation formula is an approximation. There are many [different relationships](https://en.wikipedia.org/wiki/Dispersion_(water_waves)) you can choose to fit your ocean. 
+
+### 1.2 The Wave Spectrum
+
 
 The JONSWAP spectrum formula looks like this: 
 
