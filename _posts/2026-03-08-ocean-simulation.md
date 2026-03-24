@@ -118,9 +118,11 @@ With JONSWAP you can control things like how many waves follow the wind directio
 
 The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves. 
 
-To simulate the ocean, we want to use the wave spectrum in combination with a gaussian psuedo random number generator to generate an initial representation of the heightfield in 2D space. Then using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
+To simulate the ocean, we want to use the wave spectrum in combination with a gaussian pseudo random number generator to generate an initial representation of the heightfield in 2D space.  // explain gausians
 
-The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$. The base form is defined like this: 
+Then using the dispersion relation, we propagate this heightfield forward in time, animating the waves. 
+
+The dispersion relation is a function that defines the relationship between angular frequency $\omega$ and the wave number $k$. In deep water, formula is defined like this: 
 
 $$\omega = \sqrt{gk}$$
 
@@ -131,7 +133,7 @@ $k$ - The Wavenumber. Waves per meter: $k = \frac{2\pi}{\lambda} $
 <details>
 <summary>  What is angular frequency? </summary>
 
-Regular frequency describes how many full cycles happen in a second. A wave that completes 3 cycles in a second has $f = 3 Hz$ for example.  
+Regular frequency describes how many full cycles happen in a second. For example: A wave that completes 3 cycles in a second has $f = 3 H$z.  
 Angular frequency comes from thinking about this cycle rotating around a unit circle rather than oscillating up and down.  
 A full rotation around a unit circle is $2\pi$. Angular frequency is simply the regular frequency multiplied by $2\pi$.
 
@@ -140,7 +142,7 @@ $$\omega = 2\pi f$$
 </details>
 
 
-For this implementation, we wil be using the form that encodes a finite depth:
+For this implementation, we will be using the form that encodes a finite depth:
 
 $$\omega = \sqrt{gk\tanh(kD)}$$
 
@@ -148,8 +150,28 @@ $D$ - Ocean Depth. Large values for D simplifies back to the base form while sma
 
 The dispersion relation formula is an approximation. There are many [different relationships](https://en.wikipedia.org/wiki/Dispersion_(water_waves)) you can choose to fit your ocean. 
 
+With the dispersion relation understood, we can now look at how the full ocean surface is constructed using these wave components.
+
 ### 1.2 The Wave Spectrum
 
+The wave spectrum is essentially a function that describes how the wave energy is distributed across combinations of angular frequencies $\omega$ and wind directions $\theta$.  Tessendorf expresses the ocean height field as a sum of complex wave contributions across all frequencies. 
+We represent the ocean surface using the formula:
+
+$$h(\mathbf{x}, t) = \sum_{\mathbf{k}} \tilde{h}(\mathbf{k}, t) \exp(i\mathbf{k} \cdot \mathbf{x})$$
+
+Where:
+
+$t$ - time  
+$\mathbf{x}$ - horizontal position on the ocean surface  
+$\mathbf{k}$ - a 2D wave vector with components $\mathbf{k} = (k_x, k_z)$  
+$k_x = \frac{2\pi n}{L_x}$ - wave vector x component  
+$k_z = \frac{2\pi m}{L_z}$ - wave vector z component  
+$n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  
+$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and phase of the wave at frequency $\mathbf{k}$ and time $t$  
+$N, M$ - the resolution of the FFT grid  
+
+The FFT then generates the height field at discrete positions $\mathbf{x} = \left(\frac{nL_x}{N}, \frac{mL_z}{M}\right)$  
+**The phase is the position of a wave within its cycle at any point in time. It is measured in radians, phase of 0 means the wave is at its peak, phase of $frac{\pi}{2}$, means that the wave is halfway between the peak and zero.*
 
 The JONSWAP spectrum formula looks like this: 
 
