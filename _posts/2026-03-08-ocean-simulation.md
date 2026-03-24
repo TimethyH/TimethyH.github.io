@@ -123,21 +123,18 @@ The ocean simulation is driven by a statistical wave spectrum. Rather than simul
 
 As mentioned above, I will be implementing the JONSWAP spectrum because it gave much better results and artistic control over the ocean.  The JONSWAP spectrum formula looks like this: 
 
-$$E(\omega) = \text{scale} \cdot \phi_{TMA}(\omega) \cdot \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\omega_p}{\omega}\right)^4\right) \gamma^{\exp\left(-\frac{(\omega - \omega_p)^2}{2\sigma^2\omega_p^2}\right)}$$
+$$E(\omega) = \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\omega_p}{\omega}\right)^4\right) \gamma^{\exp\left(-\frac{(\omega - \omega_p)^2}{2\sigma^2\omega_p^2}\right)}$$
 
 Where:
 
-| Symbol | Description |
-|--------|-------------|
-| $\alpha$ | Energy scale, controls the overall wave height |
-| $g$ | Gravitational acceleration (9.81 m/s²) |
-| $\omega$ | Angular frequency of the wave being evaluated |
-| $\omega_p$ | Peak frequency, the frequency with the most energy |
-| $\gamma$ | Peak enhancement factor, controls the sharpness of the spectrum peak |
-| $\sigma$ | Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$ |
-| $\phi_{TMA}$ | TMA shallow water correction factor |
-| $\text{scale}$ | Artistic scale parameter for tuning wave height |
+Where:
 
+- \(\alpha\) :  Energy scale, controls the overall wave height
+- \(g\) :   Gravitational acceleration (9.81 m/s²)
+- \(\omega\) :   Angular frequency of the wave being evaluated
+- \(\omega_p\) :   Peak frequency, the frequency with the most energy
+- \(\gamma\) :   Peak enhancement factor, controls the sharpness of the spectrum peak
+- \(\sigma\) :   Width parameter, 0.07 when \(\omega \leq \omega_p\) and 0.09 when \(\omega > \omega_p\)
 
 
 
