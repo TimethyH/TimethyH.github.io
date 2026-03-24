@@ -127,14 +127,12 @@ $$E(\omega) = \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\ome
 
 Where:
 
-| Symbol | Description |
-|--------|-------------|
-| $\alpha$ | Energy scale, controls the overall wave height |
-| $g$ | Gravitational acceleration (9.81 m/s²) |
-| $\omega$ | Angular frequency of the wave being evaluated |
-| $\omega_p$ | Peak frequency, the frequency with the most energy |
-| $\gamma$ | Peak enhancement factor, controls the sharpness of the spectrum peak |
-| $\sigma$ | Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$ |
+$\alpha$ - Energy scale, controls the overall wave height  
+$g$ - Gravitational acceleration (9.81 m/s²)  
+$\omega$ - Angular frequency of the wave being evaluated  
+$\omega_p$ - Peak frequency, the frequency with the most energy  
+$\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak  
+$\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  
 
 
 
