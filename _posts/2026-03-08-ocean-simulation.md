@@ -127,16 +127,16 @@ $$h(\mathbf{x}, t) = \sum_{\mathbf{k}} \tilde{h}(\mathbf{k}, t) \exp(i\mathbf{k}
 
 <div class="centered">
 
-Where:
+Where:<br>
 
-$t$ - time  
-$\mathbf{x}$ - horizontal position on the ocean surface  
-$\mathbf{k}$ - a 2D wave vector with components $\mathbf{k} = (k_x, k_z)$  
-$k_x = \frac{2\pi n}{L_x}$   
-$k_z = \frac{2\pi m}{L_z}$  
-$n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  
-$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  
-$N, M$ - the resolution of the FFT grid 
+$t$ - time  <br>
+$\mathbf{x}$ - horizontal position on the ocean surface  <br>
+$\mathbf{k}$ - a 2D wave vector with components $\mathbf{k} = (k_x, k_z)$  <br>
+$k_x = \frac{2\pi n}{L_x}$   <br>
+$k_z = \frac{2\pi m}{L_z}$  <br>
+$n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  <br>
+$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  <br>
+$N, M$ - the resolution of the FFT grid <br>
 
 </div>
 
@@ -196,15 +196,15 @@ $$S_{\text{JONSWAP}}(\omega) = \text{scale} \cdot \phi_{TMA}(\omega) \cdot \frac
 
 <div class="centered">
 
-Where:
+Where:<br>
 
-$\alpha$ - Energy scale, controls the overall wave height  
-$g$ - Gravitational acceleration (9.81 m/s²)  
-$\omega$ - Angular frequency of the wave being evaluated  
-$\omega_p$ - Peak frequency, the frequency with the most energy  
-$\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak  
-$\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  
-$\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave speed at shallow depths.   
+$\alpha$ - Energy scale, controls the overall wave height  <br>
+$g$ - Gravitational acceleration (9.81 m/s²)  <br>
+$\omega$ - Angular frequency of the wave being evaluated  <br>
+$\omega_p$ - Peak frequency, the frequency with the most energy  <br>
+$\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak  <br>
+$\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  <br>
+$\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave speed at shallow depths.   <br>
 
 </div>
 
@@ -305,14 +305,14 @@ $$\tilde{h}_0(\mathbf{k}) = \frac{1}{\sqrt{2}}(\xi_r + i\xi_i)\sqrt{P_h(\mathbf{
 
 <div class="centered">
 
-Where:
+Where:<br>
 
-$\tilde{h}_0(\mathbf{k})$ - The initial complex amplitude for wave vector $\mathbf{k}$. Encodes the amplitude and phase of one wave component.  
-$\mathbf{k}$ - A 2D wave vector representing the frequency and direction of a wave component.  
-$\xi_r$ - A Gaussian random number for the real part.  
-$\xi_i$ - A Gaussian random number for the imaginary part.  
-$P_h(\mathbf{k})$ - The wave spectrum energy at wave vector $\mathbf{k}$. In our implementation this is the JONSWAP spectrum.  
-$\frac{1}{\sqrt{2}}$ - A normalisation factor that ensures the correct distribution of wave amplitudes.
+$\tilde{h}_0(\mathbf{k})$ - The initial complex amplitude for wave vector $\mathbf{k}$. Encodes the amplitude and phase of one wave component.  <br>
+$\mathbf{k}$ - A 2D wave vector representing the frequency and direction of a wave component.  <br>
+$\xi_r$ - A Gaussian random number for the real part.  <br>
+$\xi_i$ - A Gaussian random number for the imaginary part. <br> 
+$P_h(\mathbf{k})$ - The wave spectrum energy at wave vector $\mathbf{k}$. In our implementation this is the JONSWAP spectrum.  <br>
+$\frac{1}{\sqrt{2}}$ - A normalisation factor that ensures the correct distribution of wave amplitudes.<br>
 
 </div>
 
