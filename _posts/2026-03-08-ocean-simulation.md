@@ -415,7 +415,8 @@ In code, `Cosine2s` is this function and `NormalizationFactor` is $Q(s)$, comput
 **Computing $s$: the Hasselmann model**
 
 We use the Hasselmann empirical model to compute $s$ based on how far the current frequency is from the peak frequency $\omega_p$:
-```cpp
+
+<pre><code class="language-cpp">
 float SpreadPower(float omega, float peakOmega)
 {
     if (omega > peakOmega)
@@ -423,7 +424,7 @@ float SpreadPower(float omega, float peakOmega)
     else
         return 6.97f * pow(abs(omega / peakOmega), 5.0f);
 }
-```
+</code></pre>
 
 The constants 9.77 and 6.97 come directly from Horvath's paper. Frequencies near the peak get a high $s$ value, meaning they are focused along the wind. Frequencies far above the peak get a low $s$, spreading more freely in all directions.
 
@@ -438,13 +439,14 @@ Where $\xi$ is the `swell` parameter. Increasing swell adds to $s$, making waves
 **Blending with spreadBlend**
 
 The final spreading function blends between two models based on the `spreadBlend` parameter:
-```cpp
+
+<pre><code class="language-cpp">
 return lerp(
     2.0f / PI * cos(theta) * cos(theta),  // simple cosine squared, no directionality
     Cosine2s(theta - angle, s),            // full Hasselmann + swell spreading
     spreadBlend
 );
-```
+</code></pre>
 
 A `spreadBlend` of 0 gives a simple spreading where all wavelengths spread equally regardless of frequency. A `spreadBlend` of 1 gives the full empirical Hasselmann model with swell. Values in between blend the two, giving you creative control over how directional the ocean looks.
 
