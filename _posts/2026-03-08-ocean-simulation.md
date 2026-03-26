@@ -482,6 +482,7 @@ Every frame, we take our initial spectrum $\tilde{h}_0(\mathbf{k})$ and multiply
 
 One important detail is that we use a rounded version of $\omega$ when computing the time evolution. This ensures that every wave component completes full cycles within a fixed time period, so the ocean animation loops seamlessly without any visible discontinuity. 
 
+<!--
 
 
 
@@ -696,6 +697,8 @@ All three IBL assets are computed as GPU compute dispatches during `Init()` befo
 - **Profiling** with Tracy Profiler and targeted optimisation
 
 ---
+
+-->
 
 ## References
 
