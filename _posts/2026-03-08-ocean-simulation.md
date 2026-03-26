@@ -481,8 +481,6 @@ Both H0 and its conjugate are packed into a single RGBA texture. The real and im
 This function provides us with the initial spectrum texture. You can visualize this texture in your preferred graphics debugger, I'm using RenderDoc. *You will need to change the color range to a very small value to see the colors clearly*.
 
 <div class="centered">
-
-<div class="centered">
   <img src="/assets/img/posts/OceanRender/initialH0.webp" alt="Initial H0 spectrum texture">
   <p><em>Your version might look slightly less colorful, mine is using multiple frequency bands which will be covered in Chapter 4.</em></p>
 </div>
