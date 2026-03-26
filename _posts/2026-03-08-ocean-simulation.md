@@ -482,9 +482,7 @@ Every frame, we take our initial spectrum $\tilde{h}_0(\mathbf{k})$ and multiply
 
 One important detail is that we use a rounded version of $\omega$ when computing the time evolution. This ensures that every wave component completes full cycles within a fixed time period, so the ocean animation loops seamlessly without any visible discontinuity. 
 
-<!--
-
-
+{% comment %}
 
 <!-- [ Explain how animate_waves.hlsl works — the dispersion relation ω = √(g·k), Euler's formula for complex exponentials, and why you accumulate total time rather than per-frame deltaTime. ] -->
 
@@ -698,7 +696,7 @@ All three IBL assets are computed as GPU compute dispatches during `Init()` befo
 
 ---
 
--->
+{% endcomment %}
 
 ## References
 
