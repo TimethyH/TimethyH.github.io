@@ -221,6 +221,43 @@ Before diving into each component of the JONSWAP, lets define a struct that will
 
 ```
 
+In code, calculating the JONSWAP spectrum looks like this:
+
+```cpp
+
+float Ocean::JONSWAP(float omega)
+{
+    float sigma = (omega <= m_jonswapParams.peakOmega) ? 0.07f : 0.09f; // width parameter
+    float r = exp(-(omega - m_jonswapParams.peakOmega) * (omega - m_jonswapParams.peakOmega) / 2.0f / sigma / sigma / m_jonswapParams.peakOmega / m_jonswapParams.peakOmega); // peak emhancement
+    float g = 9.81f; // gravity
+
+    float oneOverOmega = 1.0f / (omega + 1e-6f);
+    float peakOmegaOverOmega = m_jonswapParams.peakOmega / omega;
+
+    return m_jonswapParams.scale * TMACorrection(omega) * m_jonswapParams.alpha * g * g * oneOverOmega * oneOverOmega * oneOverOmega * oneOverOmega * oneOverOmega 
+			* exp(-1.25f * peakOmegaOverOmega * peakOmegaOverOmega * peakOmegaOverOmega * peakOmegaOverOmega) * pow(abs(m_jonswapParams.gamma), r);
+}
+
+```
+
+The TMA (Texel Marsen Arsloe) correction is used for the non directional component of the wave spectrum. This means that it does not care about the direction the waves are moving, instead the TMA functions on the depth of the ocean. In shallow waters, the seabed starts to intervene with the waves. The waves slow down, their shape changes and their enery distribution across waves get shifted. TMA accounts for this and adjusts the JONSWAP spectrum by multiplying the spectrum with a depth dependent factor.
+
+```cpp
+
+float TMACorrection(float w)
+{
+    float omegaH = omega * sqrt(OCEAN_DEPTH / 9.81f);
+    if (omegaH <= 1.0f)
+        return 0.5f * omegaH * omegaH;
+    if (omegaH < 2.0f)
+        return 1.0f - 0.5f * (2.0f - omegaH) * (2.0f - omegaH);
+
+    return 1.0f;
+}
+
+```
+
+Now that we have the wave spectrum, we can look at generating the initial heightfield.
 
 ### 1.3 Initial Spectrum Generation: H₀
 
