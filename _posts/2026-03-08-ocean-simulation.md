@@ -143,7 +143,8 @@ The phase is the position of a wave within its cycle at any point in time. It is
 
 </details>
 
-The complex amplitude $\tilde{h}(\mathbf{k}, t)$ is the heart of this formula. It is what we need to construct for every wave vector $\mathbf{k}$ on our grid. To do this we need two things: the JONSWAP spectrum, which tells us how much energy each wave frequency should carry, and the dispersion relation, which tells us how fast each wave travels. 
+This heightfield is the result of the FFT converting the initial spectrum from the frequency domain to the spatial domain. This will be discussed in section 1.5.
+The complex amplitude $\tilde{h}(\mathbf{k}, t)$ is the heart of this formula. It is what we need to construct for every wave vector $\mathbf{k}$ on our grid. To do this we need two things: the JONSWAP spectrum, which tells us how much energy each wave frequency should carry, and the dispersion relation, which tells us how fast each wave travels. *Section 1.3*.
 
 The dispersion relation allows us to propagate this heightfield forward in time, animating the waves. This will need to be recalculated every frame to update the heightfield accordingly. The dispersion relation defines the relationship between angular frequency $\omega$ and the wave number $k$.  
 In deep water, its formula is defined like this: 
@@ -205,7 +206,7 @@ Before diving into each component of the JONSWAP, lets define a struct that will
 	{
 		float scale = 0.0f; // Used to scale the Spectrum [1.0f, 5.0f] 
 		float spreadBlend = 0.0f; // Used to blend between agitated water motion, and windDirection [0.0f, 1.0f]
-		float swell = 0.0f; // Influences wave choppines, the bigger the swell, the longer the wave length [0.0f, 1.0f]
+		float swell = 0.0f; // Influences wave choppiness, the bigger the swell, the longer the wave length [0.0f, 1.0f]
 		float gamma = 0.0f; // Defines the Spectrum Peak [0.0f, 7.0f]
 		float shortWavesFade = 0.0f; // [0.0f, 1.0f]
 
@@ -228,7 +229,7 @@ In code, calculating the JONSWAP spectrum looks like this:
 float Ocean::JONSWAP(float omega)
 {
     float sigma = (omega <= m_jonswapParams.peakOmega) ? 0.07f : 0.09f; // width parameter
-    float r = exp(-(omega - m_jonswapParams.peakOmega) * (omega - m_jonswapParams.peakOmega) / 2.0f / sigma / sigma / m_jonswapParams.peakOmega / m_jonswapParams.peakOmega); // peak emhancement
+    float r = exp(-(omega - m_jonswapParams.peakOmega) * (omega - m_jonswapParams.peakOmega) / 2.0f / sigma / sigma / m_jonswapParams.peakOmega / m_jonswapParams.peakOmega); // peak enhancement
     float g = 9.81f; // gravity
 
     float oneOverOmega = 1.0f / (omega + 1e-6f);
@@ -240,7 +241,7 @@ float Ocean::JONSWAP(float omega)
 
 ```
 
-The TMA (Texel Marsen Arsloe) correction is used for the non directional component of the wave spectrum. This means that it does not care about the direction the waves are moving, instead the TMA functions on the depth of the ocean. In shallow waters, the seabed starts to intervene with the waves. The waves slow down, their shape changes and their enery distribution across waves get shifted. TMA accounts for this and adjusts the JONSWAP spectrum by multiplying the spectrum with a depth dependent factor.
+The TMA (Texel Marsen Arsloe) correction is used for the non directional component of the wave spectrum. This means that it does not care about the direction the waves are moving, instead the TMA functions on the depth of the ocean. In shallow waters, the seabed starts to intervene with the waves. The waves slow down, their shape changes and their energy distribution across waves get shifted. TMA accounts for this and adjusts the JONSWAP spectrum by multiplying the spectrum with a depth dependent factor.
 
 ```cpp
 
@@ -257,18 +258,152 @@ float TMACorrection(float w)
 
 ```
 
+Before we continue, lets populate our JonswapParameters. I recommend you play with the values to meet your desired artistic vision.  
+We do need to calculate 3 of the variables: The `angle`, the `alpha` and the `peakOmega`.
+
+```cpp
+
+m_jonswapParams.angle = m_jonswapParams.windDirection / 180.0f * PI;
+m_jonswapParams.alpha = JonswapAlpha(m_jonswapParams.fetch, m_jonswapParams.windSpeed);
+m_jonswapParams.peakOmega = JonswapPeakFequency(m_jonswapParams.fetch, m_jonswapParams.windSpeed);
+
+```
+
+```cpp
+
+float Ocean::JonswapAlpha(float fetch, float windSpeed)
+{
+    return 0.076f * pow(9.81f * fetch / windSpeed / windSpeed, - 0.22f);
+}
+
+float Ocean::JonswapPeakFequency(float fetch, float windSpeed)
+{
+    return 22.0f * pow(windSpeed * fetch / 9.81f / 9.81f, -0.33f);
+}
+
+```
+
+
 Now that we have the wave spectrum, we can look at generating the initial heightfield.
 
 ### 1.3 Initial Spectrum Generation: H₀
 
+We compute the initial spectrum once, my implementation does this on the CPU but its best done on the GPU since it can make great use of parallel computing.
+
+The formula Tessendorf proposes in his paper is:
 
 $$\tilde{h}_0(\mathbf{k}) = \frac{1}{\sqrt{2}}(\xi_r + i\xi_i)\sqrt{P_h(\mathbf{k})}$$
 
-H₀(**k**) is generated once on the CPU and uploaded to the GPU. Each texel stores a complex amplitude drawn from a Gaussian random distribution, scaled by the square root of the spectrum energy at that wavevector.
+This data lives in the frequency domain.  
+We generate a complex number that encodes the amplitude and phase for every wave vector *k*. We store the resulting data in a R16G16B16A16_FLOAT texture.
 
-<!-- [ Describe the GenerateH0 function — how Gaussian noise is combined with the spectrum, and the critical conjugate symmetry requirement h₀(–k) = h₀*(k) that guarantees a real-valued displacement field after IFFT. ] -->
+Lets look at some code.
 
-<!-- STRUGGLE TO MENTION: Early bug — the conjugate was being generated with new random numbers instead of the actual complex conjugate of h₀(k), breaking real-output symmetry entirely. -->
+```cpp
+
+void Ocean::GenerateH0(std::shared_ptr<CommandList> commandList, const UINT cascade) {
+
+    float deltaK = 2.0f * PI / patchSize;
+    float highestK = (OCEAN_SUBRES / 2.0f) * deltaK; // nyquist limit
+
+    // stored in heap to avoid stack overflow
+    std::vector<std::complex<float>> H0(OCEAN_SUBRES * OCEAN_SUBRES, { 0,0 });
+    std::vector<std::complex<float>> H0Conj(OCEAN_SUBRES * OCEAN_SUBRES, { 0,0 });
+
+    const float lowCutoff = cascade == 0 ? 0.001f : (OCEAN_SUBRES * PI / m_oceanPatchSizes[cascade - 1]); // nyquist limit of previous cascade;
+    const float highCutoff = highestK;
+    
+    
+    for (int m = 0; m < OCEAN_SUBRES; m++) {
+        for (int n = 0; n < OCEAN_SUBRES; n++) {
+            // Get wave vector for this frequency
+            float kx = (n - OCEAN_SUBRES / 2.0f) * deltaK;
+            float ky = (m - OCEAN_SUBRES / 2.0f) * deltaK;
+            float k(sqrtf(kx * kx + ky * ky));
+
+            if (k >= lowCutoff && k <= highCutoff)
+            {
+	            
+            float kAngle = atan2(ky, kx);
+            float omega = DispersionRelation(k);
+            float dOmegadk = DispersionDerivative(k);
+
+            float spectrum = JONSWAP(omega) * DirectionSpectrum(kAngle, omega) * ShortWavesFade(k);
+            
+            // Generate two independent gaussian random numbers
+            float xiR = GaussianRandom();
+            float xiI = GaussianRandom();
+
+            float amplitude = sqrtf(2.0f * spectrum * fabsf(dOmegadk) / k * deltaK * deltaK);
+            H0[m * OCEAN_SUBRES + n] = std::complex<float>(xiR * amplitude, xiI * amplitude);
+            }
+        }
+    }
+
+    // Needs its own loop since the conjugate needs all data of H0 to be valid
+    for (int m = 0; m < OCEAN_SUBRES; m++) {
+        for (int n = 0; n < OCEAN_SUBRES; n++) {
+            int m_minus = (OCEAN_SUBRES - m) % OCEAN_SUBRES;
+            int n_minus = (OCEAN_SUBRES - n) % OCEAN_SUBRES;
+            H0Conj[m * OCEAN_SUBRES + n] = std::conj(H0[m_minus * OCEAN_SUBRES + n_minus]);
+        }
+    }
+
+    std::vector<uint16_t> combinedData(OCEAN_SUBRES * OCEAN_SUBRES * 4);
+
+    for (int m = 0; m < OCEAN_SUBRES; m++) {
+        for (int n = 0; n < OCEAN_SUBRES; n++) {
+            int index = (m * OCEAN_SUBRES + n) * 4;
+            combinedData[index + 0] = FloatToHalf(H0[m * OCEAN_SUBRES + n].real());       // R: H0 real
+            combinedData[index + 1] = FloatToHalf(H0[m * OCEAN_SUBRES + n].imag());       // G: H0 imaginary
+            combinedData[index + 2] = FloatToHalf(H0Conj[m * OCEAN_SUBRES + n].real());   // B: H0_conj real
+            combinedData[index + 3] = FloatToHalf(H0Conj[m * OCEAN_SUBRES + n].imag());   // A: H0_conj imaginary
+        }
+    }
+
+    D3D12_SUBRESOURCE_DATA subData = {};
+    subData.pData = combinedData.data();
+    subData.RowPitch = OCEAN_SUBRES * 4 * sizeof(uint16_t); // 4 channels * 2 bytes
+    subData.SlicePitch = subData.RowPitch * OCEAN_SUBRES;
+
+    commandList->CopyTextureSubresource(m_oceanCascades[cascade].H0Texture, 0, 1, &subData);
+}
+
+```
+
+Lets dissect this.  
+`deltaK` is the spacing between frequency samples. Since our patch covers `patchSize` metres in the real world, dividing $2\pi$ by it gives us the step size in frequency space.  
+`highestK` is the Nyquist limit, the highest frequency our grid can represent before aliasing occurs.  
+`lowCutoff` and `highCutoff` can be ignored for now, these will be explained in Chapter 4.  
+
+**The double for loop**  
+For each grid position $(n, m)$ we compute the wave vector components `kx` and `ky`. Subtracting `OCEAN_SUBRES / 2.0f` centers the grid around zero so we cover both positive and negative frequencies, representing waves travelling in all directions.  
+`k` is the magnitude of the wave vector, the wavenumber.  
+
+**Computing the spectrum value**  
+For each wave vector we compute three things.  
+`kAngle` is the direction the wave is travelling.  
+`omega` is the angular frequency from the dispersion relation.  
+The full spectrum value is then the product of three functions. JONSWAP gives the total energy at this frequency.  
+`DirectionSpectrum` distributes that energy across directions based on `kAngle`.  
+`ShortWavesFade` damps out very high frequencies to prevent aliasing artifacts.  
+
+**Computing the amplitude and storing H₀**
+Two independent Gaussian random numbers give each wave component a unique random phase. The amplitude formula converts the continuous spectrum density into a discrete amplitude value for this specific grid cell, accounting for the cell size `deltaK * deltaK`. Multiplying the random numbers by the amplitude gives us $\tilde{h}_0(\mathbf{k})$, stored as a unique complex number.
+
+**The Conjugate**  
+The conjugate is simply the sign mirror of a complex number. For example the conjugate of $z = a + bi$ is $z = a - bi$. This conjugate is needed since the FFT takes complex numbers as input and produces a complex number as an output too. Our heightfield needs to use real numbers, so using the conjugate we can cancel out the imaginary part of the FFT output, leaving us with only real values. for example:
+
+$$ (a + bi) + (a - bi) = 2a $$
+
+**Texture Packing**  
+Both H0 and its conjugate are packed into a single RGBA texture. The real and imaginary parts of H0 go into the R and G channels, the conjugate goes into B and A. The values are converted to 16 bit half precision floats to save memory. This texture is then uploaded to the GPU where the compute shader will read it every frame to propagate the waves forward in time.
+
+
+This function provides us with the initial spectrum texture.
+
+Next we will look at how the FFT transforms this frequency domain data into real world wave displacements
+
 
 ### 1.4 Time Evolution: Animating the Waves
 
