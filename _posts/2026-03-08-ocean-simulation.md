@@ -104,10 +104,8 @@ Now, evaluating thousands of sine waves individually for every point on the ocea
 The spatial domain is our usual graph that has a value Y on the vertical axis, and a constantly increasing value X usually representing time or position, on the horizontal axis. The frequency domain exposes frequency on the horizontal axis and amplitude on the vertical axis. This produces a graph that visualizes the link between frequencies and their amplitudes.
 
 <div class="centered">
-
-![alt text](/assets/img/posts/OceanRender/freqTimeDomain.webp)  
-*Source: [Why Measuring in the Time Domain and Frequency Domain Is the Same, but Not](https://docs.keysight.com/kkbopen/why-measuring-in-the-time-domain-and-frequency-domain-is-the-same-but-not-603167255.html)*
-
+  <img src="/assets/img/posts/OceanRender/freqTimeDomain.webp" alt="Frequency and time domain">
+  <p><em>Source: <a href="https://docs.keysight.com/kkbopen/why-measuring-in-the-time-domain-and-frequency-domain-is-the-same-but-not-603167255.html">Why Measuring in the Time Domain and Frequency Domain Is the Same, but Not</a></em></p>
 </div>
 
 FFT works in the frequency domain, where each point represents a wave frequency rather than a world position. The FFT algorithm then converts the entire frequency domain into real world displacements (which live in the spatial domain) in one efficient pass. The beautiful thing about this, is that it's a lossless operation. We can convert our data between domains without losing any information. This is neat since we can remove certain frequencies from the equation, convert the data back to the spatial domain and have the exact same wave minus the removed frequency. You can imagine this like having a musical chord, say *C Major 7*. This chord contains the notes *C, E, G and B.* Using the FFT, you would be able to see every note that this chord signal contains, remove the B for example and convert it back to the spatial domain. The result would be a simple C Major chord which has the notes *C, E and G.*  
@@ -484,9 +482,9 @@ This function provides us with the initial spectrum texture. You can visualize t
 
 <div class="centered">
 
-![alt text](/assets/img/posts/OceanRender/initialH0.webp)  
-*Your version might look slightly less colorful, mine is using multiple frequency bands which will be covered in Chapter 4.*
-
+<div class="centered">
+  <img src="/assets/img/posts/OceanRender/initialH0.webp" alt="Initial H0 spectrum texture">
+  <p><em>Your version might look slightly less colorful, mine is using multiple frequency bands which will be covered in Chapter 4.</em></p>
 </div>
 
 Next we will look at how the FFT transforms this frequency domain data into real world wave displacements
