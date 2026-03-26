@@ -125,6 +125,8 @@ We represent the ocean surface using the formula:
 
 $$h(\mathbf{x}, t) = \sum_{\mathbf{k}} \tilde{h}(\mathbf{k}, t) \exp(i\mathbf{k} \cdot \mathbf{x})$$
 
+<div class="centered">
+
 Where:
 
 $t$ - time  
@@ -134,7 +136,11 @@ $k_x = \frac{2\pi n}{L_x}$
 $k_z = \frac{2\pi m}{L_z}$  
 $n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  
 $\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  
-$N, M$ - the resolution of the FFT grid  
+$N, M$ - the resolution of the FFT grid 
+
+</div>
+
+ 
 
 <details>
 <summary>  What is the phase of a wave? </summary>
@@ -188,6 +194,8 @@ The JONSWAP spectrum formula looks like this:
 
 $$S_{\text{JONSWAP}}(\omega) = \text{scale} \cdot \phi_{TMA}(\omega) \cdot \frac{\alpha g^2}{\omega^5} \exp\left(-\frac{5}{4}\left(\frac{\omega_p}{\omega}\right)^4\right) \gamma^{\exp\left(-\frac{(\omega - \omega_p)^2}{2\sigma^2\omega_p^2}\right)}$$
 
+<div class="centered">
+
 Where:
 
 $\alpha$ - Energy scale, controls the overall wave height  
@@ -198,6 +206,7 @@ $\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak
 $\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  
 $\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave speed at shallow depths.   
 
+</div>
 
 Before diving into each component of the JONSWAP, lets define a struct that will hold all the parameters that we will be populating.
 
@@ -294,6 +303,8 @@ The formula Tessendorf proposes in his paper is:
 
 $$\tilde{h}_0(\mathbf{k}) = \frac{1}{\sqrt{2}}(\xi_r + i\xi_i)\sqrt{P_h(\mathbf{k})}$$
 
+<div class="centered">
+
 Where:
 
 $\tilde{h}_0(\mathbf{k})$ - The initial complex amplitude for wave vector $\mathbf{k}$. Encodes the amplitude and phase of one wave component.  
@@ -302,6 +313,8 @@ $\xi_r$ - A Gaussian random number for the real part.
 $\xi_i$ - A Gaussian random number for the imaginary part.  
 $P_h(\mathbf{k})$ - The wave spectrum energy at wave vector $\mathbf{k}$. In our implementation this is the JONSWAP spectrum.  
 $\frac{1}{\sqrt{2}}$ - A normalisation factor that ensures the correct distribution of wave amplitudes.
+
+</div>
 
 This data lives in the frequency domain.  
 We generate a complex number that encodes the amplitude and phase for every wave vector *k*. We store the resulting data in a R16G16B16A16_FLOAT texture.
