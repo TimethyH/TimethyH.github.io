@@ -94,7 +94,7 @@ A CPU has a small number of powerful cores built for sequential logic. A GPU has
 
 The developer defines the size of the thread grid themselves. Each thread knows its own position in the grid via SV_DispatchThreadID, so it knows exactly which point on the ocean it is responsible for. This way every point on the ocean plane gets calculated in parallel.
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 [numthreads(8, 8, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID)
 {
