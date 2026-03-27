@@ -57,4 +57,11 @@
   <!-- Incomment incase you want to use Disqus
       <div id="disqus_thread"></div>
    -->
+
+    {% if page.usemathjax %}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+  {% endif %}
+  
 </article>
