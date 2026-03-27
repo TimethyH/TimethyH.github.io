@@ -34,6 +34,22 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 8. [Results & Next Steps](#chapter-8-results--next-steps)
 
 
+Before we start let me show you what we will be building.
+
+<div class="centered">
+  <video width="100%" controls autoplay loop muted playsinline>
+    <source src="/assets/img/posts/OceanRender/calmLongSea.mp4" type="video/mp4">
+  </video>
+  <p><em>Calm open ocean</em></p>
+</div>
+
+<div class="centered">
+  <video width="100%" controls autoplay loop muted playsinline>
+    <source src="/assets/img/projects/EV/sceneCompressed.mp4" type="video/mp4">
+  </video>
+  <p><em>Ocean with large swells and prominent wind direction</em></p>
+</div>
+
 ## Understanding the basics
 
 
