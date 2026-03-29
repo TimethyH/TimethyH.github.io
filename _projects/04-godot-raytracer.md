@@ -3,7 +3,7 @@ layout: project
 title: "Raytracing in Godot"
 subtitle: "Timethy Hyman"
 date: 2025-09-23
-thumbnail: /assets/img/projects/GodotRT/scene3.webp
+thumbnail: /assets/img/projects/GodotRT/home.webp
 summary: "👥 3 developers | Godot Raytracing Extension"
 tags:
   - Personal Project
