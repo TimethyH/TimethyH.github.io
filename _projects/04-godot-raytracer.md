@@ -35,11 +35,11 @@ During my self study block in Year 3,  I worked together with 2 other programmer
 <div class="project-media" markdown="1">
 
 <a href="/assets/img/projects/GodotRT/scene3.webp" class="image">
-  ![ReflectionRefraction](/assets/img/projects/GodotRT/raytraced.gif)
+  ![ReflectionRefraction](/assets/img/projects/GodotRT/scene3.webp)
 </a>
 
 <a href="/assets/img/projects/GodotRT/scene2.webp" class="image">
-  ![ReflectionRefraction](/assets/img/projects/GodotRT/raytraced.gif)
+  ![ReflectionRefraction](/assets/img/projects/GodotRT/scene2.webp)
 </a>
 
 </div>
