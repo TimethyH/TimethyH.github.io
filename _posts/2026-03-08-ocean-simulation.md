@@ -539,7 +539,7 @@ if (k < 0.0001f)
 }
 </code></pre>
 
-We calculate the angular frequency.
+We calculate the base frequency step.
 
 <pre><code class="cpp">
 float w = 2.0f * PI / REPEAT_TIME;
@@ -566,6 +566,7 @@ float2 complex_multiply(float2 W, float2 B)
                   W.x * B.y + W.y * B.x);
 }
 
+float2 exponent = EulerFormula(dispersion);
 </code></pre>
 
 Now we have all the components to calculate $\tilde{h}(\mathbf{k}, t)$  
@@ -573,7 +574,7 @@ Now we have all the components to calculate $\tilde{h}(\mathbf{k}, t)$
 float2 htilde = complex_multiply(h0, exponent) + complex_multiply(h0conj, float2(exponent.x, -exponent.y));
 </code></pre>
 
-We now sucessfully computed the heightfield in the frequency domain. Next to this, we also want to have the *horizontal displacement* and the *surface slope*. The horizontal displacement will make the waves look choppy and the slopes are used to calculate the surface normals which we will be using in Chapter 2 for lighting calculations.  
+We now successfully computed the heightfield in the frequency domain. Next to this, we also want to have the *horizontal displacement* and the *surface slope*. The horizontal displacement will make the waves look choppy and the slopes are used to calculate the surface normals which we will be using in Chapter 2 for lighting calculations.  
 
 From the animated spectrum $\tilde{h}(\mathbf{k}, t)$ we can derive everything we need in 
 one pass. Rather than running separate FFTs for height, horizontal displacement and surface 
