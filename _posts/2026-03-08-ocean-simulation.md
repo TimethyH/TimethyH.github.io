@@ -623,6 +623,7 @@ displacementTexture[dispatchThreadID.xy] = float4(htildeDisplacementX, htildeDis
 slopeTexture[dispatchThreadID.xy] = float4(htildeSlopeX, htildeSlopeZ);
 </code></pre>
 
+With this, we now have the heightfield, horizontal displacement and slopes, all calculated in the frequency domain. The last step is to transform this data to the spatial domain.
 
 {% comment %}
 
