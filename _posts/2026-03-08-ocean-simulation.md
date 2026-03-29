@@ -517,6 +517,102 @@ Every frame, we take our initial spectrum $\tilde{h}_0(\mathbf{k})$ and multiply
 
 One important detail is that we use a rounded version of $\omega$ when computing the time evolution. This ensures that every wave component completes full cycles within a fixed time period, so the ocean animation loops seamlessly without any visible discontinuity. 
 
+So we have the initial spectrum and its conjugate, the last missing term is the dispersion relation and the $e^{i\omega t}$ which we will calculate now.  
+Since we want to loop the animation, we need to introduce a new variable: `REPEAT_TIME`. Using this variable we can control the amount of time it takes for the simulation to loop back to its original state. I'm using a value of 500 but feel free to play around with this.  
+
+First we load our initial spectrum and conjugate data.
+
+<pre><code class="cpp">
+float4 H0Data = H0Texture.Load(int3(dispatchThreadID.xy, 0));
+float2 h0 = H0Data.rg;
+float2 h0conj = H0Data.ba;
+
+float kx = 2.0f * PI * (dispatchThreadID.x - OCEAN_RESOLUTION / 2.0f) / patchSize;
+float ky = 2.0f * PI * (dispatchThreadID.y - OCEAN_RESOLUTION / 2.0f) / patchSize;
+float k = length(float2(kx,ky));
+float kRcp = rcp(k);
+
+// Prevent NaN values
+if (k < 0.0001f)
+{
+    kRcp = 1.0f;
+}
+</code></pre>
+
+We calculate the angular frequency.
+
+<pre><code class="cpp">
+float w = 2.0f * PI / REPEAT_TIME;
+</code></pre>
+
+We can use this value as the stepsize around the unit circle and use `time` as the scalar that advances the dispersion.
+
+<pre><code class="cpp">
+float dispersion = floor(sqrt(GRAVITY * k) / w) * w * time;
+</code></pre>
+
+We now plug this dispersion into Euler's formula which gives us $e^{i\omega t}$. Add these helper functions:  
+
+<pre><code class="cpp">
+
+float2 EulerFormula(float x)
+{
+    return float2(cos(x), sin(x));
+}
+
+float2 complex_multiply(float2 W, float2 B)
+{
+    return float2(W.x * B.x - W.y * B.y,
+                  W.x * B.y + W.y * B.x);
+}
+
+</code></pre>
+
+Now we have all the components to calculate $\tilde{h}(\mathbf{k}, t)$  
+<pre><code class="cpp">
+float2 htilde = complex_multiply(h0, exponent) + complex_multiply(h0conj, float2(exponent.x, -exponent.y));
+</code></pre>
+
+We now sucessfully computed the heightfield in the frequency domain. Next to this, we also want to have the *horizontal displacement* and the *surface slope*. The horizontal displacement will make the waves look choppy and the slopes are used to calculate the surface normals which we will be using in Chapter 2 for lighting calculations.  
+
+From the animated spectrum $\tilde{h}(\mathbf{k}, t)$ we can derive everything we need in 
+one pass. Rather than running separate FFTs for height, horizontal displacement and surface 
+slopes, we compute all of them in the frequency domain before the FFT using a property of 
+Fourier transforms: taking a spatial derivative in the real world is equivalent to 
+multiplying by $ik$ in the frequency domain.
+
+First we precompute $i\tilde{h}$, which is just the complex number rotated 90 degrees:
+
+<pre><code class="cpp">
+float2 ih = float2(-htilde.y, htilde.x);
+</code></pre>
+
+Then we derive each output signal:
+
+- <code>displacementY = htilde</code> - the raw height field, becomes vertical displacement after the FFT
+- <code>displacementX = ih * kx * kRcp</code> and <code>displacementZ = ih * ky * kRcp</code> - horizontal displacement in x and z, pointing in the wave travel direction
+- <code>displacementY_dx</code> and <code>displacementY_dz</code> - the surface slopes in x and z, used to compute normals for lighting
+- <code>displacementX_dx</code>, <code>displacementZ_dx</code>, <code>displacementZ_dz</code> - second order derivatives used to compute the Jacobian determinant for foam detection. Covered in Chapter 3.
+
+The negative sign on the second order derivatives comes from applying the $ik$ multiplication 
+twice: $i^2 = -1$, so $ik \cdot ik = -k^2$.
+
+All eight signals are then packed into two float4 textures and converted to the spatial 
+domain by the FFT in the next pass.
+
+<pre><code class="cpp">
+float2 htildeDisplacementX = float2(displacementX.x - displacementZ.y, displacementX.y + displacementZ.x);
+float2 htildeDisplacementZ = float2(displacementY.x - displacementZ_dx.y, displacementY.y + displacementZ_dx.x);
+    
+float2 htildeSlopeX = float2(displacementY_dx.x - displacementY_dz.y, displacementY_dx.y + displacementY_dz.x);
+float2 htildeSlopeZ = float2(displacementX_dx.x - displacementZ_dz.y, displacementX_dx.y + displacementZ_dz.x);
+
+
+displacementTexture[dispatchThreadID.xy] = float4(htildeDisplacementX, htildeDisplacementZ);
+slopeTexture[dispatchThreadID.xy] = float4(htildeSlopeX, htildeSlopeZ);
+</code></pre>
+
+
 {% comment %}
 
 <!-- [ Explain how animate_waves.hlsl works — the dispersion relation ω = √(g·k), Euler's formula for complex exponentials, and why you accumulate total time rather than per-frame deltaTime. ] -->
