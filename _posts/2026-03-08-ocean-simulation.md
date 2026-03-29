@@ -590,10 +590,20 @@ float2 ih = float2(-htilde.y, htilde.x);
 
 Then we derive each output signal:
 
-- <code>displacementY = htilde</code> - the raw height field, becomes vertical displacement after the FFT
-- <code>displacementX = ih * kx * kRcp</code> and <code>displacementZ = ih * ky * kRcp</code> - horizontal displacement in x and z, pointing in the wave travel direction
-- <code>displacementY_dx</code> and <code>displacementY_dz</code> - the surface slopes in x and z, used to compute normals for lighting
-- <code>displacementX_dx</code>, <code>displacementZ_dx</code>, <code>displacementZ_dz</code> - second order derivatives used to compute the Jacobian determinant for foam detection. Covered in Chapter 3.
+<pre><code class="cpp">
+// the raw height field, becomes vertical displacement after the FFT
+float2 displacementY = htilde;
+// horizontal displacement in x and z, pointing in the wave travel direction
+float2 displacementX = ih * kx * kRcp;
+float2 displacementZ = ih * ky * kRcp;
+// the surface slopes in x and z, used to compute normals for lighting
+float2 displacementY_dx = ih * kx;
+float2 displacementY_dz = ih * ky;
+// second order derivatives used to compute the Jacobian determinant for foam detection. Covered in Chapter 3. 
+float2 displacementZ_dx = -htilde * kx * ky * kRcp;
+float2 displacementZ_dz = -htilde * ky * ky * kRcp;
+float2 displacementX_dx = -htilde * kx * kx * kRcp;
+</code></pre>
 
 The negative sign on the second order derivatives comes from applying the $ik$ multiplication 
 twice: $i^2 = -1$, so $ik \cdot ik = -k^2$.
