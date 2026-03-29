@@ -3,7 +3,7 @@ layout: project
 title: "Raytracing in Godot"
 subtitle: "Timethy Hyman"
 date: 2025-09-23
-thumbnail: /assets/img/projects/GodotRT/materials.png
+thumbnail: /assets/img/projects/GodotRT/scene3.webp
 summary: "👥 3 developers | Godot Raytracing Extension"
 tags:
   - Personal Project
@@ -34,10 +34,13 @@ During my self study block in Year 3,  I worked together with 2 other programmer
 </div>
 <div class="project-media" markdown="1">
 
-<a href="/assets/img/projects/GodotRT/raytraced.gif" class="image">
+<a href="/assets/img/projects/GodotRT/scene3.webp" class="image">
   ![ReflectionRefraction](/assets/img/projects/GodotRT/raytraced.gif)
 </a>
 
+<a href="/assets/img/projects/GodotRT/scene2.webp" class="image">
+  ![ReflectionRefraction](/assets/img/projects/GodotRT/raytraced.gif)
+</a>
 
 </div>
 </div>
