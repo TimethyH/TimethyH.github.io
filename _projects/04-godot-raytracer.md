@@ -109,7 +109,7 @@ implementation details can be found on my [blog](https://timethyh.github.io/blog
 This was the most challenging project so far.  
 In the end we're proud we achieved to build a working raytracer in 8 weeks. The raytracer is still very bare bones and does not have lighting support, or transparant object support, but we wish to continue polishing the extension over the coming months.
 
-<a href="https://github.com/TimethyH/godot-raytrace" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
+<a href="https://github.com/TimethyH/godot-raytrace" target="_blank" class="btn btn-lg btn-github" style="text-decoration: none;">
   <i class="fab fa-github" style="margin-right: 8px;"></i> View on GitHub
 </a>
 

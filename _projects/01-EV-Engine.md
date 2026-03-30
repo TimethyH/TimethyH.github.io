@@ -93,11 +93,11 @@ Beyond that, I plan to profile and optimize the simulation more thoroughly to fu
 
 A full breakdown of the implementation is covered in the blog post!
 
-<a href="https://github.com/TimethyH/EV" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
+<a href="https://github.com/TimethyH/EV" target="_blank" class="btn btn-lg btn-github" style="text-decoration: none;">
   <i class="fab fa-github" style="margin-right: 8px;"></i> View on GitHub
 </a>
 
-<a href="/blog/fft-ocean-rendering/" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
+<a href="/blog/fft-ocean-rendering/" target="_blank" class="btn btn-lg btn-blog-article" style="text-decoration: none;">
   <i class="fas fa-book-open" style="margin-right: 8px;"></i> Read Article
 </a>
 
