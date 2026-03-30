@@ -100,4 +100,8 @@ A full breakdown of the implementation is covered in the blog post!
 <a href="/blog/fft-ocean-rendering/" target="_blank" class="btn btn-dark btn-lg" style="text-decoration: none;">
   <i class="fas fa-book-open" style="margin-right: 8px;"></i> Read Article
 </a>
+
+<a href="https://buas.artstation.com/YOUR_PROJECT_URL" target="_blank" class="btn btn-lg btn-artstation" style="text-decoration: none;">
+  <i class="fa-brands fa-artstation" style="margin-right: 8px;"></i> Featured on BUas ArtStation
+</a>
 </div>

@@ -631,6 +631,20 @@ a.btn-itch {
   }
 }
 
+a.btn-artstation {
+  background-color: #13aff0 !important; /* ArtStation blue */
+  color: #fff !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: #0d8ec4 !important;
+    box-shadow: 0 0 16px rgba(19, 175, 240, 0.6);
+    transform: translateY(-2px);
+    color: #fff !important;
+  }
+}
+
+
 article h1, article h2, article h3, article h4, article h5, article h6 {
   color: white !important;
 }
