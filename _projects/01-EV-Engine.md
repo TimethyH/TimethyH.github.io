@@ -22,7 +22,7 @@ category: year3
 
 EV Engine is a DX12 renderer I started to improve my DX12 skills and rendering knowledge in general. It is based off of the work of one of my lecturers: Jeremiah van Oosten. You can see his work on [3dgep](https://www.3dgep.com/)! Following this tutorial I laid the foundation of the engine.
 
-A wise man at [Nixxies](https://www.nixxes.com/) gave me the suggestion to build something I would be passionate about. Following his advice, I decided to build EV Engine, an Ocean Rendering application. 
+A wise man at [Nixxes](https://www.nixxes.com/) gave me the suggestion to build something I would be passionate about. Following his advice, I decided to build EV Engine, an Ocean Rendering application. 
 The application's purpose is to help my dad's company simulate the carribean seas as a background for their architectural 
 renders. On top of that, I hope it can play a small part in advancing the digital scene of my island.
 
