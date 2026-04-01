@@ -4,7 +4,8 @@ title: "Voxel Software Raytracer"
 subtitle: "Timethy Hyman"
 date: 2024-02-23
 thumbnail: /assets/img/projects/Y1Raytracer/sphereGLASS.webp
-summary: "👥 1 developer | A raytracer fully developed on the CPU."
+summary_meta: "👥 1 developer | ⏱️ 8 weeks"
+summary: "A raytracer fully developed on the CPU."
 tags:
   - University Project
   - Custom Engine

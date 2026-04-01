@@ -4,7 +4,8 @@ title: "Wasteland Walkers"
 subtitle: "Timethy Hyman"
 date: 2024-06-23
 thumbnail: /assets/img/projects/Y1D/thumb.webp
-summary: "👥 12 developers | Maneuver through the desert wasteland in search of the Oasis"
+summary_meta: "👥 12 developers | ⏱️ 8 weeks"
+summary: "Maneuver through the desert wasteland in search of the Oasis"
 tags:
   - Unreal Engine
   - University Project

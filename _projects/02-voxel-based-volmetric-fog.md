@@ -4,7 +4,8 @@ title: "Voxel based Volumetric Fog"
 subtitle: "Timethy Hyman"
 date: 2026-01-23
 thumbnail: /assets/img/projects/Traverse/fogTree.webp
-summary: "👥 1 developer | Real-time volumetric fog with god rays using froxel-based techniques"
+summary_meta: "👥 1 developer | ⏱️ ongoing"
+summary: "Real-time volumetric fog with god rays using froxel-based techniques"
 tags:
   - Traverse Research
   - DX12

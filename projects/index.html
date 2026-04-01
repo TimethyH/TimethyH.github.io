@@ -135,6 +135,9 @@ permalink: /projects/
               </h6>
               {% endif %}
               
+              {% if project.summary_meta %}
+              <p class="card-text project-meta">{{ project.summary_meta }}</p>
+              {% endif %}
               {% if project.summary %}
               <p class="card-text">{{ project.summary }}</p>
               {% endif %}

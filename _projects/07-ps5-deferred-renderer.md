@@ -4,7 +4,8 @@ title: "Deferred Rendering on PS5"
 subtitle: "Timethy Hyman"
 date: 2024-09-23
 thumbnail: /assets/img/helmet.webp
-summary: "👥 1 developer | My first rendering project."
+summary_meta: "👥 1 developer | ⏱️ 8 weeks"
+summary: "My first rendering project. Deferred rendering implementation with IBL and ECS"
 blog_url: /blog/deferred-implementation/
 tags:
   - University Project

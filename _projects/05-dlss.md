@@ -4,7 +4,8 @@ title: "DLSS Integration"
 subtitle: "Timethy Hyman"
 date: 2025-07-23
 thumbnail: /assets/img/projects/Traverse/dlss.jpg
-summary: "👥 1 developer | Integrating DLSS into the Traverse framework"
+summary_meta: "👥 1 developer | ⏱️ 8 weeks"
+summary: "Integrating DLSS into the Traverse framework"
 tags:
   - Traverse Research
   - Custom Engine

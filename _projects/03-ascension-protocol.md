@@ -4,7 +4,8 @@ title: "Ascension Protocol - VR"
 subtitle: "Timethy Hyman"
 date: 2025-06-27
 thumbnail: /assets/img/projects/Y2VR/VR.webp
-summary: "👥 9 developers | VR game fully made in our own custom engine."
+summary_meta: "👥 9 developers | ⏱️ 8 weeks "
+summary: "VR game fully made in our own custom engine."
 tags:
   - University Project
   - Custom Engine

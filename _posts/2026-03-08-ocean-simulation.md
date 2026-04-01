@@ -625,12 +625,14 @@ slopeTexture[dispatchThreadID.xy] = float4(htildeSlopeX, htildeSlopeZ);
 
 With this, we now have the heightfield, horizontal displacement and slopes, all calculated in the frequency domain. The last step is to transform this data to the spatial domain.
 
-{% comment %}
 
 <!-- [ Explain how animate_waves.hlsl works — the dispersion relation ω = √(g·k), Euler's formula for complex exponentials, and why you accumulate total time rather than per-frame deltaTime. ] -->
 
 ### 1.5 The Butterfly FFT
 
+To be continued...
+
+{% comment %}
 A 2D IFFT converts the frequency-domain spectrum into a real-space displacement field each frame. The FFT is implemented as a GPU compute shader using the Cooley-Tukey butterfly algorithm.
 
 <!-- [ Walk through the FFT pipeline — bit-reversal permutation, twiddle factor calculation, ping-pong buffers to avoid race conditions, row pass then column pass, and the final checkerboard permutation. ] -->

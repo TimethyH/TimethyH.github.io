@@ -4,7 +4,8 @@ title: "Raytracing in Godot"
 subtitle: "Timethy Hyman"
 date: 2025-09-23
 thumbnail: /assets/img/projects/GodotRT/home.webp
-summary: "👥 3 developers | Godot Raytracing Extension"
+summary_meta: "👥 3 developers | ⏱️ 8 weeks"
+summary: "Godot Raytracing Extension"
 tags:
   - Personal Project
   - Vulkan
