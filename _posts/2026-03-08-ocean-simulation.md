@@ -1095,12 +1095,9 @@ All three IBL assets are computed as GPU compute dispatches during `Init()` befo
 
 ## References
 
-1. Tessendorf, J. (2001). *Simulating Ocean Water.* SIGGRAPH Course Notes.
-2. NVIDIA. (2015). *Ocean Surface Simulation.* CGDC 2015.
-3. FXGuide. (2012). *The Technology Behind Assassin's Creed III's Ocean.*
-4. GarrettGunnell. [FFT Water (Unity)](https://github.com/GarrettGunnell/Water). GitHub.
-5. gasgiant. [FFT-Ocean (Unity)](https://github.com/gasgiant/FFT-Ocean). GitHub.
-6. Losasso, F. & Hoppe, H. (2004). *Geometry Clipmaps: Terrain Rendering Using Nested Regular Grids.* SIGGRAPH 2004.
-7. Strugar, F. (2010). *Continuous Distance-Dependent Level of Detail for Rendering Heightmaps (CDLOD).*
-8. Karis, B. (2013). *Real Shading in Unreal Engine 4.* SIGGRAPH 2013.
-9. Bolba, G. Ocean rendering blog post.
+1. [Tessendorf, J. (2001)](https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf). *Simulating Ocean Water.* SIGGRAPH Course Notes.
+2. [Christopher J. Horvath](https://dl.acm.org/doi/epdf/10.1145/2791261.2791267)
+2. [GarrettGunnell.] (https://github.com/GarrettGunnell/Water). GitHub.
+3. [gasgiant.] (https://github.com/gasgiant/FFT-Ocean). GitHub.
+4. [Fynn-Jorin Flügge.](https://tore.tuhh.de/bitstream/11420/1439/1/GPGPU_FFT_Ocean_Simulation.pdf)
+9. Bolba, G. [Ocean rendering blog post.](https://gikster.dev/posts/Ocean-Simulation/)
