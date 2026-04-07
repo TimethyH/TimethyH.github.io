@@ -770,7 +770,6 @@ When `columnPass` is 0, each thread group processes one row. When `columnPass` i
 <summary>  The complete FFT shader </summary>
 
 <pre><code class="cpp">
-
 cbuffer Constants : register(b0)
 {
     uint columnPass;
@@ -793,9 +792,9 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
 {
     float4 data;
     if (columnPass)
-        data = outputTexture.Load(int3(groupID.x, groupIndex, 0)); // column: x fixed, y varies
+        data = outputTexture.Load(int3(groupID.x, groupIndex, 0));
     else
-        data = outputTexture.Load(int3(groupIndex, groupID.x, 0)); // row: x varies, y fixed
+        data = outputTexture.Load(int3(groupIndex, groupID.x, 0));
 
     bufferRG[0][groupIndex] = data.rg;
     bufferBA[0][groupIndex] = data.ba;
@@ -829,7 +828,6 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
     else
         outputTexture[int2(groupIndex, groupID.x)] = float4(resultRG, resultBA);
 }
-
 </code></pre>
 
 </details>
@@ -838,7 +836,7 @@ Putting all this together, after both passes complete we have converted our wave
 
 ## Permuting the FFT
 
-The last thing we need to do before we have valid slope and displacement data is to create a texture which stores the data in the correct order.
+The last thing we need to do before we have valid slope and displacement data is to create a texture for each of them which stores the data in the correct order.
 
 
 
