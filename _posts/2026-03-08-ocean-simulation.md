@@ -770,8 +770,6 @@ When `columnPass` is 0, each thread group processes one row. When `columnPass` i
 <summary>  The complete FFT shader </summary>
 
 <pre><code class="cpp">
-#define TOTALPOINTS 512
-#define PI 3.14159265359f
 
 cbuffer Constants : register(b0)
 {
