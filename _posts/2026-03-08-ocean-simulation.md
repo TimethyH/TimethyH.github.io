@@ -673,7 +673,7 @@ $$W_N^k = e^{-i \frac{2\pi}{N} k}$$
 
 This is a point on the unit circle in the complex plane, a rotation by $k$ steps of $\frac{2\pi}{N}$ radians. In the shader this is computed as:
 
-<pre><code class="cpp">
+<pre><code class="language-cpp">
 float angle = -2.0f * PI * float(w) / float(TOTALPOINTS);
 float2 twiddle = float2(cos(angle), -sin(angle));
 </code></pre>
@@ -699,7 +699,7 @@ which is $O(N \log N)$.
 
 In the shader this is the outer loop:
 
-<pre><code class="cpp">
+<pre><code class="language-cpp">
 for (uint stage = 0; stage < log2(TOTALPOINTS); ++stage)
 </code></pre>
 
@@ -713,7 +713,7 @@ Each iteration is one full stage, $N/2$ butterflies, all executing in parallel a
 
 Each stage reads from the previous stage's output and writes its results somewhere else, you cannot read and write the same memory simultaneously on the GPU. The shader handles this with a double buffer and a flag that alternates each stage:
 
-<pre><code class="cpp">
+<pre><code class="language-cpp">
 groupshared float2 bufferRG[2][TOTALPOINTS];
 groupshared float2 bufferBA[2][TOTALPOINTS];
 
@@ -739,7 +739,7 @@ For the butterfly stages to chain correctly, the input samples need to be fed in
 
 Garrett Gunnell takes a slightly different approach and skips the separate permutation pass entirely. Instead, the bit reversal is folded into the butterfly index arithmetic directly. At each stage, each thread computes the correct source indices on the fly:
 
-<pre><code class="cpp">
+<pre><code class="language-cpp">
 uint b = TOTALPOINTS >> (stage + 1);
 uint w = b * (groupIndex / b);
 uint i = (w + groupIndex) % TOTALPOINTS;
@@ -754,7 +754,7 @@ uint i = (w + groupIndex) % TOTALPOINTS;
 
 A 2D FFT on an $N \times N$ texture is separable. You run the 1D FFT on every row, then run the 1D FFT on every column of the result. The shader handles both passes with a single `columnPass` constant:
 
-<pre><code class="cpp">
+<pre><code class="language-cpp">
 if (columnPass)
     data = outputTexture.Load(int3(groupID.x, groupIndex, 0));
 else
@@ -769,7 +769,10 @@ When `columnPass` is 0, each thread group processes one row. When `columnPass` i
 <details>
 <summary>  The complete FFT shader </summary>
 
-<pre><code class="cpp">
+<pre><code class="language-cpp">
+#define TOTALPOINTS 512
+#define PI 3.14159265359f
+
 cbuffer Constants : register(b0)
 {
     uint columnPass;
@@ -792,9 +795,9 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
 {
     float4 data;
     if (columnPass)
-        data = outputTexture.Load(int3(groupID.x, groupIndex, 0));
+        data = outputTexture.Load(int3(groupID.x, groupIndex, 0)); // column: x fixed, y varies
     else
-        data = outputTexture.Load(int3(groupIndex, groupID.x, 0));
+        data = outputTexture.Load(int3(groupIndex, groupID.x, 0)); // row: x varies, y fixed
 
     bufferRG[0][groupIndex] = data.rg;
     bufferBA[0][groupIndex] = data.ba;
@@ -830,6 +833,7 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
 }
 </code></pre>
 
+
 </details>
 
 Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
@@ -837,6 +841,7 @@ Putting all this together, after both passes complete we have converted our wave
 ## Permuting the FFT
 
 The last thing we need to do before we have valid slope and displacement data is to create a texture for each of them which stores the data in the correct order.
+
 
 
 
