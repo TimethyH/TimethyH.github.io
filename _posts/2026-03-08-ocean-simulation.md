@@ -819,12 +819,68 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
 
 Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
 
-## Permuting the FFT
+## Permuting the FFT Output
 
-The last thing we need to do before we have valid slope and displacement data is to create a texture for each of them which stores the data in the correct order.
+Before we can use the FFT results, we need to apply two final steps: centering the output and unpacking our signals.
+
+### Centering the spectrum
+
+The raw FFT output places the zero frequency component in the corner of the texture. For our ocean patch this means the waves are arranged awkwardly, with the lowest frequencies split across opposite corners. We fix this by the following permute function:
+
+<pre><code class="language-cpp">
+float4 Permute(float4 data, float3 id)
+{
+    return data * (1.0f - 2.0f * ((id.x + id.y) % 2));
+}
+</code></pre>
+
+This flips the sign of every other texel in a checkerboard pattern, which has the effect of shifting the zero frequency component from the corner to the center. After this step the wave frequencies are arranged symmetrically, which is what we need for a correct tileable patch.
+
+### Unpacking the signals
+
+Back in the wave animation pass we packed multiple signals into two float4 textures to save GPU passes. Now we unpack them:
+
+<pre><code class="language-hlsl">
+float2 dxdz   = htildeDisplacement.rg;  // horizontal displacement in X and Z
+float2 dydxz  = htildeDisplacement.ba;  // vertical displacement Y, and the Dxz cross derivative
+float2 dyxdyz = htildeSlope.rg;         // surface slopes in X and Z, used for normals
+float2 dxxdzz = htildeSlope.ba;         // second derivatives Dxx and Dzz, used for the Jacobian (Expanded upon in Chapter 3)
+</code></pre>
+
+### Applying choppiness
+
+The horizontal displacements are scaled by a factor called Lambda before being applied to the mesh. Lambda controls how choppy the waves look. A value of 0 gives smooth rolling swells, higher values push the wave crests forward to create the sharp peaked shapes you see on a real ocean surface.
+
+<pre><code class="language-hlsl">
+float3 displacement = float3(Lambda.x * dxdz.x, dydxz.x, Lambda.y * dxdz.y);
+</code></pre>
+
+The slopes used for normal calculation get a Lambda correction too. In areas of strong horizontal displacement the surface is being stretched and compressed, which would cause the normal map to produce incorrect results without accounting for it:
+
+<pre><code class="language-hlsl">
+float2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * Lambda));
+</code></pre>
+
+Finally we store this data in their corresponding textures:
+
+<pre><code class="language-hlsl">
+slopeTexture[dispatchThreadID.xy] = float4(slopes, 0.0f, 1.0f);
+displacementTexture[dispatchThreadID.xy] = float4(displacement, 0.0f);
+</code></pre>
+
+With this, the hard part is behind us. Take a look at the contents of the texture, it should look something like this:
 
 
+<div class="centered">
+  <img src="/assets/img/posts/OceanRender/slope.webp" alt="Slope texture">
+</div>
 
+<div class="centered">
+  <img src="/assets/img/posts/OceanRender/displace.webp" alt="Displacement texture">
+</div>
+
+
+You've succesfully created the slope and displacement textures! In the next chapter I will show you how to use these textures to render the Ocean.
 
 {% comment %}
 A 2D IFFT converts the frequency-domain spectrum into a real-space displacement field each frame. The FFT is implemented as a GPU compute shader using the Cooley-Tukey butterfly algorithm.
