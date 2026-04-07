@@ -630,7 +630,219 @@ With this, we now have the heightfield, horizontal displacement and slopes, all 
 
 ### 1.5 The Butterfly FFT
 
-To be continued...
+## Understanding the FFT
+
+The ocean simulation depends on converting a frequency domain wave spectrum into real displacement values every frame. That conversion is an Inverse Fast Fourier Transform. In this section I will explain the idea behind this transformation and how it works. To not make this article too long/complex, I will not go too much into detail since understanding it fully is not required to make it work. If you are brave enough you can dive deeper and read the paper by [Flugge](https://tore.tuhh.de/bitstream/11420/1439/1/GPGPU_FFT_Ocean_Simulation.pdf) and [Matusiak](https://www.ti.com/lit/an/spra291/spra291.pdf?ts=1607161475507&ref_url=https%3A%2F%2Fwww.google.com%2F).
+
+
+<details>
+<summary>  The DFT: correct but slow </summary>
+
+The Discrete Fourier Transform is defined as:  
+
+$$F[k] = \sum_{n=0}^{N-1} f[n] \cdot e^{-i \frac{2\pi}{N} kn}$$
+
+For each output frequency $k$, you multiply every input sample $f[n]$ by a complex rotation factor and sum the results. If you have $N$ samples and $N$ output frequencies, that is $N$ multiplications per output and $N$ outputs. A total of $N^2$ operations. For $N = 512$ that is 262,144 complex multiplications per row, per column, per frame. That is not viable in real time.
+
+The FFT computes the exact same result in $O(N \log N)$ time. For $N = 512$ that is roughly 4,608 operations. The result is identical.
+
+***The key insight: reuse***
+
+Consider $N = 4$. Since $e^{-i\pi/2} = -i$, the twiddle factor simplifies to $(-i)^{kn}$, and the four outputs expand to:
+
+$$F[0] = f[0] + f[1] + f[2] + f[3]$$
+$$F[1] = f[0] - if[1] - f[2] + if[3]$$
+$$F[2] = f[0] - f[1] + f[2] - f[3]$$
+$$F[3] = f[0] + if[1] - f[2] - if[3]$$
+
+Look at $F[0]$ and $F[2]$. Both contain $f[0] + f[2]$ and $f[1] + f[3]$, just combined differently. Look at $F[1]$ and $F[3]$. Both contain $f[0] - f[2]$ and $f[1] - f[3]$. The naive DFT computes each output independently, so it recomputes these components four separate times. The FFT computes them once and reuses them across all outputs. This is the entire idea.
+
+</details>
+
+<details>
+<summary>  The butterfly </summary>
+
+The reusable building block is called a butterfly. Given two complex numbers $a$ and $b$ and a twiddle factor $W$, one butterfly produces:
+
+$$A = a + W \cdot b$$
+$$B = a - W \cdot b$$
+
+One addition and one subtraction, both reading from the same two inputs. For general $N$ the twiddle factor is:
+
+$$W_N^k = e^{-i \frac{2\pi}{N} k}$$
+
+This is a point on the unit circle in the complex plane, a rotation by $k$ steps of $\frac{2\pi}{N}$ radians. In the shader this is computed as:
+
+<pre><code class="cpp">
+float angle = -2.0f * PI * float(w) / float(TOTALPOINTS);
+float2 twiddle = float2(cos(angle), -sin(angle));
+</code></pre>
+
+That is $W_N^w$ written in real and imaginary components.
+
+</details>
+
+<details>
+<summary>  The Stages </summary>
+
+For $N = 4$ the FFT runs in two stages:
+
+**Stage 1** runs two butterflies, one on $f[0], f[2]$ and one on $f[1], f[3]$. This produces four intermediate values.
+
+**Stage 2** feeds those intermediate values into two more butterflies to produce the final outputs $F[0], F[1], F[2], F[3]$.
+
+For general $N$ there are $\log_2 N$ stages, and each stage runs $N/2$ butterflies. Total work is therefore:
+
+$$\frac{N}{2} \times \log_2 N$$
+
+which is $O(N \log N)$.
+
+In the shader this is the outer loop:
+
+<pre><code class="cpp">
+for (uint stage = 0; stage < log2(TOTALPOINTS); ++stage)
+</code></pre>
+
+Each iteration is one full stage, $N/2$ butterflies, all executing in parallel across the thread group.
+
+</details>
+
+<details>
+<summary>  Ping pong buffers </summary>
+
+
+Each stage reads from the previous stage's output and writes its results somewhere else, you cannot read and write the same memory simultaneously on the GPU. The shader handles this with a double buffer and a flag that alternates each stage:
+
+<pre><code class="cpp">
+groupshared float2 bufferRG[2][TOTALPOINTS];
+groupshared float2 bufferBA[2][TOTALPOINTS];
+
+uint flag = 0;
+for (uint stage = 0; stage < log2(TOTALPOINTS); ++stage)
+{
+    bufferRG[1 - flag][groupIndex] = bufferRG[flag][i] + complex_multiply(twiddle, bufferRG[flag][i + b]);
+    flag = 1 - flag;
+    GroupMemoryBarrierWithGroupSync();
+}
+</code></pre>
+
+Stage 0 reads from buffer 0, writes to buffer 1. Stage 1 reads from buffer 1, writes to buffer 0. This alternates for all $\log_2 N$ stages. The final result sits in whichever buffer `flag` points to after the loop.
+
+The two buffer pairs, `bufferRG` and `bufferBA` exist because the shader processes two complex signals simultaneously, packed into the four channels of a `float4` texture. This halves the number of texture reads and compute passes needed.
+
+</details>
+
+<details>
+<summary>  Bit Reversal </summary>
+
+For the butterfly stages to chain correctly, the input samples need to be fed in a specific order before stage 0. That order is bit reversal of the index, where the binary representation of each index is reversed and samples are shuffled accordingly. Index 1 (`001`) swaps with index 4 (`100`), for example. This reordering is a known property of the Cooley-Tukey Radix-2 algorithm, and the paper handles it as a separate permutation pass before the FFT runs.
+
+Garrett Gunnell takes a slightly different approach and skips the separate permutation pass entirely. Instead, the bit reversal is folded into the butterfly index arithmetic directly. At each stage, each thread computes the correct source indices on the fly:
+
+<pre><code class="cpp">
+uint b = TOTALPOINTS >> (stage + 1);
+uint w = b * (groupIndex / b);
+uint i = (w + groupIndex) % TOTALPOINTS;
+</code></pre>
+
+`i` and `i + b` are the two input positions for this thread's butterfly. Rather than pre shuffling the data once upfront, the shader just reaches into the buffer at the correct positions at every stage. The end result is exactly the same, the reordering still happens, it is just computed inline rather than as a separate dispatch.
+
+</details>
+
+<details>
+<summary>  2 Passes: Rows then columns </summary>
+
+A 2D FFT on an $N \times N$ texture is separable. You run the 1D FFT on every row, then run the 1D FFT on every column of the result. The shader handles both passes with a single `columnPass` constant:
+
+<pre><code class="cpp">
+if (columnPass)
+    data = outputTexture.Load(int3(groupID.x, groupIndex, 0));
+else
+    data = outputTexture.Load(int3(groupIndex, groupID.x, 0));
+</code></pre>
+
+When `columnPass` is 0, each thread group processes one row. When `columnPass` is 1, it processes one column. The dispatch is called twice from the CPU with the constant toggled between passes.
+
+</details>
+
+
+<details>
+<summary>  The complete FFT shader </summary>
+
+<pre><code class="cpp">
+#define TOTALPOINTS 512
+#define PI 3.14159265359f
+
+cbuffer Constants : register(b0)
+{
+    uint columnPass;
+}
+
+RWTexture2D<float4> outputTexture : register(u0);
+
+float2 complex_multiply(float2 a, float2 b)
+{
+    return float2(a.x * b.x - a.y * b.y,
+                  a.x * b.y + a.y * b.x);
+}
+
+groupshared float2 bufferRG[2][TOTALPOINTS];
+groupshared float2 bufferBA[2][TOTALPOINTS];
+
+
+[numthreads(TOTALPOINTS, 1, 1)]
+void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
+{
+    float4 data;
+    if (columnPass)
+        data = outputTexture.Load(int3(groupID.x, groupIndex, 0)); // column: x fixed, y varies
+    else
+        data = outputTexture.Load(int3(groupIndex, groupID.x, 0)); // row: x varies, y fixed
+
+    bufferRG[0][groupIndex] = data.rg;
+    bufferBA[0][groupIndex] = data.ba;
+
+    GroupMemoryBarrierWithGroupSync();
+    
+    uint flag = 0;
+    for (uint stage = 0; stage < log2(TOTALPOINTS); ++stage)
+    {
+        uint b = TOTALPOINTS >> (stage + 1);
+        uint w = b * (groupIndex / b);
+        uint i = (w + groupIndex) % TOTALPOINTS;
+
+        // rotation = e^2 * pi * i * t, this is counterclockwise roation, fft requires clockwise.
+		// you scale an amplitude by this rotation over time
+        float angle = -2.0f * PI * float(w) / float(TOTALPOINTS);
+        float2 twiddle = float2(cos(angle), -sin(angle));
+
+        bufferRG[1 - flag][groupIndex] = bufferRG[flag][i] + complex_multiply(twiddle, bufferRG[flag][i + b]);
+        bufferBA[1 - flag][groupIndex] = bufferBA[flag][i] + complex_multiply(twiddle, bufferBA[flag][i + b]);
+
+        flag = 1 - flag;
+        GroupMemoryBarrierWithGroupSync();
+    }
+
+    float2 resultRG = bufferRG[flag][groupIndex];
+    float2 resultBA = bufferBA[flag][groupIndex];
+
+    if (columnPass)
+        outputTexture[int2(groupID.x, groupIndex)] = float4(resultRG, resultBA);
+    else
+        outputTexture[int2(groupIndex, groupID.x)] = float4(resultRG, resultBA);
+}
+</code></pre>
+
+
+</details>
+
+Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
+
+## Permuting the FFT
+
+The last thing we need to do before we have valid slope and displacement data is to create a texture which stores the data in the correct order.
+
+
 
 {% comment %}
 A 2D IFFT converts the frequency-domain spectrum into a real-space displacement field each frame. The FFT is implemented as a GPU compute shader using the Cooley-Tukey butterfly algorithm.
