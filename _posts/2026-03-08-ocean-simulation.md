@@ -811,7 +811,6 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
         uint w = b * (groupIndex / b);
         uint i = (w + groupIndex) % TOTALPOINTS;
 
-        // rotation = e^2 * pi * i * t, this is counterclockwise roation, fft requires clockwise.
 		// you scale an amplitude by this rotation over time
         float angle = -2.0f * PI * float(w) / float(TOTALPOINTS);
         float2 twiddle = float2(cos(angle), -sin(angle));
@@ -832,8 +831,6 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
         outputTexture[int2(groupIndex, groupID.x)] = float4(resultRG, resultBA);
 }
 </code></pre>
-
-
 </details>
 
 Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
