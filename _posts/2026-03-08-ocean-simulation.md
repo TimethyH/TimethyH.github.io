@@ -769,26 +769,9 @@ When `columnPass` is 0, each thread group processes one row. When `columnPass` i
 <details>
 <summary>  The complete FFT shader </summary>
 
-```cpp
-#define TOTALPOINTS 512
-#define PI 3.14159265359f
-
-cbuffer Constants : register(b0)
-{
-    uint columnPass;
-}
-
-RWTexture2D<float4> outputTexture : register(u0);
-
-float2 complex_multiply(float2 a, float2 b)
-{
-    return float2(a.x * b.x - a.y * b.y,
-                  a.x * b.y + a.y * b.x);
-}
-
+<pre><code class="language-cpp">
 groupshared float2 bufferRG[2][TOTALPOINTS];
 groupshared float2 bufferBA[2][TOTALPOINTS];
-
 
 [numthreads(TOTALPOINTS, 1, 1)]
 void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_GroupID, uint groupIndex : SV_GroupIndex)
@@ -811,7 +794,6 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
         uint w = b * (groupIndex / b);
         uint i = (w + groupIndex) % TOTALPOINTS;
 
-		// you scale an amplitude by this rotation over time
         float angle = -2.0f * PI * float(w) / float(TOTALPOINTS);
         float2 twiddle = float2(cos(angle), -sin(angle));
 
@@ -830,7 +812,9 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
     else
         outputTexture[int2(groupIndex, groupID.x)] = float4(resultRG, resultBA);
 }
-```
+
+</code></pre>
+
 </details>
 
 Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
