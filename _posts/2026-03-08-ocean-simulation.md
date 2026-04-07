@@ -769,7 +769,7 @@ When `columnPass` is 0, each thread group processes one row. When `columnPass` i
 <details>
 <summary>  The complete FFT shader </summary>
 
-<pre><code class="language-cpp">
+```cpp
 #define TOTALPOINTS 512
 #define PI 3.14159265359f
 
@@ -830,9 +830,7 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
     else
         outputTexture[int2(groupIndex, groupID.x)] = float4(resultRG, resultBA);
 }
-</code></pre>
-</code></pre>
-</code></pre>
+```
 </details>
 
 Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
