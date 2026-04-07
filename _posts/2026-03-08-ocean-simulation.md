@@ -831,8 +831,8 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
     else
         outputTexture[int2(groupIndex, groupID.x)] = float4(resultRG, resultBA);
 }
-</code></pre>
 
+</code></pre>
 
 </details>
 
