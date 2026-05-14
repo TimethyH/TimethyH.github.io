@@ -840,7 +840,7 @@ This flips the sign of every other texel in a checkerboard pattern, which has th
 
 Back in the wave animation pass we packed multiple signals into two float4 textures to save GPU passes. Now we unpack them:
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 float2 dxdz   = htildeDisplacement.rg;  // horizontal displacement in X and Z
 float2 dydxz  = htildeDisplacement.ba;  // vertical displacement Y, and the Dxz cross derivative
 float2 dyxdyz = htildeSlope.rg;         // surface slopes in X and Z, used for normals
@@ -851,19 +851,19 @@ float2 dxxdzz = htildeSlope.ba;         // second derivatives Dxx and Dzz, used 
 
 The horizontal displacements are scaled by a factor called Lambda before being applied to the mesh. Lambda controls how choppy the waves look. A value of 0 gives smooth rolling swells, higher values push the wave crests forward to create the sharp peaked shapes you see on a real ocean surface.
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 float3 displacement = float3(Lambda.x * dxdz.x, dydxz.x, Lambda.y * dxdz.y);
 </code></pre>
 
 The slopes used for normal calculation get a Lambda correction too. In areas of strong horizontal displacement the surface is being stretched and compressed, which would cause the normal map to produce incorrect results without accounting for it:
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 float2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * Lambda));
 </code></pre>
 
 Finally we store this data in their corresponding textures:
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 slopeTexture[dispatchThreadID.xy] = float4(slopes, 0.0f, 1.0f);
 displacementTexture[dispatchThreadID.xy] = float4(displacement, 0.0f);
 </code></pre>
@@ -893,7 +893,7 @@ At this point we have two textures coming out of the permute pass: a displacemen
 
 The ocean mesh is just a flat grid of vertices. In the vertex shader, each vertex samples the displacement texture and adds the result to its position. The UV coordinates are derived from world-space position divided by the patch size.
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 float2 uv = data.Position.xz / patchSize;
 
 float3 displacement = DisplacementTexture.SampleLevel(linearWrapSampler, uv, 0).rgb;
@@ -907,7 +907,7 @@ Make sure you use a **WRAP** sampler here, not CLAMP. With CLAMP, every vertex o
 
 In the pixel shader, sample the slope texture using the same world-space UV. Reconstructing the surface normal from the slopes is a single line:
 
-<pre><code class="language-hlsl">
+<pre><code class="language-cpp">
 float2 uv = IN.PositionWS.xz / patchSize;
 float4 slope = SlopeTexture.Sample(anisotropicSampler, uv);
 float3 normal = normalize(float3(-slope.x, 1.0f, -slope.y));
@@ -1116,7 +1116,7 @@ All three IBL assets are computed as GPU compute dispatches during `Init()` befo
 
 1. [Tessendorf, J. (2001)](https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf). *Simulating Ocean Water.* SIGGRAPH Course Notes.
 2. [Christopher J. Horvath](https://dl.acm.org/doi/epdf/10.1145/2791261.2791267)
-2. [GarrettGunnell.] (https://github.com/GarrettGunnell/Water). GitHub.
-3. [gasgiant.] (https://github.com/gasgiant/FFT-Ocean). GitHub.
+2. [GarrettGunnell](https://github.com/GarrettGunnell/Water).
+3. [gasgiant](https://github.com/gasgiant/FFT-Ocean).
 4. [Fynn-Jorin Flügge.](https://tore.tuhh.de/bitstream/11420/1439/1/GPGPU_FFT_Ocean_Simulation.pdf)
 9. Bolba, G. [Ocean rendering blog post.](https://gikster.dev/posts/Ocean-Simulation/)
