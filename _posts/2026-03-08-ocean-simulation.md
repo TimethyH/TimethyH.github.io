@@ -882,32 +882,49 @@ With this, the hard part is behind us. Take a look at the contents of the textur
 
 You've succesfully created the slope and displacement textures! In the next chapter I will show you how to use these textures to render the Ocean.
 
-{% comment %}
-A 2D IFFT converts the frequency-domain spectrum into a real-space displacement field each frame. The FFT is implemented as a GPU compute shader using the Cooley-Tukey butterfly algorithm.
-
-<!-- [ Walk through the FFT pipeline — bit-reversal permutation, twiddle factor calculation, ping-pong buffers to avoid race conditions, row pass then column pass, and the final checkerboard permutation. ] -->
-
-<!-- STRUGGLE TO MENTION:
-- Checkerboard artifacts caused by a missing UAV barrier after the vertical FFT dispatch in DX12.
-- Double-buffer race conditions requiring the ping-pong approach.
-- Stack overflow from large stack-allocated complex arrays in GenerateH0 — fixed by moving to heap vectors.
-- Incorrect normalization (dividing by N instead of N² for 2D IFFT) producing flat output. -->
-
 ---
 
 
 ## Chapter 2 Rendering & Shading
 
-### 2.1 Physically-Based Shading (PBR)
+### 2.1 Vertex Displacement
 
-The ocean surface is shaded using a full PBR BRDF:
-- **GGX** normal distribution function
-- **Smith** geometry function (shadowing-masking)  
-- **Fresnel-Schlick** approximation
+At this point we have two textures coming out of the permute pass: a displacement texture and a slope texture. The displacement texture holds the XYZ offset to apply to each vertex. The slope texture holds the surface derivatives we need to reconstruct the surface normal in the pixel shader.
 
-<!-- [ Briefly explain each term and why they suit water — GGX's long specular tail matches the sharp sun glints seen on a real ocean. Discuss your roughness and metallic values. ] -->
+The ocean mesh is just a flat grid of vertices. In the vertex shader, each vertex samples the displacement texture and adds the result to its position. The UV coordinates are derived from world-space position divided by the patch size.
 
-<!-- STRUGGLE TO MENTION: Early specular was broken because world-space normals were being dotted with view-space vectors — a coordinate-space mismatch producing dark spots across the surface. -->
+<pre><code class="language-hlsl">
+float2 uv = data.Position.xz / patchSize;
+
+float3 displacement = DisplacementTexture.SampleLevel(linearWrapSampler, uv, 0).rgb;
+
+displacedPosition += displacement;
+</code></pre>
+
+Make sure you use a **WRAP** sampler here, not CLAMP. With CLAMP, every vertex outside the [0,1] UV range samples the border value and you end up with a completely flat ocean.
+
+### 2.2 Normal Reconstruction & Shading
+
+In the pixel shader, sample the slope texture using the same world-space UV. Reconstructing the surface normal from the slopes is a single line:
+
+<pre><code class="language-hlsl">
+float2 uv = IN.PositionWS.xz / patchSize;
+float4 slope = SlopeTexture.Sample(anisotropicSampler, uv);
+float3 normal = normalize(float3(-slope.x, 1.0f, -slope.y));
+</code></pre>
+
+This gives you a smooth normal that captures all the surface detail baked into the slope texture. From here you can use this normal however you like, whether that is a simple diffuse and specular shading model or a full PBR setup. My implementation uses PBR with GGX specular, Image Based Lighting and a subsurface scattering approximation at wave crests, all of which I may cover in a future post.
+
+If everything is wired up correctly you should have a shaded animated ocean.
+
+<div class="centered">
+  <video width="100%" controls autoplay loop muted playsinline>
+    <source src="/assets/img/posts/OceanRender/topDown.mp4" type="video/mp4">
+  </video>
+</div>
+
+
+{% comment %}
 
 ### 2.2 Image-Based Lighting (IBL) — Split-Sum Approximation
 
@@ -948,6 +965,8 @@ float3 sss = (1 - fresnel) * k1 * scatteredColor * DirectionalLights[0].Color;
 <!-- [ Describe each term: the backscatter factor (dot(L,-V)^4), the surface orientation factor, and why the (1–fresnel) weighting maintains energy conservation. Reference the GDC 2019 paper / GarrettGunnell shader. ] -->
 
 <!-- CHALLENGE: The vertex shader was initially passing incorrect height data to the pixel shader — WaveHeight was not being populated from the FFT displacement output. Also explored Beckmann vs GGX NDFs, ultimately kept GGX. -->
+
+
 
 ### 2.4 HDR Pipeline & Tonemapping
 
