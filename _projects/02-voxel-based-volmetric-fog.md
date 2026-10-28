@@ -31,7 +31,6 @@ The system makes use of a froxel based (frustum aligned voxel) data structure to
 - Implemented 3D reprojection technique to reuse existing froxel data across frames
 - Created bidirectional mapping functions for froxel space and screen space coordinates
 
-This project is currently in active development, with ongoing optimizations and feature additions.
 
 </div>
 <div class="project-media" markdown="1">
