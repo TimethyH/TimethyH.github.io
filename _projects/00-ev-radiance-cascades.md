@@ -36,20 +36,16 @@ permalink: /projects/ev-radiance-cascades/
 
 ## Overview
 
-EV Radiance Cascades is a 2D demo of **radiance cascades** running in DX12 compute shaders inside my [EV Engine](/projects/01-EV-Engine/). You paint lights and walls on a 1024×1024 canvas, and the light, with its soft shadows, updates in real time.
+EV Radiance Cascades is a 2D demo of **radiance cascades** running in DX12 compute shaders inside [EV Engine](/projects/01-EV-Engine/). You paint lights and walls on a 1024×1024 canvas, and the light, with its soft shadows, updates in real time.
 
-It is a step towards a bigger goal: EV's **path tracing project**. That project aims for a **spectral path tracer** as a feature of the engine that can be switched on and off. Next to it I want to **learn and fairly compare real-time global illumination (GI) techniques**, such as radiance cascades, DDGI probes, ReSTIR and radiance caches, on both speed and image quality. Radiance cascades will be implemented there **in 3D**, so before touching any 3D ray tracing I built this 2D version first.
-
-In 2D the whole technique fits on one screen. That makes it the cheapest place to learn its core ideas: intervals, cascades, merging and its typical artefact, ringing. I'll need all of those again in 3D.
-
-It runs as an editor panel inside EV, with its own render-graph passes that only run while the panel is enabled.
+This mini project is a step towards a bigger goal. I'm working in EV Engine to create path tracing functionality. That project aims for a **spectral path tracer** as a feature of the engine that can be switched on and off. Next to it I want to **learn and fairly compare real time global illumination (GI) techniques**, such as radiance cascades, DDGI probes, ReSTIR and radiance caches, on both speed and image quality. Radiance cascades will be implemented **in 3D**, to achieve that, I needed to learn its core fundamentals before touching any 3D ray tracing. Afterall, reasoning in 2D is a lot simpler!
 
 ### What I built so far
 
 - A paintable HDR canvas with a light, wall and eraser brush
-- A brute-force **reference** that converges to the ground truth over many frames
+- A brute force **reference** that converges to the ground truth over many frames
 - Six **cascades** of probes, each tracing its own slice of distance
-- Top-down **merging** of the cascades: six dispatches ping-ponging between two textures
+- Top down **merging** of the cascades: six dispatches ping ponging between two textures
 - The final **fluence** pass, plus a difference view against the reference
 
 </div>
@@ -69,7 +65,7 @@ It runs as an editor panel inside EV, with its own render-graph passes that only
 
 ## The idea: split every ray by distance
 
-Brute-force GI sends many rays from every pixel, and the cost grows with the resolution and the number of rays. Radiance cascades build on a simple observation about soft shadows (the **penumbra**):
+Brute force GI sends many rays from every pixel, and the cost grows with the resolution and the number of rays. Radiance cascades builds on a simple observation about soft shadows (the **penumbra**):
 
 - **Close to a point**, the lighting changes quickly from place to place, but only a **few directions** are needed.
 - **Far away**, it changes slowly from place to place, but you need **many directions** to resolve small, distant lights.
@@ -107,11 +103,12 @@ Every cascade is stored in a single 1024² texture, and every GPU thread handles
 - **which interval** it covers (start and end distance of that cascade).
 
 It then marches the canvas pixel by pixel along that interval. It stores the light it found, plus a **transmittance** value: 1 if nothing was hit, 0 if a wall or light blocked the ray.
+Note: These visualizations are made within a project im developing on the side. That project's goal is to create an environment for me where I can visualize my thoughts. It has AI integrated into it so the agent can help me understand topics like this.
 
 <a href="/assets/img/projects/EVPT/board-decode-texel.webp" class="image">
   ![Decoding a cascade texel](/assets/img/projects/EVPT/board-decode-texel.webp)
 </a>
-<p class="media-caption">Explorer I used while building this step: a texel in the cascade texture (left), the ray it means on the canvas (middle) and the decoding maths (bottom)</p>
+<p class="media-caption">A texel in the cascade texture (left) maps to the correlated ray on the canvas (middle) and the decoding maths (bottom)</p>
 
 </div>
 
@@ -132,7 +129,7 @@ The merge is the same maths as **"over" alpha compositing**:
 
 If something was hit nearby (β = 0), everything behind it is blocked. If the interval was empty (β = 1), the far light passes straight through.
 
-Per texel, the shader reads the **4 child directions** of the cascade above (their average is the light through this ray's whole cone) from the **4 nearest upper probes**, blended bilinearly. The six merge passes run top-down through EV's render graph, ping-ponging between two textures so no pass reads and writes the same texture.
+Per texel, the shader reads the **4 child directions** of the cascade above (their average is the light through this ray's whole cone) from the **4 nearest upper probes**, blended bilinearly. The six merge passes run top down through EV's render graph, ping ponging between two textures so no pass reads and writes the same texture.
 
 </div>
 <div class="project-media" markdown="1">
@@ -164,7 +161,7 @@ After merging, every texel of cascade 0 holds the light arriving at its probe th
 - Every pixel blends the **4 nearest probes** bilinearly, so the probe grid doesn't show.
 - A Reinhard tonemap maps the HDR result to the screen.
 
-To check the result I also wrote a **brute-force reference**. Every frame it shoots a few randomly rotated rays per pixel and keeps a running average, so it converges to the ground truth over a few thousand frames. Radiance cascades get a very similar image in a single frame.
+To check the result I also wrote a **brute force reference**. Every frame it shoots a few randomly rotated rays per pixel and keeps a running average, so it converges to the ground truth over a few thousand frames. Radiance cascades get a very similar image in a single frame.
 
 </div>
 <div class="project-media" markdown="1">
@@ -172,7 +169,7 @@ To check the result I also wrote a **brute-force reference**. Every frame it sho
 <a href="/assets/img/projects/EVPT/rc-vs-reference.webp" class="image">
   ![Reference vs radiance cascades](/assets/img/projects/EVPT/rc-vs-reference.webp)
 </a>
-<p class="media-caption">Left: brute-force reference after ~3000 frames. Right: radiance cascades, one frame.</p>
+<p class="media-caption">Left: brute force reference after ~3000 frames. Right: radiance cascades, one frame.</p>
 
 <a href="/assets/img/projects/EVPT/board-fluence.webp" class="image">
   ![Which probes a pixel reads](/assets/img/projects/EVPT/board-fluence.webp)
@@ -192,7 +189,7 @@ To check the result I also wrote a **brute-force reference**. Every frame it sho
 
 The **difference view** shows where radiance cascades disagree with the converged reference: red is too bright, blue is too dark.
 
-The rings around every light are **ringing**, the best-known radiance-cascades artefact. Probes of neighbouring cascades sit at different positions, so the far part of a ray starts from a slightly different point than the near part. Small, bright lights show it most.
+The rings around every light are **ringing**, the best known radiance cascades artifact. Probes of neighbouring cascades sit at different positions, so the far part of a ray starts from a slightly different point than the near part. Small, bright lights show it most.
 
 Fixing this is the next step.
 
