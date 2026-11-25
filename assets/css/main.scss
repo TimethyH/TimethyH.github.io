@@ -717,3 +717,27 @@ details {
 .centered {
   text-align: center;
 }
+
+// Markdown tables inside blog posts: centered on the page, padded cells so
+// columns don't run together, subtle row lines for the dark theme, and space
+// below so the table doesn't touch the image or text that follows.
+#blog-post-container table {
+  margin: 1.5rem auto 2.5rem;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: 0.5rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  th {
+    font-weight: 600;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
