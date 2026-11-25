@@ -32,9 +32,8 @@ So if you've ever looked at an ocean and wondered how films such as [Titanic](ht
 2. [Rendering & Shading](#chapter-2-rendering--shading)
 3. [Foam](#chapter-3-foam)
 4. [Wave Cascades: Multi Scale Detail](#chapter-4-wave-cascades-multi-scale-detail)
-5. [Skybox & Environment](#chapter-5-skybox--environment)
-6. [Major Struggles & Lessons Learned](#chapter-6-major-struggles--lessons-learned)
-7. [Results & Next Steps](#chapter-7-results--next-steps)
+5. [Major Struggles & Lessons Learned](#chapter-5-major-struggles--lessons-learned)
+6. [Results & Next Steps](#chapter-6-results--next-steps)
 
 
 Before we start let me show you what we will be building.
@@ -155,7 +154,7 @@ $\mathbf{k}$ - a 2D wave vector with components $\mathbf{k} = (k_x, k_z)$  <br>
 $k_x = \frac{2\pi n}{L_x}$   <br>
 $k_z = \frac{2\pi m}{L_z}$  <br>
 $n, m$ - integers in the range [$-N/2 \leq n < N/2$] and [$-M/2 \leq m < M/2$].  <br>
-$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and **phase* of the wave at frequency $\mathbf{k}$ and time $t$  <br>
+$\tilde{h}(\mathbf{k}, t)$ - complex amplitude encoding the amplitude and <strong>phase</strong> of the wave at frequency $\mathbf{k}$ and time $t$  <br>
 $N, M$ - the resolution of the FFT grid <br>
 
 </div>
@@ -165,7 +164,7 @@ $N, M$ - the resolution of the FFT grid <br>
 <details>
 <summary>  What is the phase of a wave? </summary>
 
-The phase is the position of a wave within its cycle at any point in time. It is measured in radians, a phase value of 0 means the wave is at its peak, while a phase value of $\frac{\pi}{2}$, means that the wave is halfway between the peak and zero.
+The phase is the position of a wave within its cycle at any point in time. It is measured in radians, a phase value of 0 means the wave is at its peak, a phase value of $\frac{\pi}{2}$ means it has moved a quarter of a cycle on and crosses zero, and at $\pi$ it reaches its lowest point.
 
 </details>
 
@@ -179,7 +178,7 @@ $$\omega = \sqrt{gk}$$
 
 $\omega$ - Angular frequency. How fast the wave oscillates in time (radians/sec)  
 $g$ - Gravitational acceleration (9.81 m/s²)  
-$k$ - The Wavenumber. Waves per meter: $k = \frac{2\pi}{\lambda} $
+$k$ - The Wavenumber, in radians per meter: $k = \frac{2\pi}{\lambda}$, where $\lambda$ is the wavelength
 
 <details>
 <summary>  What is angular frequency? </summary>
@@ -224,7 +223,7 @@ $\omega$ - Angular frequency of the wave being evaluated  <br>
 $\omega_p$ - Peak frequency, the frequency with the most energy  <br>
 $\gamma$ - Peak enhancement factor, controls the sharpness of the spectrum peak  <br>
 $\sigma$ - Width parameter, 0.07 when $\omega \leq \omega_p$ and 0.09 when $\omega > \omega_p$  <br>
-$\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave speed at shallow depths.   <br>
+$\phi_{TMA}$ - TMA shallow water correction factor. Reduces the wave energy at shallow depths.   <br>
 
 </div>
 
@@ -235,12 +234,12 @@ Before diving into each component of the JONSWAP, lets define a struct that will
 	{
 		float scale = 0.0f; // Used to scale the Spectrum [1.0f, 5.0f] 
 		float spreadBlend = 0.0f; // Used to blend between agitated water motion, and windDirection [0.0f, 1.0f]
-		float swell = 0.0f; // Influences wave choppiness, the bigger the swell, the longer the wave length [0.0f, 1.0f]
+		float swell = 0.0f; // Narrows the spread around the wind direction: long, parallel crests [0.0f, 1.0f]
 		float gamma = 0.0f; // Defines the Spectrum Peak [0.0f, 7.0f]
 		float shortWavesFade = 0.0f; // [0.0f, 1.0f]
 
 		float windDirection = 0.0f; // [0.0f, 360.0f]
-		float fetch = 0.0f; // Distance over which Wind impacts Wave Formation [0.0f, 10000.0f]
+		float fetch = 0.0f; // Distance in metres over which Wind impacts Wave Formation [1000.0f, 1000000.0f]
 		float windSpeed = 0.0f; // [0.0f, 100.0f]
 
         // These values get calculated using the metrics above.
@@ -274,7 +273,7 @@ The TMA (Texel Marsen Arsloe) correction is used for the non directional compone
 
 ```cpp
 
-float TMACorrection(float w)
+float TMACorrection(float omega)
 {
     float omegaH = omega * sqrt(OCEAN_DEPTH / 9.81f);
     if (omegaH <= 1.0f)
@@ -492,7 +491,7 @@ A <code>spreadBlend</code> of 0 gives a simple spreading where all wavelengths s
 Two independent Gaussian random numbers give each wave component a unique random phase. The amplitude formula converts the continuous spectrum density into a discrete amplitude value for this specific grid cell, accounting for the cell size `deltaK * deltaK`. Multiplying the random numbers by the amplitude gives us $\tilde{h}_0(\mathbf{k})$, stored as a unique complex number.
 
 **The Conjugate**  
-The conjugate is simply the sign mirror of a complex number. For example the conjugate of $z = a + bi$ is $z = a - bi$. This conjugate is needed since the FFT takes complex numbers as input and produces a complex number as an output too. Our heightfield needs to use real numbers, so using the conjugate we can cancel out the imaginary part of the FFT output, leaving us with only real values. for example:
+The conjugate is simply the sign mirror of a complex number. For example the conjugate of $z = a + bi$ is $z^* = a - bi$. This conjugate is needed since the FFT takes complex numbers as input and produces a complex number as an output too. Our heightfield needs to use real numbers, so using the conjugate we can cancel out the imaginary part of the FFT output, leaving us with only real values. for example:
 
 $$ (a + bi) + (a - bi) = 2a $$
 
@@ -507,7 +506,7 @@ This function provides us with the initial spectrum texture. You can visualize t
   <p><em>Your version might look slightly less colorful, mine is using multiple frequency bands which will be covered in Chapter 4.</em></p>
 </div>
 
-Next we will look at how the FFT transforms this frequency domain data into real world wave displacements
+Next we will bring this spectrum to life by animating it over time, and then look at how the FFT transforms the frequency domain data into real world wave displacements.
 
 
 ### 1.4 Time Evolution: Animating the Waves
@@ -553,6 +552,8 @@ We can use this value as the stepsize around the unit circle and use `time` as t
 <pre><code class="cpp">
 float dispersion = floor(sqrt(GRAVITY * k) / w) * w * time;
 </code></pre>
+
+Note that this uses the deep water form $\omega = \sqrt{gk}$, while H₀ is built with the finite depth version from section 1.1. At my depth of 20 metres this makes the longest waves move a little too fast. If you want them to match, use the same dispersion function in both places.
 
 We now plug this dispersion into Euler's formula which gives us $e^{i\omega t}$. Add these helper functions:  
 
@@ -633,9 +634,7 @@ With this, we now have the heightfield, horizontal displacement and slopes, all 
 
 ### 1.5 The Butterfly FFT
 
-## Understanding the FFT
-
-The ocean simulation depends on converting a frequency domain wave spectrum into real displacement values every frame. That conversion is an Inverse Fast Fourier Transform. In this section I will explain the idea behind this transformation and how it works. To not make this article too long/complex, I will not go too much into detail since understanding it fully is not required to make it work. If you are brave enough you can dive deeper and read the paper by [Flugge](https://tore.tuhh.de/bitstream/11420/1439/1/GPGPU_FFT_Ocean_Simulation.pdf) and [Matusiak](https://www.ti.com/lit/an/spra291/spra291.pdf?ts=1607161475507&ref_url=https%3A%2F%2Fwww.google.com%2F).
+The ocean simulation depends on converting a frequency domain wave spectrum into real displacement values every frame. That conversion is an Inverse Fast Fourier Transform. In this section I will explain the idea behind this transformation and how it works. To not make this article too long/complex, I will not go too much into detail since understanding it fully is not required to make it work. If you are brave enough you can dive deeper and read the paper by [Flügge](https://tore.tuhh.de/bitstream/11420/1439/1/GPGPU_FFT_Ocean_Simulation.pdf) and [Matusiak](https://www.ti.com/lit/an/spra291/spra291.pdf?ts=1607161475507&ref_url=https%3A%2F%2Fwww.google.com%2F).
 
 
 <details>
@@ -681,7 +680,7 @@ float angle = -2.0f * PI * float(w) / float(TOTALPOINTS);
 float2 twiddle = float2(cos(angle), -sin(angle));
 </code></pre>
 
-That is $W_N^w$ written in real and imaginary components.
+Look closely at the signs: with `angle` negative, this works out to $e^{+i \frac{2\pi}{N} w}$, the conjugate of $W_N^w$. That is exactly what we want, because we're running the *inverse* FFT (frequency domain to spatial domain), which uses the positive exponent.
 
 </details>
 
@@ -822,13 +821,13 @@ void main(uint3 dispatchThreadID : SV_DispatchThreadID, uint3 groupID : SV_Group
 
 Putting all this together, after both passes complete we have converted our wave spectrum from the frequency domain into real spatial data. Before we can use this data to displace our vertices, we need to apply one last step to correctly arrange it.
 
-## Permuting the FFT Output
+### 1.6 Permuting the FFT Output
 
-Before we can use the FFT results, we need to apply two final steps: centering the output and unpacking our signals.
+Before we can use the FFT results, we need to apply two final steps: fixing the signs of the output and unpacking our signals.
 
-### Centering the spectrum
+#### Fixing the signs
 
-The raw FFT output places the zero frequency component in the corner of the texture. For our ocean patch this means the waves are arranged awkwardly, with the lowest frequencies split across opposite corners. We fix this by the following permute function:
+Remember that in section 1.3 we stored the spectrum *centered*, with the zero frequency in the middle of the texture (that's the `- OCEAN_SUBRES / 2.0f` in the wave vector). The FFT however expects the zero frequency at index 0, in the corner. Shifting the input by half the texture like this has a side effect on the output: every other texel comes out with its sign flipped, in a checkerboard pattern. We undo that with the following permute function:
 
 <pre><code class="language-cpp">
 float4 Permute(float4 data, float3 id)
@@ -837,9 +836,9 @@ float4 Permute(float4 data, float3 id)
 }
 </code></pre>
 
-This flips the sign of every other texel in a checkerboard pattern, which has the effect of shifting the zero frequency component from the corner to the center. After this step the wave frequencies are arranged symmetrically, which is what we need for a correct tileable patch.
+This flips the sign of every other texel in the same checkerboard pattern, which cancels out the flip. Skip this step and your ocean turns into an obvious checkerboard of up and down spikes.
 
-### Unpacking the signals
+#### Unpacking the signals
 
 Back in the wave animation pass we packed multiple signals into two float4 textures to save GPU passes. Now we unpack them:
 
@@ -850,9 +849,9 @@ float2 dyxdyz = htildeSlope.rg;         // surface slopes in X and Z, used for n
 float2 dxxdzz = htildeSlope.ba;         // second derivatives Dxx and Dzz, used for the Jacobian (Expanded upon in Chapter 3)
 </code></pre>
 
-### Applying choppiness
+#### Applying choppiness
 
-The horizontal displacements are scaled by a factor called Lambda before being applied to the mesh. Lambda controls how choppy the waves look. A value of 0 gives smooth rolling swells, higher values push the wave crests forward to create the sharp peaked shapes you see on a real ocean surface.
+The horizontal displacements are scaled by a factor called Lambda before being applied to the mesh. Lambda controls how choppy the waves look. A value of 0 gives smooth rolling swells, higher values pull the surface points towards the crests, which makes the crests sharper and the troughs wider, like the peaked shapes you see on a real ocean surface.
 
 <pre><code class="language-cpp">
 float3 displacement = float3(Lambda.x * dxdz.x, dydxz.x, Lambda.y * dxdz.y);
@@ -867,7 +866,7 @@ float2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * Lambda));
 Finally we store this data in their corresponding textures:
 
 <pre><code class="language-cpp">
-slopeTexture[dispatchThreadID.xy] = float4(slopes, 0.0f, 1.0f);
+slopeTexture[dispatchThreadID.xy] = float4(slopes, Lambda.x * dxxdzz.x, Lambda.y * dxxdzz.y); // .ba are used for the foam in Chapter 3
 displacementTexture[dispatchThreadID.xy] = float4(displacement, 0.0f);
 </code></pre>
 
@@ -883,7 +882,7 @@ With this, the hard part is behind us. Take a look at the contents of the textur
 </div>
 
 
-You've succesfully created the slope and displacement textures! In the next chapter I will show you how to use these textures to render the Ocean.
+You've successfully created the slope and displacement textures! In the next chapter I will show you how to use these textures to render the Ocean.
 
 ---
 
@@ -1113,7 +1112,7 @@ With this, each part now depends on far fewer things, so each can be baked once:
 1. **The pre-filtered environment** only depends on the sky and the roughness. We bake it into the mip chain of a cubemap: mip 0 is the sharp sky for a perfect mirror, and every next mip is the sky blurred by a rougher GGX lobe, up to roughness 1 in mip 4.
 2. **The BRDF integral** only depends on the angle $\mathbf{n} \cdot \mathbf{v}$ and the roughness. Thanks to the way Schlick's Fresnel is built, $F_0$ can be pulled out as a scale and a bias, $F_0 \cdot A + B$. So we bake $A$ and $B$ into the red and green channels of a 2D lookup texture (the BRDF LUT). It doesn't even depend on the sky, so it's computed once and never again.
 
-There is a third baked asset, which isn't part of the split sum but belongs to the same family: the **diffuse irradiance cubemap**. For every normal direction it stores the cosine-weighted average of the whole hemisphere of sky above it. On regular PBR objects in the scene it's the diffuse ambient light. On the ocean it's used for the water body (sampled straight up, as we saw in 2.3) and for lighting the foam in Chapter 3. How all three are baked is covered in Chapter 5.
+There is a third baked asset, which isn't part of the split sum but belongs to the same family: the **diffuse irradiance cubemap**. For every normal direction it stores the cosine-weighted average of the whole hemisphere of sky above it. On regular PBR objects in the scene it's the diffuse ambient light. On the ocean it's used for the water body (sampled straight up, as we saw in 2.3) and for lighting the foam in Chapter 3. How all three are baked is left out since there are many resources on this already, for example LearnOpenGL's chapters on [diffuse irradiance](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and [specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL).
 
 In the pixel shader, using all of this is only a few lines:
 
@@ -1205,7 +1204,7 @@ We define two kinds of foam:
 
 Both start from the same question: where is a wave breaking? To answer this, we need the Jacobian.
 
-### 3.1 Jacobian-Based Foam Detection
+### 3.1 Jacobian Based Foam Detection
 
 Remember the horizontal displacement from Chapter 1? Every point on the surface slides sideways towards the nearest crest, scaled by the choppiness factor $\lambda$. With a strong enough displacement, (a big $\lambda$ or a very steep wave), a cell gets squeezed past zero and flips over: the surface folds through itself. This is where we inject the foam, a nice side effect of this is that it also hides the folding waves! (to an extent)
 
@@ -1323,11 +1322,9 @@ $a = 1 + \lambda D_{xx}$ - How much the square stretches or squeezes along $x$ <
 $b = \lambda D_{xz}$ - The shear: how much $x'$ shifts when you move along $z$ <br>
 $c = \lambda D_{zx}$ - The same, for $z'$ along $x$ <br>
 $d = 1 + \lambda D_{zz}$ - How much the square stretches or squeezes along $z$ <br>
-$D_{xx}, D_{zz}, D_{xz}$ - How fast the displacement changes: $D_{xx}$ is the change of $D_x$ along $x$, and so on <br>
-
 </div>
 
-The determinant of a 2x2 matrix is $ad - bc$. Since $b$ and $c$ are the same value ($D_{xz} = D_{zx}$, in the frequency domain they are literally the same expression), $bc$ becomes $b^2$ and we get:
+The determinant of a 2x2 matrix is $ad - bc$. Since $b$ and $c$ are the same value ($D_{xz} = D_{zx}$), $bc$ becomes $b^2$ and we get:
 
 $$J = ad - b^2 = (1 + \lambda D_{xx})(1 + \lambda D_{zz}) - (\lambda D_{xz})^2$$
 
@@ -1339,9 +1336,7 @@ float jacobian = (1.0f + Lambda.x * dxxdzz.x) * (1.0f + Lambda.y * dxxdzz.y)
                - Lambda.x * Lambda.y * dydxz.y * dydxz.y;
 </code></pre>
 
-(My first version squared a diagonal term instead of $b$. The foam looked plausible, just in the wrong places, until I wrote the matrix out on paper.)
-
-We don't actually wait for $J$ to drop below zero. Real whitecaps start a little before a wave fully folds, so foam starts forming when the Jacobian drops below a **bias** and reaches full strength a **range** further down (I use 0.3 by default for both):
+We don't actually wait for $J$ to drop below zero. Foam starts a little before a wave fully folds, so we inject it when the Jacobian drops below a **bias** and it reaches full strength at a **range** further down (I use 0.3 by default for both):
 
 $$\text{forming} = \text{saturate}\left(\frac{\text{bias} - J}{\text{range}}\right)$$
 
@@ -1351,7 +1346,7 @@ float forming = saturate((foamBias - jacobian) / max(foamRange, 0.0001f));
 
 This is a ramp instead of a hard `if (jacobian < threshold)` on purpose: with a hard threshold, the foam visibly pops in and out as the waves move.
 
-### 3.2 Trailing Foam: Remembering the Past
+### 3.2 Trailing Foam
 
 The Jacobian only tells us about *this* frame: as soon as the wave moves on, the foam would vanish instantly. Real foam lingers, so we store it in a texture that survives from frame to frame. I use an `R32G32_FLOAT` texture per cascade: the red channel holds the trailing foam, the green channel holds $\lambda D_{xz}$ for the crest foam in the next section. Every frame, the permute shader fades the old foam a little and adds new foam where waves break:
 
@@ -1400,27 +1395,23 @@ My early implementation was a `lerp` towards pure white based on the foam amount
 
 **1. A foam texture as a mask**
 
-Real foam isn't a smooth white layer, it's a lacy pattern of bubbles. I get that pattern from a tiling grayscale foam texture, used not as a color but as a *mask* that decides which pixels get foam.
-
-Think of the texture as a landscape where the bright texels are hills, and the foam amount sets a water level. Only the hills sticking out above the water show foam. Lots of foam means a low level, so almost everything shows and the foam looks solid. As the foam fades, the level rises and only the highest hills stick out, so the foam breaks up into streaks and lace on its own.
-
-The texture is *histogram-equalised*: every brightness from 0 to 1 appears equally often, so a foam amount of 0.3 covers exactly 30% of the area.
+Real foam has a lacy pattern of bubbles. We can use a tiling grayscale foam texture that decides which pixels get foam: only texels brighter than $1 - \text{foam}$ get foam. A lot of foam lets almost the whole texture through, and as the foam fades, only the brightest parts of the pattern are left, so it breaks up into streaks on its own.
 
 <pre><code class="language-cpp">
 float2 foamUV = IN.GridPosition / foamTextureSize; // one repeat every 6 metres by default
 float foamDetail = FoamDetailTexture.Sample(anisotropicSampler, foamUV).r;
-float foamCoverage = saturate((foamDetail - (1.0f - foam)) * foamSharpness); // 1 - foam is the water level
+float foamCoverage = saturate((foamDetail - (1.0f - foam)) * foamSharpness); // 1 - foam is the threshold
 
 // Far away the small mips average the pattern to ~0.5, hiding foam below 0.5: use the foam amount itself there.
 float foamLod = FoamDetailTexture.CalculateLevelOfDetail(anisotropicSampler, foamUV);
 foamCoverage = lerp(foamCoverage, foam, saturate((foamLod - 3.0f) / 2.0f));
 </code></pre>
 
-`foamSharpness` makes the edges of the foam harder. The last two lines fix the distance: far away, the GPU samples tiny mips of the texture, which blur the pattern into a flat grey of about 0.5. A flat 0.5 hides all foam below 50%, so between mip 3 and 5 the shader blends over to the plain foam amount.
+`foamSharpness` makes the edges of the foam harder.
 
 **2. Lit foam**
 
-Foam is a rough layer of bubbles, so it's lit like a diffuse surface: a Lambert term for the sun and the diffuse irradiance map for the sky. Its normal is flattened halfway towards straight up, because the bubbles sit on top of the water and don't follow every small ripple.
+Because foam is a rough layer of bubbles, it should be lit like a diffuse surface: a Lambert term for the sun and the diffuse irradiance map for the sky.
 
 <pre><code class="language-cpp">
 float3 foamNormal = normalize(lerp(normal, float3(0.0f, 1.0f, 0.0f), 0.5f));
@@ -1429,8 +1420,6 @@ float3 foamSky = diffuseMap.Sample(linearClampSampler, foamNormal).rgb;
 float3 foamColor = foamAlbedo * (foamSun + foamSky); // albedo 0.9, real foam is about 0.8 to 0.9
 BRDF = lerp(BRDF, foamColor, foamCoverage);
 </code></pre>
-
-Now foam on the shadowed side of a wave is darker than foam facing the sun, and at sunset it picks up the color of the sky. Foam also adds roughness (see 2.3), so the glints disappear where there's foam.
 
 ## Chapter 4 Wave Cascades: Multi Scale Detail
 
@@ -1565,161 +1554,33 @@ float4 slope0 = SlopeTexture0.Sample(anisotropicSampler, uv0);
 
 For a calm ocean the difference is invisible, so the simple version in 2.2 is fine to get started. Once you add choppiness and foam, use the grid position.
 
----
 
-## Chapter 5 Skybox & Environment
+## Chapter 5 Major Struggles & Lessons Learned
 
-### 5.1 HDR Cubemap Pipeline
-
-The sky in my scene is a 4K HDR photo stored as an *equirectangular* panorama: the same projection as most world maps, with longitude from left to right and latitude from top to bottom. Easy to find online, but awkward to sample, since everything gets stretched near the poles and there's a seam where the edges meet.
-
-GPUs much prefer **cubemaps**: six square images on the faces of a cube around the camera. You give the hardware a direction, and it picks the face and the texel. So at startup a compute shader converts the panorama into a cubemap of 1024x1024 texels per face, with a full mip chain.
-
-<div class="centered">
-<svg class="ocean-fig" viewBox="0 0 680 230" role="img" aria-label="An equirectangular panorama converted into the six faces of a cubemap">
-<defs><marker id="ofArrCube" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ink-fill"/></marker></defs>
-<g transform="translate(40,0)">
-<text x="140" y="40" text-anchor="middle">equirectangular panorama (2:1)</text>
-<rect x="20" y="50" width="240" height="60" fill="#8fc3ea" fill-opacity="0.45"/>
-<rect x="20" y="110" width="240" height="60" fill="#2f86c9" fill-opacity="0.35"/>
-<line class="faint" x1="80" y1="50" x2="80" y2="170"/><line class="faint" x1="140" y1="50" x2="140" y2="170"/><line class="faint" x1="200" y1="50" x2="200" y2="170"/>
-<rect class="faint" x="20" y="50" width="240" height="120"/>
-<circle class="accent-fill" cx="230" cy="88" r="7"/>
-<text class="small" x="140" y="188" text-anchor="middle">longitude &#8594;</text>
-<text class="small" x="12" y="110" text-anchor="middle" transform="rotate(-90 12 110)">latitude &#8592;</text>
-<line class="ink" x1="272" y1="110" x2="340" y2="110" marker-end="url(#ofArrCube)"/>
-<text class="small" x="306" y="100" text-anchor="middle">compute</text>
-<text class="small" x="306" y="126" text-anchor="middle">per texel</text>
-<text x="460" y="20" text-anchor="middle">cubemap: 6 square faces</text>
-<rect x="410" y="30" width="50" height="50" fill="#8fc3ea" fill-opacity="0.45"/>
-<rect class="faint" x="410" y="30" width="50" height="50"/>
-<text class="small" x="435" y="60" text-anchor="middle">+Y</text>
-<rect x="360" y="80" width="50" height="25" fill="#8fc3ea" fill-opacity="0.45"/><rect x="360" y="105" width="50" height="25" fill="#2f86c9" fill-opacity="0.35"/>
-<rect class="faint" x="360" y="80" width="50" height="50"/>
-<text class="small" x="385" y="110" text-anchor="middle">-X</text>
-<rect x="410" y="80" width="50" height="25" fill="#8fc3ea" fill-opacity="0.45"/><rect x="410" y="105" width="50" height="25" fill="#2f86c9" fill-opacity="0.35"/>
-<rect class="faint" x="410" y="80" width="50" height="50"/>
-<text class="small" x="435" y="110" text-anchor="middle">+Z</text>
-<rect x="460" y="80" width="50" height="25" fill="#8fc3ea" fill-opacity="0.45"/><rect x="460" y="105" width="50" height="25" fill="#2f86c9" fill-opacity="0.35"/>
-<rect class="faint" x="460" y="80" width="50" height="50"/>
-<text class="small" x="485" y="110" text-anchor="middle">+X</text>
-<rect x="510" y="80" width="50" height="25" fill="#8fc3ea" fill-opacity="0.45"/><rect x="510" y="105" width="50" height="25" fill="#2f86c9" fill-opacity="0.35"/>
-<rect class="faint" x="510" y="80" width="50" height="50"/>
-<text class="small" x="535" y="110" text-anchor="middle">-Z</text>
-<rect x="410" y="130" width="50" height="50" fill="#2f86c9" fill-opacity="0.35"/>
-<rect class="faint" x="410" y="130" width="50" height="50"/>
-<text class="small" x="435" y="160" text-anchor="middle">-Y</text>
-<circle class="accent-fill" cx="497" cy="93" r="6"/>
-<text class="small" x="460" y="204" text-anchor="middle">1024 &#215; 1024 texels per face, full mip chain</text>
-</g>
-</svg>
-  <p><em>The panorama gets converted into the six faces of a cubemap once, at startup.</em></p>
-</div>
-
-For every texel of every face, the shader turns its position on the face into a 3D direction, turns that direction into longitude and latitude, and samples the panorama there:
-
-<pre><code class="language-cpp">
-// Map the UV coords of the cubemap face to a direction: [(0, 0), (1, 1)] => [(-0.5, -0.5), (0.5, 0.5)]
-float3 dir = float3(texCoord.xy / float(CubemapSize) - 0.5f, 0.5f);
-// Rotate it onto the right face (texCoord.z is the face index 0-5)
-dir = normalize(mul(RotateUV[texCoord.z], dir));
-
-// Direction to panorama UV: longitude from atan2, latitude from acos. InvAtan = (1 / 2PI, 1 / PI)
-float2 panoUV = float2(atan2(-dir.x, -dir.z), acos(dir.y)) * InvAtan;
-DstMip1[texCoord] = SrcTexture.SampleLevel(LinearRepeatSampler, panoUV, FirstMip);
-</code></pre>
-
-The skybox itself is a cube drawn around the camera with its winding reversed, so you see its inside. It's the first pass that writes into the HDR target, with its own pipeline state. As a bonus, you can drop any `.hdr` file onto the scene in the editor, and the skybox and all the image based lighting get rebuilt on the spot, which makes comparing skies really easy.
-
-Getting the skybox on screen was a struggle in itself. My first cubemap had 2:1 faces instead of square ones, which drew the sky as stripes. After that came a string of DX12 crashes, the most subtle one a pipeline state created for an `R8G8B8A8_UNORM` target while it drew into an `R16G16B16A16_FLOAT` one. DX12 wants the formats and sample counts in the pipeline state to match the render target *exactly*. The debug layer tells you when they don't, so read those messages, they're right.
-
-### 5.2 IBL Bake Passes at Startup
-
-The three image based lighting assets from Chapter 2 are baked by compute shaders before the first frame, and again whenever the environment changes.
-
-| Asset | Size | Mips | Samples per texel |
-|--------|-------|-------|-------|
-| Skybox cubemap | 1024 x 1024 per face | full chain | 1 (conversion) |
-| Diffuse irradiance | 32 x 32 per face | 1 | ~15,800 (fixed grid, 0.025 rad steps) |
-| Pre-filtered specular | 512 x 512 per face | 5 (roughness 0, 0.25, 0.5, 0.75, 1) | 4096 (GGX importance sampling) |
-| BRDF LUT | 512 x 512, `R16G16_FLOAT` | 1 | 4096 |
-
-**Diffuse irradiance.** Diffuse light changes very slowly with the normal direction, so 32x32 texels per face is plenty. For every texel, the shader walks over the hemisphere around that normal in small steps and averages the sky, weighted by the cosine:
-
-<pre><code class="language-cpp">
-for (float phi = 0.0f; phi &lt; 2.0f * PI; phi += sampleDelta)         // around the normal
-{
-    for (float theta = 0.0f; theta &lt; PI * 0.5f; theta += sampleDelta) // from the normal down to the horizon
-    {
-        float3 tangentSample = float3(sin(theta) * cos(phi), sin(theta) * sin(phi), cos(theta));
-        float3 sampleDir = tangentSample.x * T + tangentSample.y * B + tangentSample.z * N;
-
-        irradiance += environmentMap.SampleLevel(linearSampler, sampleDir, sampleMip).rgb * cos(theta) * sin(theta);
-        numSamples++;
-    }
-}
-irradiance = PI * irradiance / float(numSamples);
-</code></pre>
-
-The `cos(theta)` is the usual Lambert weighting, and the `sin(theta)` compensates for the samples bunching up near the top of the hemisphere. The `sampleMip` is important. My first version sampled the full resolution sky, so whether a sample hit the tiny, extremely bright sun was pure luck, and the irradiance came out blotchy. The current version picks the mip whose texels are about as far apart as the samples, so every sample sees an average of its own little patch of sky.
-
-**Pre-filtered specular.** Each of the five mips is one dispatch with its own roughness, from 0 for mip 0 to 1 for mip 4. For every texel the shader takes 4096 GGX importance sampled directions (using a Hammersley sequence), so the samples land where the lobe actually is. Each sample again reads a sky mip that matches how much of the lobe it covers (filtered importance sampling). Without that, the sun and clouds show up as streaks and blocks on rough surfaces.
-
-**BRDF LUT.** For every combination of $\mathbf{n} \cdot \mathbf{v}$ (horizontally) and roughness (vertically) it integrates the GGX BRDF with 4096 samples and stores the scale $A$ and bias $B$. One detail that's easy to miss: the geometry term uses $k = \alpha / 2$ for IBL, where $\alpha = \text{roughness}^2$, instead of the $k = (\text{roughness} + 1)^2 / 8$ we use for the sun.
-
-The LUT gave me one of the nastiest bugs of the project: the texture was `R16G16_FLOAT`, but the shader resource view read it as a different format. The reflections were wrong in a way that pointed nowhere near the actual problem. The giveaway is the texture itself: a correct BRDF LUT is a smooth red and green gradient, and mine was nonsense.
-
----
-
-## Chapter 6 Major Struggles & Lessons Learned
-
-### 6.1 DX12 Resource Barriers & Synchronisation
+### 5.1 DX12 Resource Barriers & Synchronisation
 
 If there's one thing that kept biting me throughout this project, it's synchronisation. In older APIs the driver tracks which resource is being read and written, and inserts the waits for you. DX12 makes that *your* job: resource barriers tell the GPU when a texture switches from being written by one pass to being read by the next. Forget one, and the GPU happily starts the next dispatch before the previous one has finished writing.
 
-The ocean simulation is a long chain of compute passes on the same textures (animate the spectrum, horizontal FFT, vertical FFT, permute), with a UAV barrier needed between every step. At one point I was missing the one after the vertical FFT. Bugs like that are horrible, because the result depends on timing: it can look fine for ten minutes and then glitch, or work on one GPU and break on another.
+The ocean simulation is a long chain of compute passes on the same textures (animate the spectrum, horizontal FFT, vertical FFT, permute), with a UAV barrier needed between every step. Bugs caused by the barriers are hard to track down, because the result depends on timing: it can look fine for ten minutes and then glitch, or work on one GPU and break on another.
 
-A fellow graphics programmer took the time to explain race conditions and barriers to me properly, and afterwards I switched to "global" UAV barriers (a barrier on `nullptr`, which waits for *all* UAV writes) between the ocean passes. Slightly less precise, but much harder to get wrong. Eventually I built a small render graph into EV: every pass declares what it reads and writes, and the graph inserts the barriers. Almost all of my barrier bugs disappeared with it.
+A fellow graphics programmer (Thank you M.O) took the time to explain race conditions and barriers to me properly, and afterwards I switched to "global" UAV barriers (a barrier on `nullptr`, which waits for *all* UAV writes) between the ocean passes. Slightly less precise, but much harder to get wrong. Eventually I built a small render graph into EV: every pass declares what it reads and writes, and the graph inserts the barriers. Almost all of my barrier bugs disappeared with it.
 <!-- TODO(author): credit Manon by name here if you'd like (commit f129c15). -->
 
-What I'd tell my past self:
+### 5.2 Theory Before Code
 
-- Turn on the debug layer and treat its warnings as errors. In EV a Debug build breaks on every D3D12 warning, which is annoying for about a day and then saves you over and over.
-- Test on both AMD and NVIDIA early. My NVIDIA laptop refused to run code that worked fine on my AMD desktop, because different drivers are strict about different things.
-- Once you have more than a handful of passes, let something (a render graph) derive the barriers for you.
+For this project I deliberately tried to understand the theory before writing the code: the FFT and its butterflies, the dispersion relation, the Jacobian, the split sum approximation. Was that worth it? Mostly, yes.
 
-### 6.2 Debugging with RenderDoc
-
-Graphics bugs are hard because the GPU doesn't tell you anything. Your output is just pixels, and a wrong pixel could come from any of a dozen passes. RenderDoc changed that for me: you capture a frame and can look at every texture and buffer, at every step. A few examples where it saved me:
-
-- **The H₀ texture and the FFT steps.** Looking at the initial spectrum, the output of the horizontal FFT and the result before and after the permute pass is what made the FFT debuggable at all. A missing permute, for example, shows up as an obvious checkerboard.
-- **The foam texture.** Does it even have values where the waves break? One look told me whether a foam problem was in the simulation or in the shading.
-- **The BRDF LUT** from Chapter 5, which showed garbage instead of a smooth gradient.
-- **Misaligned structs.** HLSL packs constant buffers in 16-byte chunks and C++ doesn't, so my `DirectionalLight` struct had a different layout on the GPU and the shader read parts of one member as another.
-
-EV's editor now has its own texture inspector for quick checks, but for anything deeper RenderDoc is still the first thing I open.
-
-### 6.3 Theory Before Code
-
-For this project I deliberately tried to understand the theory before writing the code: the FFT and its butterflies, the dispersion relation, the Jacobian, the split-sum approximation. Was that worth it? Mostly, yes.
-
-The best example is the foam. Because I understood that the Jacobian measures how much the surface is squeezed, I could reason about every foam problem: foam beside the crests means the lookup position is wrong, foam that doesn't know about the swell means the cascades need to be combined *before* the determinant. Without the theory I would have been tweaking sliders until it looked okay from one camera angle. The same goes for the split sum: knowing that the LUT already contains Fresnel is the only reason I found the double Fresnel bug.
+The best example is the foam. Because I understood that the Jacobian measures how much the surface is squeezed, I could reason about every foam problem: foam beside the crests means the lookup position is wrong, foam that doesn't know about the swell means the cascades need to be combined *before* the determinant. Without the theory I would have been tweaking sliders until it looked okay from one camera angle. The same goes for the split sum: at one point I applied Fresnel on top of the LUT, and the reflections at glancing angles came out far too bright. Knowing that the LUT already contains Fresnel is the only reason I found that bug.
 
 It wasn't perfect though. Some bits I copied before I understood them, like the rounded $\omega$ in section 1.4, and some JONSWAP values came straight from gasgiant's implementation because they looked good.
 
-What I'd do differently next time: build debug views much earlier. The foam debug views were one of the last things I added, and every foam bug would have been quicker to find with them. Theory tells you what *should* happen, debug views tell you what *actually* happens. You need both.
-
-### 6.4 Scope Management
-
-An ocean is one of those topics where there's always one more thing to add. Geometry clipmap LOD, refraction, caustics, moving H₀ to the GPU and smoothing out every foam seam all got started or considered, and then parked.
-
-On a time-boxed project, I found it helps to ask "what does the viewer notice first?" A nice foam pattern, a believable color and the glow of back-lit crests are noticed in the first second. Clipmap LOD and caustics only show up when you look for them. So the first group got my time, and the second group went on the list in Chapter 7.
+What I'd do differently next time: build debug views much earlier. The foam debug views were one of the last things I added, and every foam bug would have been quicker to find with them. Theory tells you what *should* happen, the debug views will tell you what *actually* happens.
 
 ---
 
-## Chapter 7 Results & Next Steps
+## Chapter 6 Results & Next Steps
 
-### 7.1 Final Results
+### 6.1 Final Results
 
 <!-- TODO(author): add a final hero video here (e.g. the Storm or North Atlantic preset, low sun, slow camera fly-over). Save as finalOcean.mp4 -->
 <div class="centered">
@@ -1729,9 +1590,10 @@ On a time-boxed project, I found it helps to ask "what does the viewer notice fi
   <p><em>The final ocean.</em></p>
 </div>
 
-I'm really happy with how it turned out. The things I like most are the shape of the waves (the JONSWAP spectrum with four cascades gives a convincing mix of big swells and small chop), the back-lit crests, and the foam now that it sits on the crests and fades into streaks. On a good frame, with a low sun, it can fool me for a second, and that was the goal.
-
+I'm really happy with how it turned out.
 There's still plenty of room for improvement. The water has no depth to it (no refraction, nothing underneath), and the subsurface scattering is a clever fake, but it's still a fake. I'd love to compare it against a ground truth one day.
+
+**Some measurements**
 
 | Metric | Value |
 |--------|-------|
@@ -1745,22 +1607,10 @@ There's still plenty of room for improvement. The water has no depth to it (no r
 
 <!-- TODO(author): docs/path-tracing/performance.md already has measurements on the RX 9070 XT (Release, vsync off, default ocean scene in a ~1237x712 editor viewport): render graph GPU ~0.46 ms, frame ~0.86 ms (CPU-bound). Either re-measure at 1920x1080 for this table or quote those with their resolution. -->
 
-### 7.2 Ocean Presets: One Simulation, Many Seas
 
-One of my favourite things about the JONSWAP setup is how few parameters you need to completely change the character of the sea. To show that off, I added a set of built-in presets to the ocean panel. A preset only changes the wind, the shape of the spectrum, a few colors, the foam settings, and the sky with its sun. For a few presets I cheated and put the sun low in front of the camera, so the crests get back-lit by the subsurface scattering from section 2.5. The simulation code is exactly the same for all of them.
+### 6.2 Ocean Presets: One Simulation, Many Seas
 
-A quick reminder of what the main knobs do, in terms of Chapter 1:
-
-- **Wind speed and fetch** set the peak frequency $\omega_p$ and the energy scale $\alpha$. More wind over a longer distance moves the peak to lower frequencies, which means longer, higher waves.
-- **Gamma** sets how sharp the peak of the spectrum is. A high gamma puts almost all the energy in one wavelength, a low gamma spreads it over many.
-- **Swell** raises the spreading exponent $s$, which squeezes the energy into a narrow range of directions around the wind: long, parallel crests.
-- **Spread blend** fades between the broad $\cos^2$ spreading (energy in many directions, including against the wind) and the narrow Hasselmann spreading.
-- **Foam bias and decay** decide how early foam forms and how long it lingers.
-- **The sky and the sun** decide almost everything about the color. Remember from section 2.4 that on an ocean, the reflection of the sky *is* most of what you see.
-
-One thing the presets don't change is the choppiness $\lambda$, which is fixed at 1.3. All the differences in steepness come from the spectrum itself.
-
-A small warning about the wind numbers: they look tiny (the Storm preset uses 6 m/s). The JONSWAP formulas keep growing with fetch, and most presets use fetches of hundreds of kilometres, while a real sea stops growing at some point. So treat the wind slider as relative, not as a weather report. The peak wavelengths I mention below come from plugging each preset's wind and fetch into $\omega_p$ and the dispersion relation, with my fixed depth of 20 metres.
+One of my favourite things about the JONSWAP setup is how few parameters you need to completely change the character of the sea. I added a small set of presets to the ocean panel. A preset only changes the wind, the shape of the spectrum (gamma, swell, spreading), a few colors, the foam settings, and the skybox with its sun. The simulation code is exactly the same for all of them. The choppiness is the same in all presets.
 
 **Default**
 
@@ -1846,8 +1696,6 @@ Strong wind over 500 km gives waves of around 80 metres at the peak. A spread bl
 
 Everything turned up. The strongest wind over 800 km and a scale of 1.5 give the biggest waves of all the presets, with the peak at about 120 metres. The interesting part is the spreading: with no swell and a spread blend of only 0.2, most of the energy goes into the broad $\cos^2$ lobe, which sends waves in many directions, *including against the wind*. They run into each other, and you get a confused, chaotic sea with pyramid shaped peaks instead of neat rows.
 
-Here's my favourite detail: the foam bias is actually *lower* than the default (0.15 instead of 0.3), yet Storm is by far the foamiest preset. That's the summed Jacobian from Chapter 3 doing its job: wherever the crossing waves meet, the surface gets squeezed so hard that it drops below the bias all over the place. A slow decay lets the foam trail far behind the breakers.
-
 **Midnight**
 
 <!-- TODO(author): capture Midnight looking towards the moon so the glitter path is visible. Save as presets/midnight.webp -->
@@ -1870,19 +1718,9 @@ A gentle sea under a moonlit sky. The fun part is that nothing in the shader kno
 </div>
 <!-- PLACEHOLDER: this Harbour Lights image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-Remember the city HDR that took over my ocean in section 2.4? This preset does that on purpose. A 5 km fetch, the distance across a bay, gives short, steep chop of about 2 metres. With dark green water and the IBL intensity turned up, the lights of the waterfront get stretched into long streaks by the ripples. Exactly the image I tried so hard to get rid of in Chapter 2.
+This preset uses an HDR of a city at night. A 5 km fetch, the distance across a bay, gives short, steep chop of about 2 metres. With dark green water and the IBL intensity turned up, the lights of the waterfront get stretched into long streaks by the ripples. A good example of how much the sky decides the look: the reflection is almost the whole image.
 
-### 7.3 Known Issues
-
-- **Small cascade tiling.** The 17 m and 5 m cascades repeat every few metres, which shows in the trailing foam (hence their lower foam weights).
-- **The edge of the world.** The ocean is a single 1024 m plane with a uniform grid and no LOD, so fly high enough and you'll see where it ends. With 2 metres between vertices, waves shorter than about 4 metres only show up in the normals, never in the geometry.
-- **Spectrum generation on the CPU.** Changing a spectrum slider (or a preset) causes a small hitch, the sliders only apply when you let go, and the upload isn't properly synchronised with the frames that use it.
-- **Not reproducible.** The random seed comes from `std::random_device`, so every run gives a different ocean. Nice for variety, not for comparing screenshots.
-- **The time evolution uses deep water dispersion.** H₀ uses the finite depth version, but the animation pass uses $\omega = \sqrt{gk}$, so at 20 metres depth the longest waves move a bit too fast.
-- **Hardcoded constants.** The choppiness ($\lambda$ = 1.3), the roughness range and the scatter terms $k_2$ to $k_4$ are constants in the shaders instead of UI parameters.
-- **No refraction, caustics or underwater view.**
-
-### 7.4 What's Next
+### 6.3 What's Next
 
 - **Geometry clipmap LOD**: concentric rings of geometry centred on the camera, finer close by and coarser far away. There's a branch waiting for it.
 - **H₀ on the GPU**: generate the initial spectrum in a compute shader, so the sliders and presets update instantly.
@@ -1899,14 +1737,12 @@ That's it! If you made it all the way here, thank you for reading. Building this
 
 ## References
 
-1. [Tessendorf, J. (2001)](https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf). *Simulating Ocean Water.* SIGGRAPH Course Notes.
-2. [Horvath, C. J. (2015)](https://dl.acm.org/doi/epdf/10.1145/2791261.2791267). *Empirical Directional Wave Spectra for Computer Graphics.*
+1. [Tessendorf, J. (2001, revised 2004)](https://jtessen.people.clemson.edu/reports/papers_files/coursenotes2004.pdf). *Simulating Ocean Water.* SIGGRAPH Course Notes.
+2. [Horvath, C. J. (2015)](https://doi.org/10.1145/2791261.2791267). *Empirical Directional Wave Spectra for Computer Graphics.*
 3. [Garrett Gunnell (Acerola)](https://github.com/GarrettGunnell/Water). Water, FFT ocean and subsurface scattering shader.
 4. [gasgiant](https://github.com/gasgiant/FFT-Ocean). FFT-Ocean.
 5. [Fynn-Jorin Flügge.](https://tore.tuhh.de/bitstream/11420/1439/1/GPGPU_FFT_Ocean_Simulation.pdf) *Realtime GPGPU FFT Ocean Water Simulation.*
 6. Bolba, G. [Ocean rendering blog post.](https://gikster.dev/posts/Ocean-Simulation/)
 7. [Karis, B. (2013)](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf). *Real Shading in Unreal Engine 4.* SIGGRAPH Physically Based Shading course.
 8. [LearnOpenGL: Specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL) and [Diffuse irradiance](https://learnopengl.com/PBR/IBL/Diffuse-irradiance).
-9. Mihelich, M. and Tcheblokov, T. (2019). *Wakes, Explosions and Lighting: Interactive Water Simulation in Atlas.* GDC 2019.
-10. [Hable, J. (2010)](http://filmicworlds.com/blog/filmic-tonemapping-operators/). *Filmic Tonemapping Operators.*
-11. [AMD FidelityFX Single Pass Downsampler](https://gpuopen.com/fidelityfx-spd/).
+9. [Mihelich, M. and Tcheblokov, T. (2019)](https://gpuopen.com/download/gdc-2019-agtd6-interactive-water-simulation-in-atlas.pdf). *Wakes, Explosions and Lighting: Interactive Water Simulation in Atlas.* GDC 2019.
