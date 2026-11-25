@@ -524,8 +524,13 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     for( int m=0; m<2; m++ )
     for( int n=0; n<2; n++ )
     {
-        // jitter
-        float a = float(iFrame)*2.4;
+        // Sub-pixel sample offsets: a 2x2 grid rotated by a FIXED angle
+        // ("rotated grid" AA). The original rotated it by iFrame*2.4 every frame;
+        // without temporal accumulation that makes every frame slightly different,
+        // which shows up as flicker on the fine terrain detail now that the camera
+        // stands still. atan(0.5) ~ 26.6 deg spreads the 4 samples so no two share
+        // a row or column, which smooths near-horizontal and near-vertical edges best.
+        const float a = 0.4636476;
         mat2 jit = mat2(cos(a),-sin(a),sin(a),cos(a));
         vec2 o = jit * ((vec2(float(m),float(n))+0.5)/2.0 - 0.5);
 
