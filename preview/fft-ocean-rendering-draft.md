@@ -1068,9 +1068,9 @@ $$\int_{\Omega} L_i(\mathbf{l})\, f(\mathbf{l}, \mathbf{v})\, (\mathbf{n} \cdot 
 
 The first part is simply *the average color of the sky* over the directions the GGX lobe reflects. The second part is *how much light the BRDF reflects in total*, as if the sky were plain white. The $\mathbf{l}_k$ are directions picked according to the GGX distribution, and $p(\mathbf{l}_k)$ is the probability of picking each one.
 
-Why are we allowed to pull the sky out of the integral like that? Strictly speaking we aren't, it's an approximation. It assumes the sky looks roughly the same across the whole reflection lobe. For a perfect mirror the lobe is a single direction, so the approximation is exact. For a very rough surface the lobe is wide, the sky changes a lot within it, and the error grows. Our water is fairly smooth (roughness 0.08 to 0.3), so the lobes are small and the error is hard to spot. (Karis also assumes the view direction equals the normal while pre-filtering. That's why you lose the long, stretched reflections you'd see at grazing angles, which is a known limitation of this method.)
+This is the approximation. It assumes the sky looks roughly the same across the whole reflection lobe. For a perfect mirror the lobe is a single direction, so the approximation is exact. For a very rough surface the lobe is wide, the sky changes a lot within it, and the error grows. Our water is fairly smooth, so the lobes are small and the error is hard to spot.
 
-The payoff is huge. Each part now depends on far fewer things, so each can be baked once:
+With this, each part now depends on far fewer things, so each can be baked once:
 
 <div class="centered">
 <svg class="ocean-fig" viewBox="0 0 680 260" role="img" aria-label="Split-sum approximation: the full integral is approximated by a pre-filtered sky cubemap times a BRDF lookup table">
@@ -1130,26 +1130,14 @@ float2 envBRDF = brdfLUT.Sample(linearClampSampler, float2(NdotV, roughness)).rg
 float3 specular = specularColor * (F0 * envBRDF.x + envBRDF.y);
 </code></pre>
 
-`roughness * MAX_REFLECTION_LOD` maps roughness 0 to 1 onto mips 0 to 4 of the pre-filtered cubemap. The `R.y = abs(R.y)` line is a small cheat: on the steep side of a wave the reflection vector can point *down*, into the bottom half of the HDR photo (a beach, a street, whatever the photographer was standing on). In reality you'd see another wave reflected there. Mirroring the vector back up is not correct, but it looks a lot better than reflecting asphalt.
+`roughness * MAX_REFLECTION_LOD` maps roughness 0 to 1 onto mips 0 to 4 of the pre-filtered cubemap.
 
-That last comment in the code is there for a reason. My first version multiplied the LUT's $A$ term by a Fresnel value I computed myself, which is what you do for the diffuse part in a lot of tutorials. But the LUT was *built* with Fresnel inside it already, so I was applying Fresnel twice and the reflections at glancing angles came out way too bright. The fix is to just pass the plain $F_0$, as above.
-
-**The wrong sky**
-
-The biggest IBL "bug" wasn't in the code at all. I was testing with an HDR of a city street at night, and the result was... interesting:
-
-<div class="centered">
-  <img src="/assets/img/projects/EV/iblHelmet.webp" alt="Ocean lit by a city HDR at night">
-  <p><em>An early test with a city HDR. The environment completely takes over, the water is basically a blurry mirror of the street.</em></p>
-</div>
-
-The environment light was so strong and so warm that the sun and the subsurface scattering didn't stand a chance. The IBL was doing exactly what it should, the environment was just wrong for an ocean. Switching to a proper open sky HDR fixed the balance immediately. I also kept an "IBL Intensity" slider in the UI (default 0.4) to tame the reflection a bit when a sky is very bright.
 
 ### 2.5 Subsurface Scattering at Wave Crests
 
 When you look at a wave with the sun behind it, the top of the crest seems to glow green or turquoise. The crest is thin enough that sunlight goes in at the back, scatters through the water and comes out the front, towards you. Water absorbs red light the most, so what makes it through is blue-green.
 
-Doing this properly means simulating light travelling through a volume of water, which is way too expensive for a real time ocean. Instead we fake it with a handful of dot products. The approximation I use comes from the GDC 2019 talk on the water in *Atlas*, by way of Garrett Gunnell's (Acerola) water shader.
+Doing this properly means simulating light travelling through a volume of water, which is way too expensive for a real time ocean. Instead we fake it with a handful of dot products. The approximation I use comes from the [GDC 2019 talk on the water in *Atlas*, slide 52](https://gpuopen.com/download/gdc-2019-agtd6-interactive-water-simulation-in-atlas.pdf).
 
 <div class="centered">
 <svg class="ocean-fig" viewBox="0 0 680 280" role="img" aria-label="Back-lit wave crest: sunlight enters the thin crest from behind and scatters out towards the camera">
@@ -1206,136 +1194,20 @@ The other three terms are much simpler and add a base amount of scattered light 
 
 Finally, everything is multiplied by $(1 - F)$. Light that was reflected at the surface can't also enter the water, so at grazing angles, where almost everything is reflected, the scattering fades out. That keeps the term from adding energy that isn't there.
 
-Only $k_1$ (the "Peak Scatter" slider, default 0.6) and the height modifier (default 2) are exposed in the UI. $k_2$ to $k_4$ are small constants in the shader (0.3, 0.25 and 0.05).
-
-The default scatter color is `#140B01`, a very dark warm brown. That might look strange for something that's supposed to make crests glow turquoise. The thing to keep in mind is that $k_2$ to $k_4$ are active almost everywhere and the result is *added* on top of the reflection and the water body, so a bright scatter color washes out the whole ocean very quickly. Most of the presets in Chapter 7 also use fairly dark teal and green scatter colors. The brightest one is the Tropical Lagoon, where glowing crests are the whole point.
-<!-- TODO(author): check the reasoning above for #140B01 matches why you picked it. -->
-
-One bug I have to share: for a long time my crests simply didn't glow. The vertex shader never wrote the wave height from the FFT displacement into `WaveHeight`, so `H` was always zero and $k_1$ multiplied everything by nothing. The fix was a single line in the vertex shader:
-
-<pre><code class="language-cpp">
-OUT.WaveHeight = displacement.y; // summed vertical displacement of all cascades
-</code></pre>
-
-<!-- TODO(author): record a short clip with a low sun behind the waves (camera facing the sun) so the k1 crest glow is clearly visible. Save as sssCrests.mp4 -->
-<div class="centered">
-  <video width="100%" controls autoplay loop muted playsinline>
-    <source src="/assets/img/posts/OceanRender/sssCrests.mp4" type="video/mp4">
-  </video>
-  <p><em>Back-lit crests: the sun is behind the waves, so k1 lights up the thin tops.</em></p>
-</div>
-
-### 2.6 HDR Pipeline & Tonemapping
-
-Real light covers a massive range of brightness. The sun glint on the water is many, many times brighter than the blue of the water body next to it. PBR math happily produces those values, but a normal 8-bit render target can only store values between 0 and 1. Everything above 1 gets clipped: highlights turn into flat white blobs, and when several lights add up, the extra energy just disappears.
-
-So the scene is rendered into a 16-bit floating point target, `R16G16B16A16_FLOAT`, which can hold values far above 1. A final fullscreen pass, the tonemapper, then squeezes that range into 0 to 1 for the screen. The nice thing is that all the lighting math stays linear and physically meaningful, and the "make it look good on a monitor" decision happens in exactly one place.
-
-In EV this is a few passes in the render graph. The ocean simulation runs first as compute passes. Then the skybox pass clears the HDR target and draws the sky, the ocean pass draws the water on top, and the objects pass draws everything else. The tonemap pass reads the HDR target and writes the 8-bit image that the editor's scene panel shows.
-
-<div class="centered">
-<svg class="ocean-fig" viewBox="0 0 680 375" role="img" aria-label="Render pipeline from the ocean simulation to the HDR target and the tonemapper, and the filmic curve compared to clamping">
-<defs><marker id="ofArrTm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ink-fill"/></marker></defs>
-<rect class="box" x="16" y="16" width="118" height="70" rx="6"/>
-<text class="title" x="75" y="40" text-anchor="middle">Ocean sim</text>
-<text class="small" x="75" y="58" text-anchor="middle">compute, 4 cascades</text>
-<text class="small" x="75" y="74" text-anchor="middle">FFT + permute</text>
-<line class="ink" x1="135" y1="51" x2="145" y2="51" marker-end="url(#ofArrTm)"/>
-<rect class="box" x="146" y="16" width="118" height="70" rx="6"/>
-<text class="title" x="205" y="40" text-anchor="middle">Scene passes</text>
-<text class="small" x="205" y="58" text-anchor="middle">skybox, ocean,</text>
-<text class="small" x="205" y="74" text-anchor="middle">objects</text>
-<line class="ink" x1="265" y1="51" x2="275" y2="51" marker-end="url(#ofArrTm)"/>
-<rect class="box-accent" x="276" y="16" width="118" height="70" rx="6"/>
-<text class="title" x="335" y="40" text-anchor="middle">HDR Color</text>
-<text class="small" x="335" y="58" text-anchor="middle" style="font-size:9.5px">R16G16B16A16_FLOAT</text>
-<text class="small" x="335" y="74" text-anchor="middle">values above 1 kept</text>
-<line class="ink" x1="395" y1="51" x2="405" y2="51" marker-end="url(#ofArrTm)"/>
-<rect class="box" x="406" y="16" width="118" height="70" rx="6"/>
-<text class="title" x="465" y="40" text-anchor="middle">Tonemap</text>
-<text class="small" x="465" y="58" text-anchor="middle">exposure &#8594; filmic</text>
-<text class="small" x="465" y="74" text-anchor="middle">curve &#8594; gamma 2.2</text>
-<line class="ink" x1="525" y1="51" x2="535" y2="51" marker-end="url(#ofArrTm)"/>
-<rect class="box" x="536" y="16" width="118" height="70" rx="6"/>
-<text class="title" x="595" y="40" text-anchor="middle">Viewport</text>
-<text class="small" x="595" y="58" text-anchor="middle" style="font-size:9.5px">R8G8B8A8_UNORM</text>
-<text class="small" x="595" y="74" text-anchor="middle">0 to 1, on screen</text>
-<text class="title" x="80" y="160">The filmic curve vs. clamping</text>
-<line class="faint dashed" x1="80" y1="200" x2="600" y2="200"/>
-<line class="ink" x1="80" y1="330" x2="604" y2="330"/>
-<line class="ink" x1="80" y1="330" x2="80" y2="186"/>
-<text class="small" x="72" y="334" text-anchor="end">0</text>
-<text class="small" x="72" y="204" text-anchor="end">1</text>
-<text class="small" x="80" y="348" text-anchor="middle">0</text>
-<text class="small" x="145" y="348" text-anchor="middle">1</text>
-<text class="small" x="210" y="348" text-anchor="middle">2</text>
-<text class="small" x="340" y="348" text-anchor="middle">4</text>
-<text class="small" x="600" y="348" text-anchor="middle">8</text>
-<text class="small" x="340" y="368" text-anchor="middle">HDR value going in</text>
-<text class="small" x="44" y="262" text-anchor="middle" transform="rotate(-90 44 262)">screen value</text>
-<polyline class="ink dashed" points="80,330 145,200 600,200"/>
-<text class="small" x="440" y="192" text-anchor="middle">clamping: everything above 1 becomes flat white</text>
-<polyline class="accent" points="80,330 93,315 106,301 119,288 132,278 145,270 158,263 171,257 184,252 197,247 210,243 223,240 236,237 249,234 262,232 275,229 288,227 301,225 314,224 327,222 340,221 353,219 366,218 379,217 392,216 405,215 418,214 431,213 444,212 457,212 470,211 483,210 496,209 509,209 522,208 535,208 548,207 561,207 574,206 587,206 600,205"/>
-<text class="small accent-text" x="350" y="262" text-anchor="middle">filmic curve: highlights roll off smoothly</text>
-</svg>
-  <p><em>Top: the passes of a frame. Bottom: the filmic curve with the default parameters, before gamma.</em></p>
-</div>
-
-The tonemapper does three things.
-
-**Exposure.** The HDR color is multiplied by $2^{\text{exposure}}$, like the exposure stops on a camera. The default is 0, so no change.
-**A filmic curve.** The enum in my code calls it `TM_ACESFilmic`, but the formula is actually John Hable's filmic curve from *Uncharted 2*, not ACES. The name stuck around, the curve is what matters:
-
-$$f(x) = \frac{x(Ax + CB) + DE}{x(Ax + B) + DF} - \frac{E}{F}, \qquad \text{color}_{out} = \frac{f(x)}{f(W)}$$
-
-<div class="centered">
-
-Where:<br>
-
-$A = 0.22$ - Shoulder strength. How strongly the highlights get compressed. <br>
-$B = 0.3$ - Linear strength. <br>
-$C = 0.1$ - Linear angle. <br>
-$D = 0.2$ - Toe strength. How much the darks get crushed. <br>
-$E = 0.01,\ F = 0.3$ - Toe numerator and denominator. <br>
-$W = 11.2$ - Linear white. The HDR value that ends up as pure white. <br>
-
-</div>
-
-**Gamma.** The output target is a plain `R8G8B8A8_UNORM` texture, not an sRGB one, so the shader applies the gamma itself with `pow(color, 1.0 / 2.2)`.
-
-The curve has a *toe* that slightly darkens the shadows for contrast, a roughly straight middle part, and a *shoulder* that rolls the highlights off towards white instead of chopping them off. An HDR value of 1 ends up at about 0.46 before gamma, 4 at about 0.84 and 8 at about 0.96. So a bright sun glint still has some shape to it instead of being one flat white blob.
-
-<pre><code class="language-cpp">
-float3 ACESFilmic(float3 x, float A, float B, float C, float D, float E, float F)
-{
-    return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - (E / F);
-}
-
-float3 HDR = HDRTexture.SampleLevel(LinearClampSampler, TexCoord, 0);
-HDR *= exp2(TonemapParametersCB.Exposure);
-
-float3 SDR = ACESFilmic(HDR, A, B, C, D, E, F) / ACESFilmic(LinearWhite, A, B, C, D, E, F);
-return float4(pow(abs(SDR), 1.0f / TonemapParametersCB.Gamma), 1);
-</code></pre>
-
-The shader also has linear, Reinhard and Reinhard squared modes, which are handy to compare against, but the filmic curve is the default.
-
----
-
 ## Chapter 3 Foam
 
-Foam is what sells the wind and the scale of the ocean. Without it, even a big stormy sea looks like a bowl of blue jelly. In real life foam (whitecaps) forms when a wave gets too steep and breaks, trapping air in the water. After that, the bubbles stick around for a few seconds and get stretched into streaks.
+Foam is what sells the wind and the scale of the ocean. Without it, even a big stormy sea looks unimpressive. In real life foam forms when a wave gets too steep and breaks. The air gets trapped in the water and the bubbles stick around for a few seconds and get stretched into streaks.
 
-So my renderer has two kinds of foam:
+We define two kinds of foam:
 
 - **Crest foam**: where a wave is breaking *right now*.
 - **Trailing foam**: what's left behind after a wave broke, slowly fading away.
 
-Both start from the same question: where is a wave breaking? For that we need the Jacobian.
+Both start from the same question: where is a wave breaking? To answer this, we need the Jacobian.
 
 ### 3.1 Jacobian-Based Foam Detection
 
-Remember the horizontal displacement from Chapter 1? Every point on the surface slides sideways towards the nearest crest, scaled by the choppiness factor $\lambda$. Now picture the ocean surface as a stretchy rubber sheet with a grid drawn on it. In the troughs the grid cells get stretched out, and at the crests they get squeezed together. If you push too hard (a big $\lambda$ or a very steep wave), a cell gets squeezed past zero and flips over: the surface folds through itself. In the real ocean, that is exactly where a wave breaks.
+Remember the horizontal displacement from Chapter 1? Every point on the surface slides sideways towards the nearest crest, scaled by the choppiness factor $\lambda$. With a strong enough displacement, (a big $\lambda$ or a very steep wave), a cell gets squeezed past zero and flips over: the surface folds through itself. This is where we inject the foam, a nice side effect of this is that it also hides the folding waves! (to an extent)
 
 <div class="centered">
 <svg class="ocean-fig" viewBox="0 0 680 290" role="img" aria-label="Wave profiles with increasing choppiness: smooth, sharpened, and folded over where the Jacobian is negative">
@@ -1431,7 +1303,7 @@ Remember the horizontal displacement from Chapter 1? Every point on the surface 
 The **Jacobian determinant** measures exactly this. It tells you how much a tiny square of the surface changes in area after the displacement:
 
 - $J = 1$: the square didn't change.
-- $J > 1$: it got stretched (troughs).
+- $J > 1$: it got stretched.
 - $0 < J < 1$: it got squeezed (crests).
 - $J < 0$: it flipped over. The wave is folding, so this is where foam goes.
 
@@ -1441,15 +1313,25 @@ $$x' = x + \lambda D_x(x, z), \qquad z' = z + \lambda D_z(x, z)$$
 
 The Jacobian matrix holds the derivatives of the new position with respect to the old one, so how much $x'$ and $z'$ change when you nudge $x$ or $z$ a little bit:
 
-$$\mathbf{J} = \begin{pmatrix} \dfrac{\partial x'}{\partial x} & \dfrac{\partial x'}{\partial z} \\[2ex] \dfrac{\partial z'}{\partial x} & \dfrac{\partial z'}{\partial z} \end{pmatrix} = \begin{pmatrix} 1 + \lambda D_{xx} & \lambda D_{xz} \\ \lambda D_{zx} & 1 + \lambda D_{zz} \end{pmatrix}$$
+$$\mathbf{J} = \begin{pmatrix} \dfrac{\partial x'}{\partial x} & \dfrac{\partial x'}{\partial z} \\[2ex] \dfrac{\partial z'}{\partial x} & \dfrac{\partial z'}{\partial z} \end{pmatrix} = \begin{pmatrix} a & b \\ c & d \end{pmatrix}$$
 
-Where does the "+1" on the diagonal come from? We're taking the derivative of the *total* position $x + \lambda D_x$, not just the displacement, and the derivative of $x$ with respect to itself is 1. That's also why a flat ocean, with no displacement at all, gives the identity matrix and a determinant of exactly 1.
+<div class="centered">
 
-The determinant of a 2x2 matrix is "top-left times bottom-right minus top-right times bottom-left". Both off-diagonal terms are the same value ($D_{xz} = D_{zx}$, in the frequency domain they are literally the same expression), so we get:
+Where:<br>
 
-$$J = (1 + \lambda D_{xx})(1 + \lambda D_{zz}) - (\lambda D_{xz})^2$$
+$a = 1 + \lambda D_{xx}$ - How much the square stretches or squeezes along $x$ <br>
+$b = \lambda D_{xz}$ - The shear: how much $x'$ shifts when you move along $z$ <br>
+$c = \lambda D_{zx}$ - The same, for $z'$ along $x$ <br>
+$d = 1 + \lambda D_{zz}$ - How much the square stretches or squeezes along $z$ <br>
+$D_{xx}, D_{zz}, D_{xz}$ - How fast the displacement changes: $D_{xx}$ is the change of $D_x$ along $x$, and so on <br>
 
-The good news is that we already have everything we need. $D_{xx}$, $D_{zz}$ and $D_{xz}$ are the second order derivatives we computed in the wave animation pass in Chapter 1 (multiplying by $ik$ twice) and carried through the FFT together with the displacement. In the permute shader it's one line:
+</div>
+
+The determinant of a 2x2 matrix is $ad - bc$. Since $b$ and $c$ are the same value ($D_{xz} = D_{zx}$, in the frequency domain they are literally the same expression), $bc$ becomes $b^2$ and we get:
+
+$$J = ad - b^2 = (1 + \lambda D_{xx})(1 + \lambda D_{zz}) - (\lambda D_{xz})^2$$
+
+We already computed $D_{xx}$, $D_{zz}$ and $D_{xz}$ in the wave animation pass in Chapter 1, so in the permute shader this is just:
 
 <pre><code class="language-cpp">
 // dxxdzz = (Dxx, Dzz), dydxz.y = Dxz (see the unpacking in Chapter 1)
@@ -1457,27 +1339,21 @@ float jacobian = (1.0f + Lambda.x * dxxdzz.x) * (1.0f + Lambda.y * dxxdzz.y)
                - Lambda.x * Lambda.y * dydxz.y * dydxz.y;
 </code></pre>
 
-My first version got the last term wrong: I squared one of the *diagonal* derivatives instead of using the mixed derivative $D_{xz}$. The foam still showed up on waves, so it looked plausible enough, but in the wrong places and in the wrong amounts. Once I wrote the matrix out on paper, like above, the mistake was obvious.
+(My first version squared a diagonal term instead of $b$. The foam looked plausible, just in the wrong places, until I wrote the matrix out on paper.)
 
-We don't actually wait for $J$ to drop below zero. Real whitecaps start a little before a wave fully folds, so foam starts forming when the Jacobian drops below a **bias** (0.3 by default) and reaches full strength a **range** further down (also 0.3):
+We don't actually wait for $J$ to drop below zero. Real whitecaps start a little before a wave fully folds, so foam starts forming when the Jacobian drops below a **bias** and reaches full strength a **range** further down (I use 0.3 by default for both):
 
 $$\text{forming} = \text{saturate}\left(\frac{\text{bias} - J}{\text{range}}\right)$$
 
 <pre><code class="language-cpp">
-float forming = saturate((foamBias - jacobian) / max(foamRange, 0.0001f)); // ramp, not a step: no popping
+float forming = saturate((foamBias - jacobian) / max(foamRange, 0.0001f));
 </code></pre>
 
-This is a ramp instead of a hard threshold on purpose. My first version used an `if (jacobian < threshold)` style check, and foam visibly popped in and out as waves moved across it.
+This is a ramp instead of a hard `if (jacobian < threshold)` on purpose: with a hard threshold, the foam visibly pops in and out as the waves move.
 
 ### 3.2 Trailing Foam: Remembering the Past
 
-The Jacobian only tells us about *this* frame. As soon as the wave moves on, the Jacobian goes back up and the foam would vanish instantly. Real foam lingers. So we need memory: a texture that survives from one frame to the next, where foam can build up and slowly fade.
-
-This took me a few tries. My first idea was to store the foam in the unused alpha channel of the displacement texture. The problem is that the displacement texture gets *overwritten every frame*: the wave animation pass writes a fresh spectrum into it and the FFT passes transform it in place. So by the time the permute shader wanted to read last frame's foam, it was long gone. Worse, I was reading `htildeDisplacement.a` before anything sensible had been written there, which gave me either a completely white ocean or flickering garbage blocks, depending on the frame.
-
-The fix was a dedicated foam texture per cascade that none of the FFT passes touch. It's simulation state that lives across frames, just like the H₀ texture. One more lesson from this: **clear it at startup**. GPU memory isn't zeroed for you, and an uncleared foam texture gives you a first frame full of random foam.
-
-Today each cascade has an `R32G32_FLOAT` foam texture. The red channel holds the trailing foam, the green channel holds $\lambda D_{xz}$ for the crest foam in the next section. The permute shader updates it every frame:
+The Jacobian only tells us about *this* frame: as soon as the wave moves on, the foam would vanish instantly. Real foam lingers, so we store it in a texture that survives from frame to frame. I use an `R32G32_FLOAT` texture per cascade: the red channel holds the trailing foam, the green channel holds $\lambda D_{xz}$ for the crest foam in the next section. Every frame, the permute shader fades the old foam a little and adds new foam where waves break:
 
 <pre><code class="language-cpp">
 float foamData = foamTexture.Load(int3(dispatchThreadID.xy, 0)).r;
@@ -1490,22 +1366,15 @@ foam = saturate(foam);
 foamTexture[dispatchThreadID.xy] = float2(foam, Lambda.x * dydxz.y);
 </code></pre>
 
-Written as a formula:
-
-$$\text{foam}_{t+\Delta t} = \text{foam}_t \cdot e^{-\text{decay} \cdot \Delta t} + \text{add} \cdot \text{forming} \cdot \Delta t$$
-
-The exponential decay means foam loses the same *fraction* every second, which is how real foam behaves: lots of bubbles pop at first, then it thins out slowly. With the default decay of 0.4 per second, half the foam is gone after $\ln 2 / 0.4 \approx 1.7$ seconds.
-
-Notice the `deltaTime` in there. My first version decayed the foam by `exp(-foamDecay)` *per frame*. That means the foam lived more than twice as long at 60 fps as it did at 144 fps. Making everything per second fixed that. I also clamp `deltaTime` to 0.1 seconds on the CPU. Without that, a single long frame (hitting a breakpoint, dragging the window around) would add or remove all the foam at once.
-
 ### 3.3 Crest Foam & Cascades
 
-In Chapter 4 we'll split the ocean into four cascades, and each cascade has its own Jacobian. For a long time I computed the foam per cascade and then combined the four results in the pixel shader. I started with `max()` of the four, which gave large waves far too little foam. Then I switched to adding them up with `saturate()`, and raised the bias from a very conservative 0.096 towards the 0.3 to 0.5 range that an NVIDIA paper I was reading recommended. Better, but it still never looked quite right.
-<!-- TODO(author): add the link to the NVIDIA paper you mean here. -->
+In Chapter 4 we'll split the ocean into four cascades, and each cascade has its own Jacobian. For a long time I computed the foam per cascade and combined the four results in the pixel shader, first with `max()`, later by adding them up. It never looked quite right.
 
-The real problem was more fundamental. The ocean surface you see is the *sum* of all cascades. A crest breaks when the big swell and the smaller waves riding on top of it pinch together *at the same spot*. Each cascade on its own rarely folds, and their individual Jacobians know nothing about each other. On top of that, a determinant doesn't add up nicely: the Jacobian of the sum is not the sum of the Jacobians. If you multiply out the formula, there are cross terms that mix the derivatives of different cascades, and those cross terms are exactly where the cascades interact.
+The problem is that the waves you see are the *sum* of all cascades. A crest usually breaks where a big swell and a smaller wave on top of it squeeze the surface *at the same spot*, while each cascade on its own rarely squeezes hard enough.
 
-So the current version computes **one Jacobian for the whole surface**. The permute shader no longer only writes the foam, it also stores the Jacobian ingredients of each cascade: $\lambda D_{xx}$ and $\lambda D_{zz}$ in the (otherwise unused) blue and alpha channels of the slope texture, and $\lambda D_{xz}$ in the green channel of the foam texture. The pixel shader samples all four cascades, sums the derivatives, and only then computes the determinant:
+A simple example: two cascades each squeeze the surface along $x$ with $\lambda D_{xx} = -0.6$. On their own, each gives $J = 1 - 0.6 = 0.4$, above the bias of 0.3, so no foam. But the real surface is squeezed by both at once: $J = 1 - 0.6 - 0.6 = -0.2$, so the wave folds. Combining the foam of each cascade afterwards can never find this, because neither cascade had any foam to begin with.
+
+So the current version computes **one Jacobian for the whole surface**: first add up the derivatives of all cascades, then compute the determinant. The permute shader stores each cascade's ingredients: $\lambda D_{xx}$ and $\lambda D_{zz}$ in the (otherwise unused) blue and alpha channels of the slope texture, and $\lambda D_{xz}$ in the green channel of the foam texture. The pixel shader samples all four cascades, sums them, and computes the determinant:
 
 <pre><code class="language-cpp">
 float4 slope = slope0 + slope1 + slope2 + slope3;                 // .ba = sum of lambda * (Dxx, Dzz)
@@ -1523,33 +1392,35 @@ float trailingFoam = dot(float4(foam0.r, foam1.r, foam2.r, foam3.r), foamCascade
 float foam = saturate(max(crestFoam, trailingFoam));
 </code></pre>
 
-The trailing foam still has to live per cascade, because its memory is stored in the cascade textures. Each cascade gets its own weight, `(1.0, 1.0, 0.5, 0.25)` by default. The two small cascades (17 m and 5 m) only hold ripples, and their patches repeat every few metres, so their foam shows visible tiling if you give it too much weight.
+The trailing foam still lives per cascade, since its memory is stored in the cascade textures. Each cascade gets a weight, `(1.0, 1.0, 0.5, 0.25)` by default. The two small cascades repeat every few metres, so their foam shows visible tiling if you give it too much weight.
 
 ### 3.4 Making Foam Look Like Foam
 
-My early foam was a `lerp` towards pure white based on the foam amount. Technically foam, but it looked like someone spilled paint on the ocean. Three changes made it look a lot more like the real thing.
+My early implementation was a `lerp` towards pure white based on the foam amount. Technically foam, but very unrealistic. Two things fixed that: a texture for the pattern, and proper lighting.
 
-**1. A foam texture, used as a threshold**
+**1. A foam texture as a mask**
 
-Real foam isn't a smooth white gradient, it's a lacy pattern of bubbles. I use a tiling foam texture for that, but not as a color. The trick is that the texture is *histogram-equalised*: its values are spread evenly between 0 and 1. That means if you only keep the texels above $1 - f$, you cover exactly a fraction $f$ of the area. So the foam amount becomes a threshold on the pattern:
+Real foam isn't a smooth white layer, it's a lacy pattern of bubbles. I get that pattern from a tiling grayscale foam texture, used not as a color but as a *mask* that decides which pixels get foam.
+
+Think of the texture as a landscape where the bright texels are hills, and the foam amount sets a water level. Only the hills sticking out above the water show foam. Lots of foam means a low level, so almost everything shows and the foam looks solid. As the foam fades, the level rises and only the highest hills stick out, so the foam breaks up into streaks and lace on its own.
+
+The texture is *histogram-equalised*: every brightness from 0 to 1 appears equally often, so a foam amount of 0.3 covers exactly 30% of the area.
 
 <pre><code class="language-cpp">
 float2 foamUV = IN.GridPosition / foamTextureSize; // one repeat every 6 metres by default
 float foamDetail = FoamDetailTexture.Sample(anisotropicSampler, foamUV).r;
-float foamCoverage = saturate((foamDetail - (1.0f - foam)) * foamSharpness);
+float foamCoverage = saturate((foamDetail - (1.0f - foam)) * foamSharpness); // 1 - foam is the water level
 
 // Far away the small mips average the pattern to ~0.5, hiding foam below 0.5: use the foam amount itself there.
 float foamLod = FoamDetailTexture.CalculateLevelOfDetail(anisotropicSampler, foamUV);
 foamCoverage = lerp(foamCoverage, foam, saturate((foamLod - 3.0f) / 2.0f));
 </code></pre>
 
-Fresh foam (close to 1) covers everything and looks solid. As it fades, only the brightest parts of the pattern survive, and the foam breaks up into thin streaks and lace on its own. No extra animation needed.
-
-The last two lines fix a problem in the distance. Far away, the GPU samples tiny mips of the foam texture, and those average the whole pattern to a flat grey of about 0.5. Thresholding a flat 0.5 means any foam below 50% disappears completely. So between mip 3 and mip 5 the shader blends over to the plain foam amount instead.
+`foamSharpness` makes the edges of the foam harder. The last two lines fix the distance: far away, the GPU samples tiny mips of the texture, which blur the pattern into a flat grey of about 0.5. A flat 0.5 hides all foam below 50%, so between mip 3 and 5 the shader blends over to the plain foam amount.
 
 **2. Lit foam**
 
-Foam is a rough layer of bubbles, so it behaves like a diffuse surface. It's lit by the sun with a Lambert term and by the sky with the diffuse irradiance map. Its normal is flattened halfway towards straight up, because the bubbles sit on top of the water and don't follow every small ripple.
+Foam is a rough layer of bubbles, so it's lit like a diffuse surface: a Lambert term for the sun and the diffuse irradiance map for the sky. Its normal is flattened halfway towards straight up, because the bubbles sit on top of the water and don't follow every small ripple.
 
 <pre><code class="language-cpp">
 float3 foamNormal = normalize(lerp(normal, float3(0.0f, 1.0f, 0.0f), 0.5f));
@@ -1559,28 +1430,7 @@ float3 foamColor = foamAlbedo * (foamSun + foamSky); // albedo 0.9, real foam is
 BRDF = lerp(BRDF, foamColor, foamCoverage);
 </code></pre>
 
-Now foam on the shadowed side of a wave is darker than foam facing the sun, and at sunset it picks up the color of the sky. It also adds roughness (see 2.3), so the glints disappear where there's foam.
-
-**3. Mip chains that actually exist**
-
-The slope and foam textures are sampled with anisotropic filtering, which needs mip maps. The FFT and permute passes only write mip 0 though. For a while, nobody wrote the other mips at all, so far away the sampler was reading mips full of nothing. Then I used the engine's generic mip generation, which works but needs several dispatches per texture. The current version, `ocean_mips.hlsl`, builds all nine mips of both the slope and the foam texture in a single dispatch per cascade. It's inspired by AMD's Single Pass Downsampler: each thread group reduces a 64x64 tile down to one texel of mip 6 in groupshared memory, and the last group to finish (they count themselves with an atomic counter) builds mips 7 to 9 from those.
-<!-- TODO(author): docs/path-tracing/performance.md has a measured A/B for this (Release, RX 9070 XT: mips 0.039 ms -> 0.029 ms GPU, frame 1.03 ms -> 0.86 ms). Add the numbers here if you want to show them. -->
-
-<!-- TODO(author): capture the three foam debug views (Ocean Parameters > Foam > Debug View: "Foam amount", "Foam coverage", "Crest foam only") of the same frame side by side, plus the final shaded result. Save as foamDebugViews.webp -->
-<div class="centered">
-  <img src="/assets/img/posts/OceanRender/foamDebugViews.webp" alt="Foam debug views">
-  <p><em>The foam debug views: foam amount, foam coverage after the texture threshold, and crest foam only.</em></p>
-</div>
-
-<!-- TODO(author): record a clip of the current foam (the existing /assets/img/projects/EV/oceanFoam.mp4 shows the old white-lerp foam). Save as foam.mp4 -->
-<div class="centered">
-  <video width="100%" controls autoplay loop muted playsinline>
-    <source src="/assets/img/posts/OceanRender/foam.mp4" type="video/mp4">
-  </video>
-  <p><em>Crest foam on the breaking waves, trailing foam fading into streaks behind them.</em></p>
-</div>
-
----
+Now foam on the shadowed side of a wave is darker than foam facing the sun, and at sunset it picks up the color of the sky. Foam also adds roughness (see 2.3), so the glints disappear where there's foam.
 
 ## Chapter 4 Wave Cascades: Multi Scale Detail
 
@@ -1590,7 +1440,7 @@ Our FFT grid is 512x512 samples, spread over a patch of `patchSize` metres. The 
 
 One patch can't cover that. Make it big, and each texel is metres wide, so all the small detail is gone. Make it small, and there's no room for the big swells, and the same small pattern repeats every few metres. That repetition is called *tiling*, and your eyes pick it up instantly.
 
-The solution is to run several FFTs at different patch sizes, called **cascades**, and add them together. The vertex shader sums the displacement of all cascades, and the pixel shader sums the slopes (and the foam ingredients from Chapter 3). My final setup uses four cascades:
+The solution is to run several FFTs at different patch sizes, called **cascades**, and add them together. The vertex shader sums the displacement of all cascades, and the pixel shader sums the slopes (and the foam ingredients from Chapter 3). I use four cascades:
 
 | Cascade | Patch size | One texel is |
 |--------|-------|-------|
@@ -1598,6 +1448,7 @@ The solution is to run several FFTs at different patch sizes, called **cascades*
 | 1 | 250 m | ~49 cm |
 | 2 | 17 m | ~3.3 cm |
 | 3 | 5 m | ~1 cm |
+
 
 <div class="centered">
   <img src="/assets/img/projects/EV/cascadeThumb.webp" alt="Four cascades summed together">
@@ -1608,15 +1459,15 @@ There's one important rule: **the cascades must not overlap**. If two cascades b
 
 ### 4.2 Splitting the Spectrum Between Cascades
 
-So where do you draw the line between two cascades? In the `GenerateH0` snippet in section 1.3 you saw my first answer: a cascade starts where the previous, bigger cascade runs out of resolution, at its Nyquist limit:
+So where do you draw the line between two cascades? In the `GenerateH0` snippet in section 1.3 you saw my first answer: a cascade starts where the previous, bigger cascade runs out of resolution (its Nyquist limit). That sounds efficient, since every cascade uses its full resolution. Funny enough, it turned out to be a bad idea.
 
-$$k_{low} = \frac{N \pi}{L_{i-1}}$$
+The catch is that the shortest waves of every cascade are then only *two texels* long. Two texels are enough to store a wave's height, but not its shape. The normals and the Jacobian are computed from neighbouring texels, and with only two texels per wave they come out blocky and aliased. To make it worse, the shortest waves of the big cascade are exactly the ones that break and make foam, so the foam came out blocky too.
 
-where $N = 512$ and $L_{i-1}$ is the patch size of the previous cascade. That's the most "efficient" split: every cascade uses its full resolution. It also turned out to be a bad idea. With that split, the 1500 m cascade held every wave down to about 5.9 metres, sampled at roughly 2.9 metres per texel. Those are exactly the waves that break and make foam, and their derivatives (the normals and the Jacobian) were only *two texels* long. They aliased badly, and the foam came out blocky.
-
-The current version (following gasgiant's FFT-Ocean) puts the boundary at **6 wavelengths per patch of the next cascade**:
+The fix (following gasgiant's FFT-Ocean) is to hand waves over to the next cascade earlier, so every wave is at least about six texels long in the cascade that owns it. The boundary between cascade $i$ and $i+1$ sits at the wave that fits **6 times** into the patch of the next cascade:
 
 $$k_{i \mid i+1} = 6 \cdot \frac{2\pi}{L_{i+1}}$$
+
+where $k_{i \mid i+1}$ is the boundary wavenumber (longer waves go to cascade $i$, shorter ones to $i+1$) and $L_{i+1}$ is the patch size of the next, smaller cascade.
 
 <pre><code class="language-cpp">
 // Boundary between cascades i and i+1 at 6 wavelengths per patch of i+1: every wave is >= ~6 texels long in its
@@ -1627,7 +1478,7 @@ const float lowCutoff = cascade == 0 ? 0.001f : boundaryK(cascade - 1);
 const float highCutoff = cascade + 1 &lt; m_oceanCascadesNumber ? boundaryK(cascade) : highestK;
 </code></pre>
 
-Now every wave is at least about six texels long in the cascade that owns it, and the breaking waves have moved to the 250 m cascade, where they have plenty of resolution:
+The breaking waves now live in the 250 m cascade, where they have plenty of resolution:
 
 <div class="centered">
 <svg class="ocean-fig" viewBox="0 0 680 250" role="img" aria-label="Wavelength bands per cascade, before and after moving the split from the Nyquist limit to six wavelengths per patch">
@@ -1641,7 +1492,7 @@ Now every wave is at least about six texels long in the cascade that owns it, an
 <rect x="537.6" y="46" width="58.0" height="34" fill="#8fd0f0"/>
 <text class="small on-light" x="566.6" y="67" text-anchor="middle">5 m</text>
 <line class="accent" x1="325.3" y1="84" x2="325.3" y2="96"/>
-<text class="small accent-text" x="325.3" y="108" text-anchor="middle">waves down to 5.9 m, only 2 texels long</text>
+<text class="small accent-text" x="325.3" y="108" text-anchor="middle">breaking waves, only 2 texels long</text>
 <text x="60" y="140">Now: split at 6 wavelengths per patch of the next cascade</text>
 <rect x="62.6" y="148" width="169.8" height="34" fill="#1d4e89"/>
 <text class="small on-dark" x="147.5" y="169" text-anchor="middle">1500 m</text>
@@ -1659,29 +1510,27 @@ Now every wave is at least about six texels long in the cascade that owns it, an
 <line class="ink" x1="518.2" y1="196" x2="518.2" y2="202"/><text class="small" x="518.2" y="216" text-anchor="middle">10 cm</text>
 <text class="small" x="330" y="240" text-anchor="middle">wavelength (log scale): longer &#8592;&#8195;&#8594; shorter</text>
 </svg>
-  <p><em>Which wavelengths each cascade owns. The big cascade used to hold the breaking waves at about 2.9 m per texel.</em></p>
+  <p><em>Which wavelengths each cascade owns, before and after moving the split.</em></p>
 </div>
 
-Look closely at `boundaryK`: it uses the patch size of the *next* cascade, `m_oceanPatchSizes[i + 1]`. That only works if the cascades are sorted **from largest to smallest**. I learned this the hard way. At some point I reordered them from smallest to largest, and suddenly the ocean was full of heavy tiling in some places and flat as a mirror in others. The cutoffs had turned into nonsense: some bands overlapped and doubled their energy, others ended up completely empty.
+One thing to watch out for: `boundaryK` uses the patch size of the *next* cascade, so the cascades must be sorted **from largest to smallest**. I once reordered them the other way around, and the bands overlapped in some places and were empty in others: heavy tiling right next to water as flat as a mirror.
 
-How did I end up with these four sizes? I started with three cascades of 250 m, 17 m and 5 m on a small 128 m ocean plane, and it looked great. Then I made the plane 4096 m wide, and the 250 m patch repeated sixteen times across it. The tiling was impossible to miss. Adding a fourth, 1500 m cascade on top filled in the long swells and the tiling disappeared. Later I shrank the plane to 1024 m, which is plenty for the camera's view distance and is covered by less than one repeat of the big cascade.
+As for the sizes themselves: I started with three cascades (250 m, 17 m and 5 m), but once the ocean plane got bigger, the repeating 250 m patch was impossible to miss. Adding a 1500 m cascade on top filled in the long swells and hid the tiling.
 
 ### 4.3 Adding the 4th Cascade
 
-Adding a cascade sounds like copy-paste work, and that's exactly where it went wrong. A new cascade means three new textures (displacement, slope and foam), new shader registers, a bigger descriptor table (it grew from 12 to 15 SRVs), another patch size in the constant buffer, and another set of samples in both the vertex and the pixel shader.
+Adding a cascade sounds like copy-paste work, and that's exactly where it went wrong. A new cascade means three new textures (displacement, slope and foam), new shader registers, a bigger descriptor table, another patch size in the constant buffer, and another set of samples in both the vertex and the pixel shader.
 
-In both shaders I copied the cascade 2 lines for the new cascade, and forgot to update some of the names. So "cascade 3" was sampling `DisplacementTexture2`, `SlopeTexture2` and `FoamTexture2` at its own 5 m scale. Nothing crashed and nothing was black. The 17 m cascade was simply counted twice (once squeezed into 5 m tiles), and the real 5 m cascade was computed every frame and never used. The ocean just looked subtly *off*, which is the worst kind of bug.
+I copied the cascade 2 lines in both shaders and forgot to rename some of them, so "cascade 3" was sampling the cascade 2 textures at its own 5 m scale. Nothing crashed and nothing was black. The 17 m cascade was simply counted twice, and the real 5 m cascade was computed every frame and never used. The ocean just looked subtly *off*, which is the worst kind of bug.
 <!-- TODO(author): add how you found it (RenderDoc showing two SRV slots bound to the same texture? Disabling cascades one at a time?). -->
 
 If you add a cascade yourself, check in RenderDoc that every SRV slot points at a different texture. It takes a minute.
 
-The second bug came from the D3D12 debug layer, which was actually very helpful here. When I added the foam parameters, I first called `m_foamParameters.resize()` and then filled the vector with `push_back()`. `resize()` already creates the elements, so `push_back()` added new ones *after* them, and my vector ended up with 8 floats instead of 4. Those 8 floats were uploaded as root constants into a root signature that only had room for 4, and the debug layer complained about the root constants going out of bounds. The fix was to replace both calls with a single initializer list:
+The second bug was a classic C++ one, caught by the D3D12 debug layer. I called `resize()` on the foam parameter vector and then filled it with `push_back()`. `resize()` already creates the elements, so the vector ended up twice as long as the root constants it was uploaded to. A single initializer list fixes it:
 
 <pre><code class="language-cpp">
 m_foamParameters = { cbv.foamDecay, cbv.foamBias, cbv.foamAdd, cbv.foamRange, cbv.deltaTime };
 </code></pre>
-
-(It has five values today, since `deltaTime` joined the party in Chapter 3.)
 
 ### 4.4 World-Space UV Sampling
 
@@ -1699,13 +1548,11 @@ float3 displacement = DisplacementTexture0.SampleLevel(linearWrapSampler, uv0, 0
                     + DisplacementTexture3.SampleLevel(linearWrapSampler, uv3, 0).rgb;
 </code></pre>
 
-Because the UVs come from the world position instead of the mesh's own UVs, every cascade tiles at its own size across the same ocean plane, no matter how big the mesh is or where it sits. This also means the UVs go way outside the [0, 1] range, so, like I mentioned in section 2.1, you need a **WRAP** sampler. I started with a CLAMP sampler, and every vertex outside the first patch sampled the same edge value. Large parts of my ocean were perfectly flat.
+Because the UVs come from the world position, every cascade tiles at its own size across the same ocean plane, no matter how big the mesh is. The UVs also go way outside the [0, 1] range, so, like I mentioned in section 2.1, you need a **WRAP** sampler. With my first CLAMP sampler, everything outside the first patch sampled the same edge value, and large parts of the ocean were perfectly flat.
 
-The patch sizes get to the shaders through a small constant buffer, and that gave me one of my favourite C++ bugs. I uploaded them with `&m_cascadeSizes` instead of `m_cascadeSizes.data()`. A `std::vector` is a small object that holds *pointers* to its data. `&m_cascadeSizes` is the address of that object, so I was copying the vector's internal pointers into the constant buffer, and the shader interpreted those bytes as floats. Cascades 1 and 2 ended up with garbage patch sizes, and their UV scaling was all over the place. `.data()` gives you the address of the actual floats.
+The patch sizes reach the shaders through a small constant buffer, which gave me one of my favourite C++ bugs: I uploaded `&m_cascadeSizes` instead of `m_cascadeSizes.data()`. The first is the address of the `std::vector` object itself, so I was copying its internal pointers into the constant buffer, and the shader read those bytes as patch sizes.
 
-The most recent fix is a more subtle one, and it was hiding in plain sight in section 2.2. There, the pixel shader computed its UV from `IN.PositionWS`, the *displaced* world position. But the FFT textures are indexed by where a point *started*, not by where it ended up after the horizontal displacement. With choppy waves, points move sideways by a metre or more, so the pixel shader was looking up the normal and foam of a neighbouring point. The result: foam that sat *next to* the crests instead of on them.
-
-The fix is to pass the undisplaced position along from the vertex shader and use that for every cascade lookup in the pixel shader:
+The most subtle fix was hiding in plain sight in section 2.2. There, the pixel shader computed its UV from `IN.PositionWS`, the *displaced* world position. But the FFT textures are indexed by where a point *started*, not where it ended up after the horizontal displacement. With choppy waves, points move sideways by a metre or more, so the pixel shader looked up the normal and foam of a neighbouring point, and the foam sat *next to* the crests instead of on them. The fix is to pass the undisplaced position along from the vertex shader:
 
 <pre><code class="language-cpp">
 // ocean_vertex.hlsl
@@ -1716,7 +1563,7 @@ float2 uv0 = IN.GridPosition / patchSize0;
 float4 slope0 = SlopeTexture0.Sample(anisotropicSampler, uv0);
 </code></pre>
 
-For a calm ocean the difference is invisible, which is why the simple version in 2.2 works fine to get started. Once you add choppiness and foam, use the grid position.
+For a calm ocean the difference is invisible, so the simple version in 2.2 is fine to get started. Once you add choppiness and foam, use the grid position.
 
 ---
 
@@ -1724,9 +1571,9 @@ For a calm ocean the difference is invisible, which is why the simple version in
 
 ### 5.1 HDR Cubemap Pipeline
 
-The sky in my scene is an HDR photo stored as an *equirectangular* panorama, a 4K `.hdr` file. Equirectangular is the same projection as most world maps: longitude goes from left to right, latitude from top to bottom, and the image is twice as wide as it is tall. That's easy to store and easy to find online, but awkward to sample: everything gets stretched near the poles and there's a seam where the left and right edges meet.
+The sky in my scene is a 4K HDR photo stored as an *equirectangular* panorama: the same projection as most world maps, with longitude from left to right and latitude from top to bottom. Easy to find online, but awkward to sample, since everything gets stretched near the poles and there's a seam where the edges meet.
 
-GPUs much prefer **cubemaps**: six square images on the faces of a cube around the camera. You give the hardware a direction, and it figures out which face and which texel to read. So at startup a compute shader converts the panorama into a cubemap of 1024x1024 texels per face, with a full mip chain.
+GPUs much prefer **cubemaps**: six square images on the faces of a cube around the camera. You give the hardware a direction, and it picks the face and the texel. So at startup a compute shader converts the panorama into a cubemap of 1024x1024 texels per face, with a full mip chain.
 
 <div class="centered">
 <svg class="ocean-fig" viewBox="0 0 680 230" role="img" aria-label="An equirectangular panorama converted into the six faces of a cubemap">
@@ -1782,15 +1629,13 @@ float2 panoUV = float2(atan2(-dir.x, -dir.z), acos(dir.y)) * InvAtan;
 DstMip1[texCoord] = SrcTexture.SampleLevel(LinearRepeatSampler, panoUV, FirstMip);
 </code></pre>
 
-The skybox itself is a cube drawn around the camera with its winding reversed, so you see its inside. It's the first pass that writes into the HDR target. To keep the pipeline state objects manageable, I pulled the skybox out of the main `EffectPSO` into its own `SkyboxPSO`, both implementing a small `BasePSO` interface with pure virtual functions for setting the matrices and the material, applying the state and creating the pipeline state.
+The skybox itself is a cube drawn around the camera with its winding reversed, so you see its inside. It's the first pass that writes into the HDR target, with its own pipeline state. As a bonus, you can drop any `.hdr` file onto the scene in the editor, and the skybox and all the image based lighting get rebuilt on the spot, which makes comparing skies really easy.
 
-As a bonus, you can drop any `.hdr` file onto the scene in the editor. The skybox and all the image based lighting get rebuilt from it on the spot, which makes comparing skies really easy.
-
-Getting the skybox on screen was a struggle in itself. My first cubemap had faces with a 2:1 aspect ratio instead of square ones, which drew the sky as a bunch of stripes. After that came a string of DX12 crashes: pipeline state objects whose sample count didn't match the render target, and descriptor tables that were sized too small for what the shader expected. The most subtle one was a format mismatch between the MSAA and the non-MSAA render targets: one was `R16G16B16A16_FLOAT`, the other `R8G8B8A8_UNORM`, and a pipeline state was created for the wrong one. DX12 wants the formats and sample counts in the pipeline state to match the render target *exactly*, and the debug layer will tell you when they don't. Read those messages, they're right.
+Getting the skybox on screen was a struggle in itself. My first cubemap had 2:1 faces instead of square ones, which drew the sky as stripes. After that came a string of DX12 crashes, the most subtle one a pipeline state created for an `R8G8B8A8_UNORM` target while it drew into an `R16G16B16A16_FLOAT` one. DX12 wants the formats and sample counts in the pipeline state to match the render target *exactly*. The debug layer tells you when they don't, so read those messages, they're right.
 
 ### 5.2 IBL Bake Passes at Startup
 
-The three image based lighting assets from Chapter 2 are baked by compute shaders before the first frame. They are baked again whenever the environment changes (like dropping in a new HDR), or when one of their shaders gets hot-reloaded.
+The three image based lighting assets from Chapter 2 are baked by compute shaders before the first frame, and again whenever the environment changes.
 
 | Asset | Size | Mips | Samples per texel |
 |--------|-------|-------|-------|
@@ -1799,7 +1644,7 @@ The three image based lighting assets from Chapter 2 are baked by compute shader
 | Pre-filtered specular | 512 x 512 per face | 5 (roughness 0, 0.25, 0.5, 0.75, 1) | 4096 (GGX importance sampling) |
 | BRDF LUT | 512 x 512, `R16G16_FLOAT` | 1 | 4096 |
 
-**Diffuse irradiance.** Diffuse light changes very slowly with the normal direction, so 32x32 texels per face is plenty. For every texel, the shader walks over the whole hemisphere around that normal in small steps of 0.025 radians, about 250 steps around and 63 steps up, and averages the sky weighted by the cosine:
+**Diffuse irradiance.** Diffuse light changes very slowly with the normal direction, so 32x32 texels per face is plenty. For every texel, the shader walks over the hemisphere around that normal in small steps and averages the sky, weighted by the cosine:
 
 <pre><code class="language-cpp">
 for (float phi = 0.0f; phi &lt; 2.0f * PI; phi += sampleDelta)         // around the normal
@@ -1816,13 +1661,13 @@ for (float phi = 0.0f; phi &lt; 2.0f * PI; phi += sampleDelta)         // around
 irradiance = PI * irradiance / float(numSamples);
 </code></pre>
 
-The `cos(theta)` is the usual Lambert weighting, and the `sin(theta)` compensates for the samples bunching up near the top of the hemisphere. The `sampleMip` is important. My first version sampled the full resolution sky. With samples that far apart, whether a sample hit the tiny, extremely bright sun was pure luck, and the irradiance came out blotchy: blocks of light and dark on objects that changed as they turned. My first "fix" was a band-aid that just used a blurrier mip of the sky. The current version picks the mip whose texels are about as far apart as the samples, so every sample sees an average of its own little patch of sky.
+The `cos(theta)` is the usual Lambert weighting, and the `sin(theta)` compensates for the samples bunching up near the top of the hemisphere. The `sampleMip` is important. My first version sampled the full resolution sky, so whether a sample hit the tiny, extremely bright sun was pure luck, and the irradiance came out blotchy. The current version picks the mip whose texels are about as far apart as the samples, so every sample sees an average of its own little patch of sky.
 
-**Pre-filtered specular.** Each of the five mips is one dispatch with its own roughness, from 0 for mip 0 to 1 for mip 4. For every texel the shader takes 4096 directions, spread evenly with a Hammersley sequence and then importance sampled with the GGX distribution, so the samples land where the lobe actually is. Each sample again reads a mip of the sky that matches how much of the lobe it represents (this is called filtered importance sampling). Reading too detailed a mip shows the sun and clouds as streaks and blocks on rough surfaces.
+**Pre-filtered specular.** Each of the five mips is one dispatch with its own roughness, from 0 for mip 0 to 1 for mip 4. For every texel the shader takes 4096 GGX importance sampled directions (using a Hammersley sequence), so the samples land where the lobe actually is. Each sample again reads a sky mip that matches how much of the lobe it covers (filtered importance sampling). Without that, the sun and clouds show up as streaks and blocks on rough surfaces.
 
 **BRDF LUT.** For every combination of $\mathbf{n} \cdot \mathbf{v}$ (horizontally) and roughness (vertically) it integrates the GGX BRDF with 4096 samples and stores the scale $A$ and bias $B$. One detail that's easy to miss: the geometry term uses $k = \alpha / 2$ for IBL, where $\alpha = \text{roughness}^2$, instead of the $k = (\text{roughness} + 1)^2 / 8$ we use for the sun.
 
-The LUT gave me one of the nastiest bugs of the whole project. The texture is created as `R16G16_FLOAT`, but the shader resource view I sampled it through interpreted it as a different format. Every sample returned garbage, so the reflections were wrong in a way that didn't point anywhere near the actual problem. The giveaway is the texture itself: a correct BRDF LUT is a smooth red and green gradient, and mine was nonsense. The view format has to match the data.
+The LUT gave me one of the nastiest bugs of the project: the texture was `R16G16_FLOAT`, but the shader resource view read it as a different format. The reflections were wrong in a way that pointed nowhere near the actual problem. The giveaway is the texture itself: a correct BRDF LUT is a smooth red and green gradient, and mine was nonsense.
 
 ---
 
@@ -1830,35 +1675,29 @@ The LUT gave me one of the nastiest bugs of the whole project. The texture is cr
 
 ### 6.1 DX12 Resource Barriers & Synchronisation
 
-If there's one thing that kept biting me throughout this project, it's synchronisation. In older APIs the driver keeps track of which resource is being read and written, and inserts the waits for you. DX12 makes that *your* job: you tell the GPU with resource barriers when a texture switches from being written by one pass to being read by the next. Forget one, and the GPU happily starts the next dispatch before the previous one has finished writing.
+If there's one thing that kept biting me throughout this project, it's synchronisation. In older APIs the driver tracks which resource is being read and written, and inserts the waits for you. DX12 makes that *your* job: resource barriers tell the GPU when a texture switches from being written by one pass to being read by the next. Forget one, and the GPU happily starts the next dispatch before the previous one has finished writing.
 
-The ocean simulation is a long chain of compute passes that all read and write the same textures: animate the spectrum, horizontal FFT, vertical FFT, permute. Between every step you need a UAV barrier. At one point I was missing the one after the vertical FFT of the displacement texture. Bugs like that are horrible, because the result depends on timing. It can look fine for ten minutes and then glitch, or look fine on one GPU and break on another.
+The ocean simulation is a long chain of compute passes on the same textures (animate the spectrum, horizontal FFT, vertical FFT, permute), with a UAV barrier needed between every step. At one point I was missing the one after the vertical FFT. Bugs like that are horrible, because the result depends on timing: it can look fine for ten minutes and then glitch, or work on one GPU and break on another.
 
-A fellow graphics programmer took the time to explain race conditions and barriers to me properly, and afterwards I simplified things by using "global" UAV barriers (a barrier on `nullptr`, which waits for *all* UAV writes) between the ocean passes. Slightly less precise, but much harder to get wrong.
+A fellow graphics programmer took the time to explain race conditions and barriers to me properly, and afterwards I switched to "global" UAV barriers (a barrier on `nullptr`, which waits for *all* UAV writes) between the ocean passes. Slightly less precise, but much harder to get wrong. Eventually I built a small render graph into EV: every pass declares what it reads and writes, and the graph inserts the barriers. Almost all of my barrier bugs disappeared with it.
 <!-- TODO(author): credit Manon by name here if you'd like (commit f129c15). -->
-
-Another lesson: test on more than one GPU. My laptop (NVIDIA) refused to run code that worked fine on my desktop (AMD). The fix ended up being a change to resource flags and shuffling the shader registers and descriptor ranges around, and honestly, at the time I wasn't completely sure which of the changes fixed it. Different drivers are strict about different things.
-
-Eventually I got tired of placing barriers by hand and built a small render graph into EV. Every pass declares what it reads and writes, and the graph inserts the transitions and UAV barriers between them. The ocean's cascade textures are *imported* into the graph, since they live across frames, and the graph handles the rest. Almost all of my barrier bugs disappeared with it.
 
 What I'd tell my past self:
 
 - Turn on the debug layer and treat its warnings as errors. In EV a Debug build breaks on every D3D12 warning, which is annoying for about a day and then saves you over and over.
-- Test on both AMD and NVIDIA early, not when you think you're done.
+- Test on both AMD and NVIDIA early. My NVIDIA laptop refused to run code that worked fine on my AMD desktop, because different drivers are strict about different things.
 - Once you have more than a handful of passes, let something (a render graph) derive the barriers for you.
 
 ### 6.2 Debugging with RenderDoc
 
-Graphics bugs are hard because the GPU doesn't tell you anything. Your output is just pixels, and a wrong pixel could come from any of a dozen passes. RenderDoc changed that for me: you capture a frame and can look at every texture and buffer, at every step.
+Graphics bugs are hard because the GPU doesn't tell you anything. Your output is just pixels, and a wrong pixel could come from any of a dozen passes. RenderDoc changed that for me: you capture a frame and can look at every texture and buffer, at every step. A few examples where it saved me:
 
-A few examples from this project where RenderDoc saved me:
-
-- **The H₀ texture and the FFT steps.** Being able to look at the initial spectrum (with the color range turned way down, see Chapter 1), the output of the horizontal FFT and the result before and after the permute pass made the FFT debuggable at all. A missing permute, for example, shows up as an obvious checkerboard.
-- **The foam texture.** When the foam looked wrong, the first question was always: does the foam texture even have non-zero values where the waves break? One look at the texture answered that, and told me whether the problem was in the simulation or in the shading.
+- **The H₀ texture and the FFT steps.** Looking at the initial spectrum, the output of the horizontal FFT and the result before and after the permute pass is what made the FFT debuggable at all. A missing permute, for example, shows up as an obvious checkerboard.
+- **The foam texture.** Does it even have values where the waves break? One look told me whether a foam problem was in the simulation or in the shading.
 - **The BRDF LUT** from Chapter 5, which showed garbage instead of a smooth gradient.
-- **Misaligned structs.** My `DirectionalLight` struct didn't have the same layout on the CPU and the GPU. HLSL packs constant buffers in 16-byte chunks, C++ doesn't care, so the shader was reading parts of one member as another. RenderDoc is what pointed me at it. The same thing happened later with a material struct.
+- **Misaligned structs.** HLSL packs constant buffers in 16-byte chunks and C++ doesn't, so my `DirectionalLight` struct had a different layout on the GPU and the shader read parts of one member as another.
 
-Later I added a texture inspector to EV's own editor, and the render graph can show every resource a pass reads and writes. That covers the quick "is this texture what I think it is" checks without leaving the app, but for anything deeper RenderDoc is still the first thing I open.
+EV's editor now has its own texture inspector for quick checks, but for anything deeper RenderDoc is still the first thing I open.
 
 ### 6.3 Theory Before Code
 
@@ -1866,18 +1705,13 @@ For this project I deliberately tried to understand the theory before writing th
 
 The best example is the foam. Because I understood that the Jacobian measures how much the surface is squeezed, I could reason about every foam problem: foam beside the crests means the lookup position is wrong, foam that doesn't know about the swell means the cascades need to be combined *before* the determinant. Without the theory I would have been tweaking sliders until it looked okay from one camera angle. The same goes for the split sum: knowing that the LUT already contains Fresnel is the only reason I found the double Fresnel bug.
 
-It wasn't perfect though. There are still bits I copied before I understood them. The rounded $\omega$ in the time evolution (section 1.4) is one: my shader still has a `// TODO: lookup where this version comes from` next to it. And some of the JONSWAP parameter values came straight from gasgiant's implementation because they looked good.
+It wasn't perfect though. Some bits I copied before I understood them, like the rounded $\omega$ in section 1.4, and some JONSWAP values came straight from gasgiant's implementation because they looked good.
 
-What I'd do differently next time: build debug views much earlier. The foam debug views (foam amount, coverage, crest foam only) were one of the last things I added, and every foam bug would have been quicker to find with them. Theory tells you what *should* happen, debug views tell you what *actually* happens. You need both.
+What I'd do differently next time: build debug views much earlier. The foam debug views were one of the last things I added, and every foam bug would have been quicker to find with them. Theory tells you what *should* happen, debug views tell you what *actually* happens. You need both.
 
 ### 6.4 Scope Management
 
-An ocean is one of those topics where there's always one more thing to add. Here's what I decided *not* to do, at least for now:
-
-- **Geometry clipmap LOD.** The ocean is a uniform 512x512 grid over 1024 metres. A clipmap (rings of geometry that get coarser further from the camera) would give much more detail close by for the same cost. I started a branch for it, but parked it, since the uniform grid looked good enough at the distances I cared about.
-- **Refraction and caustics.** Seeing through the water, and the light patterns on a seabed. Both are a big project on their own, and my scene doesn't even have a seabed.
-- **Moving the H₀ generation to the GPU.** It's still on the CPU (see section 1.3). That's fine at startup, but it's the reason the spectrum sliders only update when you let go of them.
-- **Fixing every foam seam.** I experimented with bicubic foam sampling to smooth out hard edges, but didn't merge it.
+An ocean is one of those topics where there's always one more thing to add. Geometry clipmap LOD, refraction, caustics, moving H₀ to the GPU and smoothing out every foam seam all got started or considered, and then parked.
 
 On a time-boxed project, I found it helps to ask "what does the viewer notice first?" A nice foam pattern, a believable color and the glow of back-lit crests are noticed in the first second. Clipmap LOD and caustics only show up when you look for them. So the first group got my time, and the second group went on the list in Chapter 7.
 
@@ -1897,7 +1731,7 @@ On a time-boxed project, I found it helps to ask "what does the viewer notice fi
 
 I'm really happy with how it turned out. The things I like most are the shape of the waves (the JONSWAP spectrum with four cascades gives a convincing mix of big swells and small chop), the back-lit crests, and the foam now that it sits on the crests and fades into streaks. On a good frame, with a low sun, it can fool me for a second, and that was the goal.
 
-There's still plenty of room for improvement. The water has no depth to it: you can't see into it, there's no refraction and nothing underneath. And with 2 metres between the vertices of the ocean grid, the two small cascades only show up in the normals, never in the actual shape of the surface. And the subsurface scattering is a clever fake, but it's still a fake. I'd love to compare it against a ground truth one day.
+There's still plenty of room for improvement. The water has no depth to it (no refraction, nothing underneath), and the subsurface scattering is a clever fake, but it's still a fake. I'd love to compare it against a ground truth one day.
 
 | Metric | Value |
 |--------|-------|
@@ -1913,7 +1747,7 @@ There's still plenty of room for improvement. The water has no depth to it: you 
 
 ### 7.2 Ocean Presets: One Simulation, Many Seas
 
-One of my favourite things about the JONSWAP setup is how few parameters you need to completely change the character of the sea. To show that off, I added a set of built-in presets to the ocean panel. A preset only changes the wind, the shape of the spectrum, a few colors, the foam settings, and the sky: every preset comes with its own HDR sky and its own sun. Usually the sun sits where that sky has its sun, but for a few presets I cheated and put it low in front of the camera, so the crests get back-lit and the subsurface scattering from section 2.5 can glow through them. The simulation code is exactly the same for all of them. (You can also save your own presets, those end up in a small JSON file.)
+One of my favourite things about the JONSWAP setup is how few parameters you need to completely change the character of the sea. To show that off, I added a set of built-in presets to the ocean panel. A preset only changes the wind, the shape of the spectrum, a few colors, the foam settings, and the sky with its sun. For a few presets I cheated and put the sun low in front of the camera, so the crests get back-lit by the subsurface scattering from section 2.5. The simulation code is exactly the same for all of them.
 
 A quick reminder of what the main knobs do, in terms of Chapter 1:
 
@@ -1926,9 +1760,7 @@ A quick reminder of what the main knobs do, in terms of Chapter 1:
 
 One thing the presets don't change is the choppiness $\lambda$, which is fixed at 1.3. All the differences in steepness come from the spectrum itself.
 
-A small warning about the wind numbers: they look tiny (the Storm preset uses 6 m/s). That's because the fetch-limited JONSWAP formulas keep growing with fetch, and most presets use fetches of hundreds of kilometres. In the real ocean, a sea stops growing at some point (it becomes "fully developed"), but the formula doesn't know that. So treat the wind slider as relative, not as a weather report. The ocean depth plays a role too: with my fixed depth of 20 metres, the TMA correction and the finite depth dispersion from Chapter 1 keep the longest waves noticeably shorter than they would be in deep water.
-
-The peak wavelengths I mention below are what you get by plugging each preset's wind and fetch into $\omega_p$ and the dispersion relation.
+A small warning about the wind numbers: they look tiny (the Storm preset uses 6 m/s). The JONSWAP formulas keep growing with fetch, and most presets use fetches of hundreds of kilometres, while a real sea stops growing at some point. So treat the wind slider as relative, not as a weather report. The peak wavelengths I mention below come from plugging each preset's wind and fetch into $\omega_p$ and the dispersion relation, with my fixed depth of 20 metres.
 
 **Default**
 
@@ -1940,7 +1772,7 @@ The peak wavelengths I mention below are what you get by plugging each preset's 
 </div>
 <!-- PLACEHOLDER: this Default image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-The values from the code snippets in this article, based on gasgiant's parameters: a light wind over a 100 km fetch, full Hasselmann spreading and the standard JONSWAP gamma of 3.3 (the average measured in the North Sea). The peak sits at waves of about 8 metres, so it's a lively but friendly sea. The sun sits just above the horizon, which is perfect for the back-lit crests from section 2.5.
+The values from the code snippets in this article, based on gasgiant's parameters: a light wind over a 100 km fetch, full Hasselmann spreading and the standard JONSWAP gamma of 3.3. The peak sits at waves of about 8 metres, a lively but friendly sea, with the sun just above the horizon for back-lit crests.
 
 **Glassy Calm**
 
@@ -1952,7 +1784,7 @@ The values from the code snippets in this article, based on gasgiant's parameter
 </div>
 <!-- PLACEHOLDER: this Glassy Calm image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-Almost no wind (0.2 m/s) means a very small $\alpha$, so there's hardly any energy in the spectrum, and the scale is lowered on top of that. The swell is turned all the way up, so whatever energy there is travels as long, low undulations of around 20 metres, all in one direction. A strong short wave fade removes the small ripples, and that's what makes the surface glassy. The foam bias is set to -0.5, which means the Jacobian would have to drop far below zero before any foam forms, so there is none. With a clear dawn sky, a warm low sun and a higher IBL intensity, the water becomes an almost perfect mirror.
+Almost no wind (0.2 m/s) and a lowered scale leave hardly any energy in the spectrum. The swell is turned all the way up, so what's left travels as long, low undulations of around 20 metres, all in one direction, and a strong short wave fade removes the ripples that would break up the glassy look. A foam bias of -0.5 means no foam at all. With a clear dawn sky and a higher IBL intensity, the water becomes an almost perfect mirror.
 
 **Tropical Lagoon**
 
@@ -1964,7 +1796,7 @@ Almost no wind (0.2 m/s) means a very small $\alpha$, so there's hardly any ener
 </div>
 <!-- PLACEHOLDER: this Tropical Lagoon image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-A light breeze over a short fetch of only 20 km. A short fetch gives a "young" sea: the peak sits at short waves of around 4 metres and $\alpha$ is relatively large, so the waves are small but steep and choppy. Most of the look comes from the shading though: a turquoise water body with an even brighter aqua scatter color, a high height modifier and the peak scatter at its maximum. The sky has small fair-weather clouds, and I put the sun lower than the sky's own sun (which is out of view anyway), so every little crest is lit from behind and glows. In real life lagoons are turquoise because the light bounces off a shallow, sandy bottom. My ocean doesn't have a bottom, so the body color fakes it.
+A light breeze over a short fetch of only 20 km gives a "young" sea: small but steep, choppy waves of around 4 metres. Most of the look comes from the shading though: a turquoise water body, an even brighter aqua scatter color, and the peak scatter at its maximum with a low sun behind the waves, so every little crest glows. Real lagoons are turquoise because the light bounces off a shallow, sandy bottom. My ocean doesn't have a bottom, so the body color fakes it.
 
 **Trade Winds**
 
@@ -1976,7 +1808,7 @@ A light breeze over a short fetch of only 20 km. A short fetch gives a "young" s
 </div>
 <!-- PLACEHOLDER: this Trade Winds image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-A steady, moderate wind over 300 km of open ocean, under fair-weather clouds. The peak moves out to waves of around 40 metres, and with a spread blend of 0.9 most of them travel with the wind. The foam bias is raised to 0.55, so foam forms well before a wave actually folds, but it also fades a bit faster than the default. The result is regular whitecaps that only leave short trails. A classic mid-blue open ocean.
+A steady, moderate wind over 300 km of open ocean. The peak moves out to waves of around 40 metres, and with a spread blend of 0.9 most of them travel with the wind. A foam bias of 0.55 makes foam form well before a wave folds, but it fades a bit faster than the default, giving regular whitecaps with short trails. A classic mid-blue open ocean.
 
 **Long Swell**
 
@@ -1988,7 +1820,7 @@ A steady, moderate wind over 300 km of open ocean, under fair-weather clouds. Th
 </div>
 <!-- PLACEHOLDER: this Long Swell image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-The waves you see on a calm evening that were made by a storm far away. The fetch is 1000 km, which pushes the peak out to waves of around 100 metres. Gamma is at its maximum of 7, so almost all the energy sits in that one wavelength, which gives the sea a slow, regular rhythm. The swell is at 1, so the crests are long and parallel, and the short wave fade removes most of the local chop. With a foam bias of 0, only waves that really fold get foam, which almost never happens here. Big rolling hills of water, very little drama.
+The waves you see on a calm evening that were made by a storm far away. A 1000 km fetch pushes the peak out to waves of around 100 metres, and with gamma at its maximum of 7 almost all the energy sits in that one wavelength, giving the sea a slow, regular rhythm. Full swell makes the crests long and parallel, and a foam bias of 0 means only waves that really fold get foam, which almost never happens. Big rolling hills of water, very little drama.
 
 **North Atlantic**
 
@@ -2000,7 +1832,7 @@ The waves you see on a calm evening that were made by a storm far away. The fetc
 </div>
 <!-- PLACEHOLDER: this North Atlantic image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-Strong wind over 500 km, a slightly higher scale, and waves of around 80 metres at the peak. The spread blend drops to 0.7, so 30% of the broad $\cos^2$ spreading is mixed in, which adds waves that cross the main direction. The water is a dark blue-green grey, the sun is dimmed to a cold grey and the IBL intensity is lower, so the sea looks heavy and cold. A foam bias of 0.4 makes foam form early, and a slightly slower decay than the default lets the whitecaps linger.
+Strong wind over 500 km gives waves of around 80 metres at the peak. A spread blend of 0.7 mixes in 30% of the broad $\cos^2$ spreading, which adds waves that cross the main direction. Dark blue-green grey water, a cold grey sun and a lower IBL intensity make the sea look heavy and cold, and a foam bias of 0.4 with a slower decay lets the whitecaps form early and linger.
 
 **Storm**
 
@@ -2012,9 +1844,9 @@ Strong wind over 500 km, a slightly higher scale, and waves of around 80 metres 
 </div>
 <!-- PLACEHOLDER: this Storm image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-Everything turned up. The strongest wind over 800 km and a scale of 1.5 give the biggest waves of all the presets, with the peak at about 120 metres (in deep water it would be around 160, the 20 metre depth holds them back). The interesting part is the spreading. The swell is 0 and the spread blend is only 0.2, so 80% of the directional spreading is the broad $\cos^2$ lobe. That lobe sends energy in many directions, *including against the wind*. Waves from different directions run into each other, and you get a confused, chaotic sea with pyramid shaped peaks instead of neat rows.
+Everything turned up. The strongest wind over 800 km and a scale of 1.5 give the biggest waves of all the presets, with the peak at about 120 metres. The interesting part is the spreading: with no swell and a spread blend of only 0.2, most of the energy goes into the broad $\cos^2$ lobe, which sends waves in many directions, *including against the wind*. They run into each other, and you get a confused, chaotic sea with pyramid shaped peaks instead of neat rows.
 
-Here's my favourite detail: the foam bias is actually *lower* than the default (0.15 instead of 0.3), so a wave has to fold harder before it gets any foam, yet Storm is by far the foamiest preset. That's the Jacobian from Chapter 3 doing its job. Wherever the crossing waves meet, the surface gets squeezed so hard that the summed Jacobian drops below the bias all over the place. On top of that the foam decays at only 0.3 per second, a half-life of a bit over 2 seconds, so it trails far behind the breakers. Dark slate water, a dim grey sun hidden low behind the heavy clouds and deep green light through the crests finish it off.
+Here's my favourite detail: the foam bias is actually *lower* than the default (0.15 instead of 0.3), yet Storm is by far the foamiest preset. That's the summed Jacobian from Chapter 3 doing its job: wherever the crossing waves meet, the surface gets squeezed so hard that it drops below the bias all over the place. A slow decay lets the foam trail far behind the breakers.
 
 **Midnight**
 
@@ -2026,7 +1858,7 @@ Here's my favourite detail: the foam bias is actually *lower* than the default (
 </div>
 <!-- PLACEHOLDER: this Midnight image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-A gentle sea (waves of around 25 metres) under a moonlit sky. The fun part is that nothing in the shader knows it's night. The "sun" is simply placed where the moon is in the HDR sky and given a dim, cold blue color, and the water body is almost black. The GGX highlight from section 2.3 then turns into a glittering path of moonlight across the waves, using exactly the same math as the sunset glint. The foam albedo is lowered too, otherwise the whitecaps would glow brighter than the moon.
+A gentle sea under a moonlit sky. The fun part is that nothing in the shader knows it's night. The "sun" is simply placed where the moon is in the HDR sky with a dim, cold blue color, and the GGX highlight from section 2.3 turns into a glittering path of moonlight, using exactly the same math as the sunset glint. The foam albedo is lowered too, otherwise the whitecaps would glow brighter than the moon.
 
 **Harbour Lights**
 
@@ -2038,15 +1870,15 @@ A gentle sea (waves of around 25 metres) under a moonlit sky. The fun part is th
 </div>
 <!-- PLACEHOLDER: this Harbour Lights image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
-Remember the city HDR that took over my ocean in section 2.4? This preset does that on purpose. The fetch is only 5 km, the distance across a bay, which gives a very young sea: short, steep chop of about 2 metres with no swell at all, and a lower gamma that spreads the energy over more wavelengths. The water is a dark green and the IBL intensity is turned up, so the lights of the waterfront in the HDR get stretched into long streaks by the ripples. Exactly the image I tried so hard to get rid of in Chapter 2.
+Remember the city HDR that took over my ocean in section 2.4? This preset does that on purpose. A 5 km fetch, the distance across a bay, gives short, steep chop of about 2 metres. With dark green water and the IBL intensity turned up, the lights of the waterfront get stretched into long streaks by the ripples. Exactly the image I tried so hard to get rid of in Chapter 2.
 
 ### 7.3 Known Issues
 
-- **Small cascade tiling.** The 17 m and 5 m cascades repeat every few metres. In the waves you don't notice it, but in the trailing foam you can, which is why their foam weights are turned down.
-- **The edge of the world.** The ocean is a single 1024 m plane with a uniform grid and no LOD. Fly high enough and you'll see where it ends. With 2 metres between vertices, waves shorter than about 4 metres can't show up in the geometry at all, only in the normals.
-- **Spectrum generation on the CPU.** H₀ is generated on the CPU, so changing a spectrum slider (or a preset) causes a small hitch, and the sliders only apply when you let go. It's also uploaded on the copy queue without proper synchronisation with the frames that use it.
-- **Not reproducible.** The random seed for the spectrum comes from `std::random_device`, so every run gives a different ocean. Nice for variety, not nice for comparing screenshots.
-- **The time evolution uses deep water dispersion.** H₀ is built with the finite depth dispersion $\omega = \sqrt{gk \tanh(kD)}$, but the animation pass uses $\omega = \sqrt{gk}$. At 20 metres depth the longest waves move a bit too fast.
+- **Small cascade tiling.** The 17 m and 5 m cascades repeat every few metres, which shows in the trailing foam (hence their lower foam weights).
+- **The edge of the world.** The ocean is a single 1024 m plane with a uniform grid and no LOD, so fly high enough and you'll see where it ends. With 2 metres between vertices, waves shorter than about 4 metres only show up in the normals, never in the geometry.
+- **Spectrum generation on the CPU.** Changing a spectrum slider (or a preset) causes a small hitch, the sliders only apply when you let go, and the upload isn't properly synchronised with the frames that use it.
+- **Not reproducible.** The random seed comes from `std::random_device`, so every run gives a different ocean. Nice for variety, not for comparing screenshots.
+- **The time evolution uses deep water dispersion.** H₀ uses the finite depth version, but the animation pass uses $\omega = \sqrt{gk}$, so at 20 metres depth the longest waves move a bit too fast.
 - **Hardcoded constants.** The choppiness ($\lambda$ = 1.3), the roughness range and the scatter terms $k_2$ to $k_4$ are constants in the shaders instead of UI parameters.
 - **No refraction, caustics or underwater view.**
 
@@ -2054,8 +1886,8 @@ Remember the city HDR that took over my ocean in section 2.4? This preset does t
 
 - **Geometry clipmap LOD**: concentric rings of geometry centred on the camera, finer close by and coarser far away. There's a branch waiting for it.
 - **H₀ on the GPU**: generate the initial spectrum in a compute shader, so the sliders and presets update instantly.
-- **Refraction**: I'm currently building a path tracer in EV, and one of the planned side steps is ray traced refraction in the raster ocean: one inline ray per water pixel along the refracted direction, with absorption based on the real distance the light travels through the water.
-- **A ground truth for the water**: the same path tracer will get a proper water material with absorption and scattering. I'd love to use it as a reference to tune the subsurface scattering fake from Chapter 2.
+- **Refraction**: I'm currently building a path tracer in EV, and one of the planned side steps is ray traced refraction in the raster ocean, with absorption based on the real distance the light travels through the water.
+- **A ground truth for the water**: a proper water material in the same path tracer, to tune the subsurface scattering fake from Chapter 2 against.
 - **Caustics**: the light patterns that refracted sunlight draws on a seabed.
 - **More profiling**: the render graph already times every pass on the GPU. Next up is the CPU side, with a profiler like Tracy.
 
