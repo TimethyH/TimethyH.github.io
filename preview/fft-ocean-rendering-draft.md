@@ -1043,12 +1043,6 @@ float3 body = (1.0f - fresnelView) * oceanColor.rgb * skyIrradiance;
 
 `diffuseMap` is the diffuse irradiance cubemap from the next section, sampled straight up. The ocean color gives room for artistic vision. It's a very simple technique, but it gets the most important behaviour right. Now, when you look down into the water you see its color, and at grazing angles the color fades away and the reflection takes over.
 
-<!-- TODO(author): capture a low-sun shot looking towards the sun, so the GGX glint band and the distance roughness are both visible. Save as sunGlint.webp -->
-<div class="centered">
-  <img src="/assets/img/posts/OceanRender/sunGlint.webp" alt="Sun glint on the ocean">
-  <p><em>The sun glint: sharp sparkles close by, a soft band of light further away.</em></p>
-</div>
-
 ### 2.4 Image Based Lighting: the Split Sum Approximation
 
 In case you're already familiar with how IBL works, feel free to skip this section!
@@ -1582,17 +1576,23 @@ What I'd do differently next time: build debug views much earlier. The foam debu
 
 ### 6.1 Final Results
 
-<!-- TODO(author): add a final hero video here (e.g. the Storm or North Atlantic preset, low sun, slow camera fly-over). Save as finalOcean.mp4 -->
 <div class="centered">
-  <video width="100%" controls autoplay loop muted playsinline>
-    <source src="/assets/img/posts/OceanRender/finalOcean.mp4" type="video/mp4">
-  </video>
+  <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+    <iframe 
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+      src="https://www.youtube.com/embed/Bj9YD5zhjTY" 
+      frameborder="0" 
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
   <p><em>The final ocean.</em></p>
 </div>
 
 I'm really happy with how it turned out.
 There's still plenty of room for improvement. The water has no depth to it (no refraction, nothing underneath), and the subsurface scattering is a clever fake, but it's still a fake. I'd love to compare it against a ground truth one day.
 
+{% comment %} Hidden for now: the author adds the measurements later. Delete this comment line and the endcomment tag below to show the section again.
 **Some measurements**
 
 | Metric | Value |
@@ -1606,6 +1606,7 @@ There's still plenty of room for improvement. The water has no depth to it (no r
 | Cascade count | 4 (1500 m / 250 m / 17 m / 5 m) |
 
 <!-- TODO(author): docs/path-tracing/performance.md already has measurements on the RX 9070 XT (Release, vsync off, default ocean scene in a ~1237x712 editor viewport): render graph GPU ~0.46 ms, frame ~0.86 ms (CPU-bound). Either re-measure at 1920x1080 for this table or quote those with their resolution. -->
+{% endcomment %}
 
 
 ### 6.2 Ocean Presets: One Simulation, Many Seas
@@ -1614,27 +1615,12 @@ One of my favourite things about the JONSWAP setup is how few parameters you nee
 
 **Default**
 
-<!-- TODO(author): capture the Default preset (sky4k.hdr, low sun), camera slightly above the water looking towards the sun. Save as presets/default.webp -->
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/default.webp" alt="Default ocean preset">
   <p><em>Default</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
-<!-- PLACEHOLDER: this Default image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 The values from the code snippets in this article, based on gasgiant's parameters: a light wind over a 100 km fetch, full Hasselmann spreading and the standard JONSWAP gamma of 3.3. The peak sits at waves of about 8 metres, a lively but friendly sea, with the sun just above the horizon for back-lit crests.
-
-**Glassy Calm**
-
-<!-- TODO(author): capture Glassy Calm looking towards the horizon so the dawn sky reflection dominates. Save as presets/glassy-calm.webp -->
-<div class="centered">
-  <img src="/assets/img/posts/OceanRender/presets/glassy-calm.webp" alt="Glassy Calm ocean preset">
-  <p><em>Glassy Calm</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
-</div>
-<!-- PLACEHOLDER: this Glassy Calm image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
-
-Almost no wind (0.2 m/s) and a lowered scale leave hardly any energy in the spectrum. The swell is turned all the way up, so what's left travels as long, low undulations of around 20 metres, all in one direction, and a strong short wave fade removes the ripples that would break up the glassy look. A foam bias of -0.5 means no foam at all. With a clear dawn sky and a higher IBL intensity, the water becomes an almost perfect mirror.
 
 **Tropical Lagoon**
 
@@ -1662,13 +1648,10 @@ A steady, moderate wind over 300 km of open ocean. The peak moves out to waves o
 
 **Long Swell**
 
-<!-- TODO(author): capture Long Swell from a low camera so the long parallel crests roll towards the viewer, sunset sky. A short video would show the rhythm even better. Save as presets/long-swell.webp -->
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/long-swell.webp" alt="Long Swell ocean preset">
   <p><em>Long Swell</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
-<!-- PLACEHOLDER: this Long Swell image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 The waves you see on a calm evening that were made by a storm far away. A 1000 km fetch pushes the peak out to waves of around 100 metres, and with gamma at its maximum of 7 almost all the energy sits in that one wavelength, giving the sea a slow, regular rhythm. Full swell makes the crests long and parallel, and a foam bias of 0 means only waves that really fold get foam, which almost never happens. Big rolling hills of water, very little drama.
 
@@ -1683,6 +1666,15 @@ The waves you see on a calm evening that were made by a storm far away. A 1000 k
 <!-- PLACEHOLDER: this North Atlantic image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 Strong wind over 500 km gives waves of around 80 metres at the peak. A spread blend of 0.7 mixes in 30% of the broad $\cos^2$ spreading, which adds waves that cross the main direction. Dark blue-green grey water, a cold grey sun and a lower IBL intensity make the sea look heavy and cold, and a foam bias of 0.4 with a slower decay lets the whitecaps form early and linger.
+
+**Troubled Ocean**
+
+<div class="centered">
+  <img src="/assets/img/posts/OceanRender/presets/troubled-ocean.webp" alt="Troubled Ocean preset">
+  <p><em>Troubled Ocean</em></p>
+</div>
+
+Same 500 km fetch and 0.7 spread blend as North Atlantic, but with a much weaker wind of 4 m/s and a little swell (0.2). The waves themselves aren't huge; the mood comes almost entirely from the shading. Dark teal water, a grey sun and a low IBL intensity of 0.35 under a pale, overcast sky make everything feel flat and heavy. The scatter color is a muted amber instead of the usual blue-green, and with the height modifier raised to 2.5, the crests pick up a dull, murky glow. A foam bias of 0.4 lets the whitecaps form early.
 
 **Storm**
 
@@ -1707,18 +1699,6 @@ Everything turned up. The strongest wind over 800 km and a scale of 1.5 give the
 <!-- PLACEHOLDER: this Midnight image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 A gentle sea under a moonlit sky. The fun part is that nothing in the shader knows it's night. The "sun" is simply placed where the moon is in the HDR sky with a dim, cold blue color, and the GGX highlight from section 2.3 turns into a glittering path of moonlight, using exactly the same math as the sunset glint. The foam albedo is lowered too, otherwise the whitecaps would glow brighter than the moon.
-
-**Harbour Lights**
-
-<!-- TODO(author): capture Harbour Lights (bay2k.hdr) looking towards the waterfront so the lights smear across the ripples. Save as presets/harbour-lights.webp -->
-<div class="centered">
-  <img src="/assets/img/posts/OceanRender/presets/harbour-lights.webp" alt="Harbour Lights ocean preset">
-  <p><em>Harbour Lights</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
-</div>
-<!-- PLACEHOLDER: this Harbour Lights image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
-
-This preset uses an HDR of a city at night. A 5 km fetch, the distance across a bay, gives short, steep chop of about 2 metres. With dark green water and the IBL intensity turned up, the lights of the waterfront get stretched into long streaks by the ripples. A good example of how much the sky decides the look: the reflection is almost the whole image.
 
 ### 6.3 What's Next
 
