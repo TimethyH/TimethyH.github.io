@@ -35,7 +35,15 @@ Ocean implementation: 1 month.
   </div>
   <div class="project-media" markdown="1">
 
-  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/sceneCompressed.mp4"></video>
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+  <iframe 
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+    src="https://www.youtube.com/embed/Bj9YD5zhjTY" 
+    frameborder="0" 
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+    allowfullscreen>
+  </iframe>
+</div>
 
   </div>
 </div>
@@ -70,10 +78,7 @@ All work so far is done by simply following along with Jeremiah's tutorial. The 
   <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/calmWavesCompressed.mp4"></video>
   <p class="media-caption">FFT Generated ocean with 4 frequency bands</p>
 
-<a href="/assets/img/projects/EV/chess.webp" class="image">
-  ![Chess IBL](/assets/img/projects/EV/chess.webp)
-</a>
-<p class="media-caption">IBL</p>
+  <video controls autoplay loop muted preload="metadata" src="/assets/img/projects/EV/sceneCompressed.mp4"></video>
 
   </div>
 </div>
