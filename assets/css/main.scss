@@ -261,6 +261,23 @@ html, body {
     color: #fff;
     margin-bottom: 16px;
   }
+
+  /* Lists look the same as in the two-column .project-text sections
+     (without this they fall back to the theme's grey). */
+  ul, ol {
+    line-height: 1.8;
+    color: #fff;
+    margin-bottom: 20px;
+    padding-left: 20px;
+  }
+
+  /* A wide image in a full-width section: never wider than the section,
+     rounded like the images in .project-media. */
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
 }
 
 /* Tags */
