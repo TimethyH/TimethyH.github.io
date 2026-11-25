@@ -8,11 +8,38 @@ permalink: /projects/
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lobster&display=swap">
 
 <style>
+/* Card grid. auto-fill makes as many columns as fit at >= 340px each;
+   1fr then stretches them to share the leftover width evenly. */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 30px;
   margin-top: 30px;
+}
+
+/* Wide screens (PC): give the grid more room than the theme allows.
+   The theme squeezes every page into .main-container (70% of the screen)
+   and this page added col-lg-10 (83% of that), leaving the grid only ~58%
+   of the screen: 3 cards on a 1920px monitor, 4 on a 2560px one.
+   Here we:
+   1. let the col-lg-10 column use the full width (Bootstrap sets its size
+      with flex + max-width, so both are overridden), and
+   2. make the grid 90% of the screen width (vw = 1% of the viewport width,
+      capped at 2400px for ultrawides) and pull it left so it stays centred:
+      the left margin is "half the parent" minus "half the grid", which may
+      be negative — the grid then sticks out past the 70% box on both sides.
+   Result: 4 cards at 1920px, 6 at 2560px. Below 1200px nothing changes,
+   so tablets and phones keep the old layout. */
+@media (min-width: 1200px) {
+  .projects-column {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .projects-grid {
+    width: min(90vw, 2400px);
+    margin-left: calc(50% - min(45vw, 1200px));
+  }
 }
 
 .projects-grid .blog-post {
@@ -128,8 +155,9 @@ permalink: /projects/
 
 <div class="col-lg-12">
   <div class="row justify-content-center">
-    <div class="col-lg-10">
-      
+    <!-- projects-column: widened on PC screens, see the @media rule above -->
+    <div class="col-lg-10 projects-column">
+
       <div class="projects-header">
         <h1>My Projects</h1>
         <p>A collection of my graphics programming and rendering work</p>
