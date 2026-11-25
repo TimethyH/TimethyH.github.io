@@ -22,7 +22,8 @@ permalink: /projects/shadertoy/
   Live shaders: each <div class="shader-player"> shows its poster until the
   visitor presses play; only then are the .glsl file and the iChannel
   textures downloaded and run (assets/js/shader-player.js).
-  The GLSL files are the Shadertoy "Image" tab, pasted unchanged.
+  The GLSL files are the Shadertoy "Image" tab; Landscape Temple has a fixed
+  camera you turn by dragging (data-mouse="drag", see the top of its .glsl).
 -->
 
 <!-- Two-column section: Overview text left, live Landscape Temple right -->
@@ -51,10 +52,11 @@ Both shaders on this page **run live in your browser**. Press play to start one.
 <div class="shader-player" markdown="0"
      data-shader="/assets/shaders/landscape-temple.glsl"
      data-channel0="/assets/shaders/textures/stone.jpg"
+     data-mouse="drag"
      data-shadertoy="https://www.shadertoy.com/view/s3jGD3">
   <img class="shader-poster" src="/assets/img/projects/Shadertoy/landscapeTemple.webp" alt="Landscape Temple: a raymarched mountain landscape with a floating Greek temple">
 </div>
-<p class="media-caption">Landscape Temple: press play to run it live</p>
+<p class="media-caption">Landscape Temple: press play, then drag to look around</p>
 
 </div>
 </div>

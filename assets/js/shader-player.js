@@ -25,6 +25,8 @@
  *        data-channel0-filter="mipmap"           optional: mipmap | linear | nearest
  *        data-channel0-wrap="repeat"             optional: repeat | clamp
  *        data-channel0-vflip="true"              optional: flip rows like Shadertoy does
+ *        data-mouse="drag"                       optional: iMouse.xy = total drag distance
+ *                                                (for "drag to look around" cameras)
  *        data-shadertoy="https://shadertoy.com/view/ID">  optional: "open on Shadertoy" link
  *     <img class="shader-poster" src="poster.webp" alt="...">
  *   </div>
@@ -251,6 +253,14 @@
     // first frame of a click.
     this.mouse = [0, 0, 0, 0];
 
+    // data-mouse="drag": instead of the cursor position, iMouse.xy holds the
+    // total distance dragged so far (starting at 0, 0). A camera can turn
+    // that into angles, and a new drag continues from where the last one
+    // stopped instead of jumping to the spot that was clicked.
+    this.dragMouse = root.getAttribute('data-mouse') === 'drag';
+    this.lastPointer = null;  // previous pointer position during a drag
+    if (this.dragMouse) root.classList.add('is-drag-look');
+
     this.buildOverlay();
     allPlayers.push(this);
   }
@@ -456,18 +466,34 @@
 
     canvas.addEventListener('pointerdown', function (e) {
       var p = toPixels(e);
-      self.mouse = [p[0], p[1], p[0], p[1]];   // positive z, w: button down
+      if (self.dragMouse) {
+        // Drag mode: keep the accumulated xy, only mark the button as down.
+        // Math.max(…, 1) keeps z/w positive even for a click at pixel 0.
+        self.mouse[2] = Math.max(p[0], 1);
+        self.mouse[3] = Math.max(p[1], 1);
+        self.lastPointer = p;
+      } else {
+        self.mouse = [p[0], p[1], p[0], p[1]]; // positive z, w: button down
+      }
       canvas.setPointerCapture(e.pointerId);    // keep events while dragging outside
     });
     canvas.addEventListener('pointermove', function (e) {
       if (self.mouse[2] <= 0) return;           // only track while pressed
       var p = toPixels(e);
-      self.mouse[0] = p[0];
-      self.mouse[1] = p[1];
+      if (self.dragMouse) {
+        // Add how far the pointer moved since the previous event.
+        self.mouse[0] += p[0] - self.lastPointer[0];
+        self.mouse[1] += p[1] - self.lastPointer[1];
+        self.lastPointer = p;
+      } else {
+        self.mouse[0] = p[0];
+        self.mouse[1] = p[1];
+      }
     });
     function release() {
       self.mouse[2] = -Math.abs(self.mouse[2]); // negative z: button up
       self.mouse[3] = -Math.abs(self.mouse[3]);
+      self.lastPointer = null;
     }
     canvas.addEventListener('pointerup', release);
     canvas.addEventListener('pointercancel', release);

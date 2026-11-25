@@ -1,5 +1,10 @@
 // Landscape Temple (https://www.shadertoy.com/view/s3jGD3)
-// Shadertoy "Image" tab, unchanged. iChannel0 = Shadertoy texture Xsf3Rr, copied to textures/stone.jpg.
+// Shadertoy "Image" tab. iChannel0 = Shadertoy texture Xsf3Rr, copied to textures/stone.jpg.
+// Changed for the website: the camera stands still and the visitor looks around by
+// dragging (see "camera" in mainImage). The player runs this shader with
+// data-mouse="drag", so iMouse.xy is the total drag distance in pixels instead of the
+// cursor position. Pasted back into Shadertoy it still compiles; there the view simply
+// follows the absolute cursor position while dragging.
 
 // This shader is made entirely from resources learned from Inigo Quilez  v
 // Landscape: https://www.youtube.com/watch?v=BFld4EBO2RE&t=1501s
@@ -532,11 +537,27 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         vec3 offs = vec3(20.0,0.0,60.0);
         offs = vec3(0.0);
 
-        // camera
+        // camera: fixed position, the view direction comes from the mouse drag
         vec3 ro = vec3(2271.0, 401.5, 7856.0) - offs;
         vec3 ta = vec3(81.0, 403.5, -21.0);
 
-        ro.x -= 15.0 * sin(0.1 * iTime);
+        // Split the original view direction into yaw (around y, 0 = looking down +z)
+        // and pitch (up/down), so the drag can rotate around it.
+        vec3 baseDir = normalize(ta - ro);
+        float yaw   = atan(baseDir.x, baseDir.z);
+        float pitch = asin(baseDir.y);
+
+        // Drag distance in pixels -> radians. Dividing by the height keeps the speed the
+        // same at any render resolution; 1.2 rad per screen height roughly matches the
+        // vertical field of view (fl = 1.5), so the scene follows the cursor.
+        // "Grab" style: drag right -> the scene moves right (view turns left), drag up ->
+        // the scene moves up (view tilts down). Pitch is clamped so it never flips over.
+        vec2 look = iMouse.xy / iResolution.y * 1.2;
+        yaw  += look.x;
+        pitch = clamp(pitch - look.y, -1.0, 1.2);
+
+        // Rebuild the target one unit in front of the camera.
+        ta = ro + vec3(cos(pitch)*sin(yaw), sin(pitch), cos(pitch)*cos(yaw));
 
         // camera-to-world transformation
         mat3 ca = setCamera( ro, ta, 0.0 );
