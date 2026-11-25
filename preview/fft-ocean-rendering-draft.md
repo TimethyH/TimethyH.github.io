@@ -138,7 +138,7 @@ With JONSWAP you can control things like how many waves follow the wind directio
 
 The ocean simulation is driven by a statistical wave spectrum. Rather than simulating individual water particles, the sea surface is represented as a collection of many sinusoidal waves. 
 
-To simulate the ocean, the general idea is that we want to start by generating the initial representation of the heightfield in 2D space. We do this by using the wave spectrum in combination with a gaussian pseudo random number generator.  The gaussian random number is used to ensure that each wave component starts at a different point in its cycle. This way two oceans with the same parameters will still look different from each other. This random number becomes the $\xi_r + i\xi_i$ term in the H₀ formula, which we will see in section 1.2.
+To simulate the ocean, the general idea is that we want to start by generating the initial representation of the heightfield in 2D space. We do this by using the wave spectrum in combination with a gaussian pseudo random number generator.  The gaussian random number is used to ensure that each wave component starts at a different point in its cycle. This way two oceans with the same parameters will still look different from each other. This random number becomes the $\xi_r + i\xi_i$ term in the H₀ formula, which we will see in section 1.3.
 
 Tessendorf expresses the ocean height field as a sum of complex wave contributions across all frequencies. 
 We represent the ocean surface using the formula:
@@ -989,7 +989,7 @@ For water, the Fresnel term starts at $F_0 = 0.02$. This number comes straight f
 
 $$F_0 = \left(\frac{n - 1}{n + 1}\right)^2 = \left(\frac{0.33}{2.33}\right)^2 \approx 0.02$$
 
-So when you look straight down, only 2% of the light is reflected. At grazing angles that goes up to almost 100%. You can see this at any beach: the water at your feet is see-through, while the sea near the horizon is a mirror of the sky. This one small number does a surprising amount of the work in making water look like water.
+So when you look straight down, only 2% of the light is reflected. At grazing angles that goes up to almost 100%. You can see this at any beach: the water at your feet is see through, while the sea near the horizon is a mirror of the sky. This one small number does a surprising amount of the work in making water look like water.
 
 <pre><code class="language-cpp">
 float3 F0 = float3(0.02f, 0.02f, 0.02f);
@@ -1009,11 +1009,9 @@ directionalLightBRDF += PBRSpecular(normDist, geometryFunc, fresnel, viewDirWS, 
 
 I briefly tried a Beckmann distribution instead of GGX, since some of the older ocean papers use it. Beckmann falls off quickly away from the center of the highlight, while GGX has a longer "tail", which gives the sun glint a soft glow around it. That glow looks a lot like the sparkling band of light you see on the sea at sunset, so I kept GGX. It also matches the image based lighting in the next section, which is baked with GGX, so the sun and the sky reflections behave the same way.
 
-One silly bug worth mentioning: from an early lighting test I still had a *second* directional light pointing straight down. It added a fake sun glint right underneath the camera, wherever I flew. It took me a while to figure out that this wasn't a roughness problem at all, but a whole extra light. The glint loop now only runs for the sun.
-
 **Roughness that grows with distance**
 
-Close to the camera the water is smooth, which gives tight, sharp glints. Far away, a single pixel covers a lot of tiny waves that neither the mesh nor the slope textures can resolve. Those waves still exist though, and from far away they behave exactly like microfacets: they scatter the light around. So the further away a pixel is, the rougher the water should look. Without this, the distant ocean turns into a noisy carpet of single-pixel sparkles.
+Close to the camera the water is smooth, which gives tight, sharp glints. Far away, a single pixel covers a lot of tiny waves that neither the mesh nor the slope textures can resolve. Those waves still exist though, and from far away they behave exactly like microfacets: they scatter the light around. So the further away a pixel is, the rougher the water should look. Without this, the distant ocean turns into a noisy surface of single pixel sparkles.
 
 I blend between a near and a far roughness with an exponential, so the change is quick close by and levels off in the distance:
 
@@ -1044,7 +1042,7 @@ float3 skyIrradiance = diffuseMap.Sample(linearClampSampler, float3(0.0f, 1.0f, 
 float3 body = (1.0f - fresnelView) * oceanColor.rgb * skyIrradiance;
 </code></pre>
 
-`diffuseMap` is the diffuse irradiance cubemap from the next section, sampled straight up. The default ocean color is a deep blue, `(0.0, 0.15, 0.3)`. It's a very simple model, but it gets the most important behaviour right for free: when you look down into the water you see its color, and at grazing angles the color fades away and the reflection takes over.
+`diffuseMap` is the diffuse irradiance cubemap from the next section, sampled straight up. The ocean color gives room for artistic vision. It's a very simple technique, but it gets the most important behaviour right. Now, when you look down into the water you see its color, and at grazing angles the color fades away and the reflection takes over.
 
 <!-- TODO(author): capture a low-sun shot looking towards the sun, so the GGX glint band and the distance roughness are both visible. Save as sunGlint.webp -->
 <div class="centered">
@@ -1052,7 +1050,9 @@ float3 body = (1.0f - fresnelView) * oceanColor.rgb * skyIrradiance;
   <p><em>The sun glint: sharp sparkles close by, a soft band of light further away.</em></p>
 </div>
 
-### 2.4 Image-Based Lighting: the Split-Sum Approximation
+### 2.4 Image Based Lighting: the Split Sum Approximation
+
+In case you're already familiar with how IBL works, feel free to skip this section!
 
 The sun is a single light, but the sky is light coming from *every* direction. The blue sky, the clouds, the bright band at the horizon: the water reflects all of it, and on an ocean that reflection is most of what you see, especially towards the horizon. Image Based Lighting (IBL) uses an HDR photo of the environment as the light source to capture exactly that.
 
@@ -1060,9 +1060,9 @@ The problem is that the reflected light for a single pixel is an integral over e
 
 $$L_o(\mathbf{v}) = \int_{\Omega} L_i(\mathbf{l})\, f(\mathbf{l}, \mathbf{v})\, (\mathbf{n} \cdot \mathbf{l})\, d\mathbf{l}$$
 
-In words: for every direction $\mathbf{l}$ in the hemisphere above the surface, take the light coming from the sky in that direction, multiply it by how much of it the BRDF sends towards the camera, weight it by the angle, and add everything up. To do this properly you'd need hundreds or thousands of samples per pixel, every frame. Not happening.
+Simply put: for every direction $\mathbf{l}$ on the hemisphere above the surface, we take the light coming from the sky in that direction, multiply it by how much of it the BRDF sends towards the camera, weighted by the angle, and then add everything up. To do this properly you'd need hundreds or thousands of samples per pixel, every frame. You can imagine that this is computationally heavy and not feasible in real time applications. We solve this the same way we solve most rendering problems, we approximate :).
 
-The trick everyone uses comes from Brian Karis at Epic Games (Unreal Engine 4, 2013). If you estimate the integral with $N$ samples, you can split that estimate into two separate sums:
+The trick everyone uses comes from [Brian Karis at Epic Games (Unreal Engine 4, 2013)](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf). If you estimate the integral with $N$ samples, you can split that estimate into two separate sums:
 
 $$\int_{\Omega} L_i(\mathbf{l})\, f(\mathbf{l}, \mathbf{v})\, (\mathbf{n} \cdot \mathbf{l})\, d\mathbf{l} \;\approx\; \underbrace{\left(\frac{1}{N}\sum_{k=1}^{N} L_i(\mathbf{l}_k)\right)}_{\text{1. pre-filtered environment}} \cdot \underbrace{\left(\frac{1}{N}\sum_{k=1}^{N} \frac{f(\mathbf{l}_k, \mathbf{v})\,(\mathbf{n} \cdot \mathbf{l}_k)}{p(\mathbf{l}_k)}\right)}_{\text{2. BRDF integral}}$$
 
