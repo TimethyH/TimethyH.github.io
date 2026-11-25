@@ -1619,17 +1619,13 @@ One of my favourite things about the JONSWAP setup is how few parameters you nee
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/tropical-lagoon.webp" alt="Tropical Lagoon ocean preset">
   <p><em>Tropical Lagoon</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
-<!-- PLACEHOLDER: this Tropical Lagoon image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 <!-- TODO(author): capture Trade Winds from a bit higher up so the regular whitecap pattern under the cloudy sky is visible. Save as presets/trade-winds.webp -->
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/trade-winds.webp" alt="Trade Winds ocean preset">
   <p><em>Trade Winds</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
-<!-- PLACEHOLDER: this Trade Winds image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/long-swell.webp" alt="Long Swell ocean preset">
@@ -1640,7 +1636,6 @@ One of my favourite things about the JONSWAP setup is how few parameters you nee
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/north-atlantic.webp" alt="North Atlantic ocean preset">
   <p><em>North Atlantic</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
 
 <div class="centered">
@@ -1652,17 +1647,13 @@ One of my favourite things about the JONSWAP setup is how few parameters you nee
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/storm.webp" alt="Storm ocean preset">
   <p><em>Storm</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
-<!-- PLACEHOLDER: this Storm image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 <!-- TODO(author): capture Midnight looking towards the moon so the glitter path is visible. Save as presets/midnight.webp -->
 <div class="centered">
   <img src="/assets/img/posts/OceanRender/presets/midnight.webp" alt="Midnight ocean preset">
   <p><em>Midnight</em></p>
-  <p><small>Placeholder screenshot, to be replaced.</small></p>
 </div>
-<!-- PLACEHOLDER: this Midnight image is a temporary screenshot (960x540, fixed test camera). Replace it with a proper capture and remove the 'Placeholder screenshot' line above. -->
 
 ### 6.3 What's Next
 
