@@ -142,6 +142,22 @@ layout: full-width
     transform: scale(1.04);
   }
 
+  /* A video background (the ocean bar). Without this the <video> showed at
+     its own pixel size: on wide screens it ended before the bar's right
+     edge (black strip), and the bar only ever showed its top-left corner.
+     object-fit: cover = scale the video until it fills the whole bar
+     (keeping its shape) and crop what sticks out, centred, just like
+     background-size: cover does for the image bars. */
+  .featured-project-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
   /* Dark gradient overlay */
   .featured-project-bar::after {
     content: '';
@@ -294,8 +310,22 @@ layout: full-width
       <!-- Project 2: EV -->
       <a href="{{site.url}}{{site.baseurl}}/projects/01-EV-Engine" class="featured-project-bar">
         <div class="featured-project-bg">
-          <video autoplay muted loop playsinline preload="none" poster="{{site.url}}{{site.baseurl}}/assets/img/projects/EV/thumb2.webp">
-            <source src="{{site.url}}{{site.baseurl}}/assets/img/projects/EV/thumbVideo.mp4" type="video/mp4">
+          <!-- Looping ocean banner: a 9 s, 1920x480 strip cut from the EV
+               showcase recording (0:58-1:08, Gloomy Ocean), with the last
+               second crossfaded into the first so the loop has no jump.
+               - No autoplay + preload="none": nothing downloads until the
+                 script at the bottom calls play() when the bar scrolls into
+                 view (the bar sits far below the first screen).
+               - muted + playsinline: required for phones (iOS) to play a
+                 video by itself without going fullscreen.
+               - The browser picks the first <source> it can play: WebM/VP9
+                 (2.5 MB) in Chrome/Firefox/Edge, MP4/H.264 (3.1 MB) else.
+               - poster: still of the first frame, shown until it plays (and
+                 forever for visitors who asked for reduced motion). -->
+          <video class="featured-project-video" muted loop playsinline preload="none" aria-hidden="true"
+                 poster="{{site.url}}{{site.baseurl}}/assets/img/projects/EV/oceanBanner.webp">
+            <source src="{{site.url}}{{site.baseurl}}/assets/img/projects/EV/oceanBanner.webm" type="video/webm">
+            <source src="{{site.url}}{{site.baseurl}}/assets/img/projects/EV/oceanBanner.mp4" type="video/mp4">
           </video>
         </div>
         <div class="featured-project-content">
@@ -339,3 +369,48 @@ layout: full-width
     </section>
   </div>
 </div>
+
+<script>
+/* Play the featured-bar videos only while they are on screen.
+   IntersectionObserver is a browser API that calls us back whenever an
+   element enters or leaves the visible part of the page, so:
+   - the video file is only downloaded once someone scrolls near it
+     (the first play() starts the download, since preload="none"), and
+   - it pauses when scrolled away, so it doesn't keep decoding frames
+     (CPU/GPU/battery) for nothing.
+   rootMargin "200px" starts it a little before it actually appears. */
+(function () {
+  var videos = document.querySelectorAll('.featured-project-video');
+  if (!videos.length) return;
+
+  /* Visitors who turned on "reduce motion" in their system settings keep
+     the still poster image only.
+     (Only block comments in this script: the site's "compress" layout puts
+     the whole page on one line, so a // comment would swallow the code.) */
+  var reduceMotion = window.matchMedia &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  /* play() returns a promise that fails when the browser refuses to play
+     (e.g. iPhone low-power mode); then the poster simply stays visible. */
+  function tryPlay(video) {
+    var promise = video.play();
+    if (promise && promise.catch) promise.catch(function () {});
+  }
+
+  /* Very old browsers without IntersectionObserver: just play. */
+  if (!('IntersectionObserver' in window)) {
+    videos.forEach(tryPlay);
+    return;
+  }
+
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) tryPlay(entry.target);
+      else entry.target.pause();
+    });
+  }, { rootMargin: '200px 0px' });
+
+  videos.forEach(function (video) { observer.observe(video); });
+})();
+</script>
