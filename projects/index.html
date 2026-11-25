@@ -28,8 +28,11 @@ permalink: /projects/
       capped at 2400px for ultrawides) and pull it left so it stays centred:
       the left margin is "half the parent" minus "half the grid", which may
       be negative — the grid then sticks out past the 70% box on both sides.
-   Result: 4 cards at 1920px, 6 at 2560px. Below 1200px nothing changes,
-   so tablets and phones keep the old layout. */
+   3. raise the smallest card width to 380px so the wider grid doesn't
+      cram in too many columns (2300px grid at 2560px: 6 cards would need
+      6*380 + 5*30 gaps = 2430px, so it makes 5).
+   Result: 3 cards at 1366px, 4 at 1920px, 5 at 2560px. Below 1200px
+   nothing changes, so tablets and phones keep the old layout. */
 @media (min-width: 1200px) {
   .projects-column {
     flex: 0 0 100%;
@@ -37,6 +40,7 @@ permalink: /projects/
   }
 
   .projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
     width: min(90vw, 2400px);
     margin-left: calc(50% - min(45vw, 1200px));
   }
