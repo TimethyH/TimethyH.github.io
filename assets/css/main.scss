@@ -113,13 +113,26 @@ html, body {
   }
 }
 
-/* Two-column layout */
+/* Two-column layout (stacks into one column below 992px, see "Responsive").
+   minmax(0, 1fr) instead of plain 1fr: a plain 1fr column can't get narrower
+   than its widest unbreakable content (a long code line, a wide image), so
+   that content would widen its column, squash the other one and push the
+   page past the screen edge on phones. With a minimum of 0 both halves stay
+   exactly 50/50 and long code scrolls inside its own box (pre has
+   overflow-x: auto). */
 .project-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 60px;
   margin-bottom: 80px;
   align-items: center;
+}
+
+/* Grid items default to min-width: auto (= their content's width); 0 lets
+   them shrink to their column so wide content scrolls instead of overflowing. */
+.project-text,
+.project-media {
+  min-width: 0;
 }
 
 .project-text {
@@ -271,6 +284,13 @@ html, body {
     padding-left: 20px;
   }
 
+  /* Code in a full-width section: a long line scrolls inside its box
+     instead of running off the screen. */
+  pre {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
   /* A wide image in a full-width section: never wider than the section,
      rounded like the images in .project-media. */
   img {
@@ -386,8 +406,11 @@ html, body {
 
 /* Responsive */
 @media (max-width: 992px) {
+  /* One column on tablets and phones: text first, then the media at full
+     width. (Also applies to .reverse sections, which no longer set their own
+     columns, so this rule isn't overridden.) */
   .project-section {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 30px;
   }
   
@@ -588,10 +611,11 @@ body:has(.project-background) {
   }
 }
 
-/* Reverse layout for alternating sections */
+/* Reverse layout for alternating sections: only swaps the order of text and
+   media. The columns come from .project-section; setting them here again
+   (two classes = more specific) used to override the one-column rule for
+   tablets/phones, leaving a thin text column next to a tiny image. */
 .project-section.reverse {
-  grid-template-columns: 1fr 1fr;
-  
   .project-text {
     order: 2;
     padding-right: 0;
