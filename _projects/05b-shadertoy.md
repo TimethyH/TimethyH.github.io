@@ -14,6 +14,8 @@ tags:
   - Raymarching
 # Loads assets/js/shader-player.js (see _layouts/project.html)
 shader_player: true
+# Clean URL; the filename prefix 05b only sorts the card after 05-dlss
+permalink: /projects/shadertoy/
 ---
 
 <!--
