@@ -19,7 +19,7 @@ usemathjax: true
 
 Oceans can be one of the most relaxing phenomena that nature provides us. Hearing the crashing waves, seeing small water ripples and light refraction through the water surface can take hours of my day when sitting at a beach. This is one of the reasons why this project came to life. 
 
-As a graphics programmer, I often ask myself how real life scenarios would translate to a digital implementation. Usually I have a rough idea, but oceans seemed so complex, non-uniform and variable dependent that I decided to ask google instead. This led to a rabbit hole of papers regarding Fourier Transforms, Euler's formula and scary math which I will be elaborating on in this blogpost. 
+As a graphics programmer, I often ask myself how real life scenarios would translate to a digital implementation. Usually I have a rough idea, but oceans seemed so complex, non uniform and variable dependent that I decided to ask google instead. This led to a rabbit hole of papers regarding Fourier Transforms, Euler's formula and scary math which I will be elaborating on in this blogpost. 
 
 So if you've ever looked at an ocean and wondered how films such as [Titanic](https://youtu.be/BTff04cFsRw?t=99), AAA games such as [Horizon Forbidden West](https://www.youtube.com/watch?v=XT-xhCNalPc) and [Sea of Thieves](https://www.reddit.com/r/Seaofthieves/comments/184f1le/the_ocean_of_sea_of_thieves_is_insane_enjoy_it/) recreated it, then this blogpost is for you. 
 
@@ -888,7 +888,7 @@ You've successfully created the slope and displacement textures! In the next cha
 
 At this point we have two textures coming out of the permute pass: a displacement texture and a slope texture. The displacement texture holds the XYZ offset to apply to each vertex. The slope texture holds the surface derivatives we need to reconstruct the surface normal in the pixel shader.
 
-The ocean mesh is just a flat grid of vertices. In the vertex shader, each vertex samples the displacement texture and adds the result to its position. The UV coordinates are derived from world-space position divided by the patch size.
+The ocean mesh is just a flat grid of vertices. In the vertex shader, each vertex samples the displacement texture and adds the result to its position. The UV coordinates are derived from world space position divided by the patch size.
 
 <pre><code class="language-cpp">
 float2 uv = data.Position.xz / patchSize;
@@ -902,7 +902,7 @@ Make sure you use a **WRAP** sampler here, not CLAMP. With CLAMP, every vertex o
 
 ### 2.2 Normal Reconstruction & Shading
 
-In the pixel shader, sample the slope texture using the same world-space UV. Reconstructing the surface normal from the slopes is a single line:
+In the pixel shader, sample the slope texture using the same world space UV. Reconstructing the surface normal from the slopes is a single line:
 
 <pre><code class="language-cpp">
 float2 uv = IN.PositionWS.xz / patchSize;
@@ -1052,7 +1052,7 @@ Simply put: for every direction $\mathbf{l}$ on the hemisphere above the surface
 
 The trick everyone uses comes from [Brian Karis at Epic Games (Unreal Engine 4, 2013)](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf). If you estimate the integral with $N$ samples, you can split that estimate into two separate sums:
 
-$$\int_{\Omega} L_i(\mathbf{l})\, f(\mathbf{l}, \mathbf{v})\, (\mathbf{n} \cdot \mathbf{l})\, d\mathbf{l} \;\approx\; \underbrace{\left(\frac{1}{N}\sum_{k=1}^{N} L_i(\mathbf{l}_k)\right)}_{\text{1. pre-filtered environment}} \cdot \underbrace{\left(\frac{1}{N}\sum_{k=1}^{N} \frac{f(\mathbf{l}_k, \mathbf{v})\,(\mathbf{n} \cdot \mathbf{l}_k)}{p(\mathbf{l}_k)}\right)}_{\text{2. BRDF integral}}$$
+$$\int_{\Omega} L_i(\mathbf{l})\, f(\mathbf{l}, \mathbf{v})\, (\mathbf{n} \cdot \mathbf{l})\, d\mathbf{l} \;\approx\; \underbrace{\left(\frac{1}{N}\sum_{k=1}^{N} L_i(\mathbf{l}_k)\right)}_{\text{1. prefiltered environment}} \cdot \underbrace{\left(\frac{1}{N}\sum_{k=1}^{N} \frac{f(\mathbf{l}_k, \mathbf{v})\,(\mathbf{n} \cdot \mathbf{l}_k)}{p(\mathbf{l}_k)}\right)}_{\text{2. BRDF integral}}$$
 
 The first part is simply *the average color of the sky* over the directions the GGX lobe reflects. The second part is *how much light the BRDF reflects in total*, as if the sky were plain white. The $\mathbf{l}_k$ are directions picked according to the GGX distribution, and $p(\mathbf{l}_k)$ is the probability of picking each one.
 
@@ -1061,7 +1061,7 @@ This is the approximation. It assumes the sky looks roughly the same across the 
 With this, each part now depends on far fewer things, so each can be baked once:
 
 <div class="centered">
-<svg class="ocean-fig" viewBox="0 0 680 260" role="img" aria-label="Split-sum approximation: the full integral is approximated by a pre-filtered sky cubemap times a BRDF lookup table">
+<svg class="ocean-fig" viewBox="0 0 680 260" role="img" aria-label="Split sum approximation: the full integral is approximated by a prefiltered sky cubemap times a BRDF lookup table">
 <defs>
 <linearGradient id="ofLutH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2e7d32"/><stop offset="1" stop-color="#c62828"/></linearGradient>
 <linearGradient id="ofLutV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#000000" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity="0.6"/></linearGradient>
@@ -1075,7 +1075,7 @@ With this, each part now depends on far fewer things, so each can be baked once:
 <text class="small" x="108" y="156" text-anchor="middle">per pixel, per frame</text>
 <text x="226" y="114" text-anchor="middle" style="font-size:26px">&#8776;</text>
 <rect class="box" x="244" y="30" width="200" height="150" rx="8"/>
-<text class="title" x="344" y="52" text-anchor="middle">1. Pre-filtered sky</text>
+<text class="title" x="344" y="52" text-anchor="middle">1. Prefiltered sky</text>
 <rect x="257" y="62" width="30" height="50" fill="#8fc3ea" fill-opacity="0.35" class="faint"/><circle cx="272" cy="80" r="3" fill="url(#ofSunBlur)"/>
 <rect x="294" y="62" width="30" height="50" fill="#8fc3ea" fill-opacity="0.35" class="faint"/><circle cx="309" cy="80" r="6" fill="url(#ofSunBlur)"/>
 <rect x="331" y="62" width="30" height="50" fill="#8fc3ea" fill-opacity="0.35" class="faint"/><circle cx="346" cy="80" r="9" fill="url(#ofSunBlur)"/>
@@ -1098,10 +1098,10 @@ With this, each part now depends on far fewer things, so each can be baked once:
   <p><em>The split sum: one impossible integral becomes two textures you can bake ahead of time.</em></p>
 </div>
 
-1. **The pre-filtered environment** only depends on the sky and the roughness. We bake it into the mip chain of a cubemap: mip 0 is the sharp sky for a perfect mirror, and every next mip is the sky blurred by a rougher GGX lobe, up to roughness 1 in mip 4.
+1. **The prefiltered environment** only depends on the sky and the roughness. We bake it into the mip chain of a cubemap: mip 0 is the sharp sky for a perfect mirror, and every next mip is the sky blurred by a rougher GGX lobe, up to roughness 1 in mip 4.
 2. **The BRDF integral** only depends on the angle $\mathbf{n} \cdot \mathbf{v}$ and the roughness. Thanks to the way Schlick's Fresnel is built, $F_0$ can be pulled out as a scale and a bias, $F_0 \cdot A + B$. So we bake $A$ and $B$ into the red and green channels of a 2D lookup texture (the BRDF LUT). It doesn't even depend on the sky, so it's computed once and never again.
 
-There is a third baked asset, which isn't part of the split sum but belongs to the same family: the **diffuse irradiance cubemap**. For every normal direction it stores the cosine-weighted average of the whole hemisphere of sky above it. On regular PBR objects in the scene it's the diffuse ambient light. On the ocean it's used for the water body (sampled straight up, as we saw in 2.3) and for lighting the foam in Chapter 3. How all three are baked is left out since there are many resources on this already, for example LearnOpenGL's chapters on [diffuse irradiance](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and [specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL).
+There is a third baked asset, which isn't part of the split sum but belongs to the same family: the **diffuse irradiance cubemap**. For every normal direction it stores the cosine weighted average of the whole hemisphere of sky above it. On regular PBR objects in the scene it's the diffuse ambient light. On the ocean it's used for the water body (sampled straight up, as we saw in 2.3) and for lighting the foam in Chapter 3. How all three are baked is left out since there are many resources on this already, for example LearnOpenGL's chapters on [diffuse irradiance](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and [specular IBL](https://learnopengl.com/PBR/IBL/Specular-IBL).
 
 In the pixel shader, using all of this is only a few lines:
 
@@ -1118,17 +1118,17 @@ float2 envBRDF = brdfLUT.Sample(linearClampSampler, float2(NdotV, roughness)).rg
 float3 specular = specularColor * (F0 * envBRDF.x + envBRDF.y);
 </code></pre>
 
-`roughness * MAX_REFLECTION_LOD` maps roughness 0 to 1 onto mips 0 to 4 of the pre-filtered cubemap.
+`roughness * MAX_REFLECTION_LOD` maps roughness 0 to 1 onto mips 0 to 4 of the prefiltered cubemap.
 
 
 ### 2.5 Subsurface Scattering at Wave Crests
 
-When you look at a wave with the sun behind it, the top of the crest seems to glow green or turquoise. The crest is thin enough that sunlight goes in at the back, scatters through the water and comes out the front, towards you. Water absorbs red light the most, so what makes it through is blue-green.
+When you look at a wave with the sun behind it, the top of the crest seems to glow green or turquoise. The crest is thin enough that sunlight goes in at the back, scatters through the water and comes out the front, towards you. Water absorbs red light the most, so what makes it through is blue green.
 
 Doing this properly means simulating light travelling through a volume of water, which is way too expensive for a real time ocean. Instead we fake it with a handful of dot products. The approximation I use comes from the [GDC 2019 talk on the water in *Atlas*, slide 52](https://gpuopen.com/download/gdc-2019-agtd6-interactive-water-simulation-in-atlas.pdf).
 
 <div class="centered">
-<svg class="ocean-fig" viewBox="0 0 680 280" role="img" aria-label="Back-lit wave crest: sunlight enters the thin crest from behind and scatters out towards the camera">
+<svg class="ocean-fig" viewBox="0 0 680 280" role="img" aria-label="Backlit wave crest: sunlight enters the thin crest from behind and scatters out towards the camera">
 <defs><marker id="ofArrSun" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="accent-fill"/></marker><marker id="ofArrSss" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1fb5a3"/></marker><marker id="ofArrInk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="ink-fill"/></marker></defs>
 <line class="faint dashed" x1="20" y1="200" x2="660" y2="200"/>
 <text class="small" x="24" y="194">mean sea level</text>
@@ -1142,7 +1142,7 @@ Doing this properly means simulating light travelling through a volume of water,
 <text class="small" x="500" y="142" text-anchor="middle">from behind</text>
 <line class="scatter-line" x1="334" y1="117" x2="104" y2="128" marker-end="url(#ofArrSss)"/>
 <text class="small" x="215" y="146" text-anchor="middle">scattered light comes out</text>
-<text class="small" x="215" y="160" text-anchor="middle">tinted blue-green</text>
+<text class="small" x="215" y="160" text-anchor="middle">tinted blue green</text>
 <g transform="translate(72,128)"><rect class="ink" x="-24" y="-12" width="30" height="24" rx="3"/><path class="ink" d="M6,-6 L20,-12 L20,12 L6,6 Z"/></g>
 <text x="64" y="164" text-anchor="middle">camera</text>
 <line class="ink" x1="316" y1="131" x2="292" y2="106" marker-end="url(#ofArrInk)"/>
@@ -1152,7 +1152,7 @@ Doing this properly means simulating light travelling through a volume of water,
 <text class="small" x="340" y="250" text-anchor="middle">k1 is large when the camera looks towards the sun, the surface faces away from the sun,</text>
 <text class="small" x="340" y="264" text-anchor="middle">and the point sits high up on a crest. All three at once.</text>
 </svg>
-  <p><em>The k1 term: a thin, back-lit crest lets the sunlight through.</em></p>
+  <p><em>The k1 term: a thin, backlit crest lets the sunlight through.</em></p>
 </div>
 
 <pre><code class="language-cpp">
@@ -1172,12 +1172,12 @@ It looks like a wall of math, but each piece answers a simple question. Let's st
 
 - **`H`: are we high up on a wave?** This is the height of the vertex above the mean sea level (the summed vertical displacement of all cascades), scaled by `heightModifier`. It's a proxy for "how thin is the water here". Crests are thin, troughs are not, and negative heights are clamped to zero so troughs get nothing.
 - **`dot(L, -V)^4`: is the camera looking towards the sun?** `mainLightDirection` points towards the sun and `-viewDirWS` points from the camera into the scene. Their dot product is 1 when you look straight into the sun, which means the sun is *behind* the wave. The power of 4 makes this a narrow cone.
-- **`(0.5 - 0.5 * dot(L, N))^3`: does this side of the wave face away from the sun?** This remaps $\mathbf{l} \cdot \mathbf{n}$ from the range [-1, 1] to [1, 0]. It's 1 when the surface faces directly away from the sun, which is the back-lit side of the crest that faces you. Cubed to make it tighter.
+- **`(0.5 - 0.5 * dot(L, N))^3`: does this side of the wave face away from the sun?** This remaps $\mathbf{l} \cdot \mathbf{n}$ from the range [-1, 1] to [1, 0]. It's 1 when the surface faces directly away from the sun, which is the backlit side of the crest that faces you. Cubed to make it tighter.
 
 The other three terms are much simpler and add a base amount of scattered light everywhere:
 
 - **$k_2$**, looking down: when you look down into the water you see more of the light scattered inside it.
-- **$k_3$**, sun-facing slopes: the side of a wave that faces the sun lets light in, and some of it scatters back out.
+- **$k_3$**, sun facing slopes: the side of a wave that faces the sun lets light in, and some of it scatters back out.
 - **$k_4$**, bubbles: a small constant glow from bubbles and particles in the water.
 
 Finally, everything is multiplied by $(1 - F)$. Light that was reflected at the surface can't also enter the water, so at grazing angles, where almost everything is reflected, the scattering fades out. That keeps the term from adding energy that isn't there.
@@ -1497,7 +1497,7 @@ As for the sizes themselves: I started with three cascades (250 m, 17 m and 5 m)
 
 ### 4.3 Adding the 4th Cascade
 
-Adding a cascade sounds like copy-paste work, and that's exactly where it went wrong. A new cascade means three new textures (displacement, slope and foam), new shader registers, a bigger descriptor table, another patch size in the constant buffer, and another set of samples in both the vertex and the pixel shader.
+Adding a cascade sounds like copy paste work, and that's exactly where it went wrong. A new cascade means three new textures (displacement, slope and foam), new shader registers, a bigger descriptor table, another patch size in the constant buffer, and another set of samples in both the vertex and the pixel shader.
 
 I copied the cascade 2 lines in both shaders and forgot to rename some of them, so "cascade 3" was sampling the cascade 2 textures at its own 5 m scale. Nothing crashed and nothing was black. The 17 m cascade was simply counted twice, and the real 5 m cascade was computed every frame and never used. The ocean just looked subtly *off*, which is the worst kind of bug.
 <!-- TODO(author): add how you found it (RenderDoc showing two SRV slots bound to the same texture? Disabling cascades one at a time?). -->
@@ -1510,7 +1510,7 @@ The second bug was a classic C++ one, caught by the D3D12 debug layer. I called 
 m_foamParameters = { cbv.foamDecay, cbv.foamBias, cbv.foamAdd, cbv.foamRange, cbv.deltaTime };
 </code></pre>
 
-### 4.4 World-Space UV Sampling
+### 4.4 World Space UV Sampling
 
 Each cascade is sampled with its own UV, computed from the world position divided by its patch size:
 

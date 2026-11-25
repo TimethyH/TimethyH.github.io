@@ -96,7 +96,7 @@ Fewer probes × more directions keeps every cascade at exactly **1024² rays**. 
 
 ## Gathering a cascade: one texel = one ray
 
-Every cascade is stored in a single 1024² texture, and every GPU thread handles one texel. The first job of the shader is to find out which ray that texel stands for. The texture is laid out **probe-first**: each probe owns a small square block of texels with one texel per direction. From the texel position the shader derives:
+Every cascade is stored in a single 1024² texture, and every GPU thread handles one texel. The first job of the shader is to find out which ray that texel stands for. The texture is laid out **probe first**: each probe owns a small square block of texels with one texel per direction. From the texel position the shader derives:
 
 - **which probe** it belongs to (integer division by the block size) and where that probe sits on the canvas,
 - **which direction** it points in (the position inside the block, numbered row by row),
@@ -220,11 +220,11 @@ Fixing this is the next step.
 
 **Then the path tracing project**
 
-- DXR acceleration structures and ray-query debug views
+- DXR acceleration structures and ray query debug views
 - An RGB reference path tracer, then spectral rendering with hero wavelength sampling
-- Denoising, and the GI comparison: **3D radiance cascades** (where everything learned here comes back), DDGI probes, ReSTIR and radiance caches, all measured against the path-traced reference
+- Denoising, and the GI comparison: **3D radiance cascades** (where everything learned here comes back), DDGI probes, ReSTIR and radiance caches, all measured against the path traced reference
 
-The techniques come from Alexander Sannikov's [Radiance Cascades paper](https://github.com/Raikiri/RadianceCascadesPaper) and these write-ups: [Fundamentals of Radiance Cascades](https://m4xc.dev/articles/fundamental-rc/), GM Shaders' [part 1](https://mini.gmshaders.com/p/radiance-cascades) and [part 2](https://mini.gmshaders.com/p/radiance-cascades2), and [jason.today](https://jason.today/rc).
+The techniques come from Alexander Sannikov's [Radiance Cascades paper](https://github.com/Raikiri/RadianceCascadesPaper) and these articles: [Fundamentals of Radiance Cascades](https://m4xc.dev/articles/fundamental-rc/), GM Shaders' [part 1](https://mini.gmshaders.com/p/radiance-cascades) and [part 2](https://mini.gmshaders.com/p/radiance-cascades2), and [jason.today](https://jason.today/rc).
 
 <a href="https://github.com/TimethyH/EV/tree/path-tracing" target="_blank" class="btn btn-dark btn-lg btn-github" style="text-decoration: none;">
   <i class="fab fa-github" style="margin-right: 8px;"></i> View on GitHub
