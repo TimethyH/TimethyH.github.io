@@ -120,6 +120,11 @@ layout: default
     });
   </script>
 
+  {% if page.shader_player %}
+  <!-- Click-to-play live Shadertoy shaders (only on pages with shader_player: true) -->
+  <script src="{{ '/assets/js/shader-player.js' | relative_url }}"></script>
+  {% endif %}
+
   <!-- Lazy load all videos, autoplay+loop on desktop, manual on mobile/iOS -->
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function() {

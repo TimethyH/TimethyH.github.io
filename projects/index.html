@@ -4,6 +4,9 @@ title: Projects
 permalink: /projects/
 ---
 
+<!-- Lobster = the font of the Shadertoy wordmark on the Shadertoy card -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lobster&display=swap">
+
 <style>
 .projects-grid {
   display: grid;
@@ -21,6 +24,31 @@ permalink: /projects/
   width: 100%;
   height: 250px;
   object-fit: cover;
+}
+
+/* Wrapper so a logo can sit on top of the thumbnail (thumbnail_logo in a
+   project's front matter). position: relative makes the logo's
+   position: absolute measure from this box. */
+.project-thumbnail-wrap {
+  position: relative;
+  display: block;
+}
+
+.thumbnail-logo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;   /* clicks go through to the card */
+}
+
+/* Semi-transparent Shadertoy wordmark (Lobster, loaded below). */
+.thumbnail-logo-shadertoy {
+  font-family: 'Lobster', cursive;
+  font-size: 64px;
+  color: rgba(255, 255, 255, 0.82);
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
 }
 
 .projects-header {
@@ -113,9 +141,15 @@ permalink: /projects/
         <div class="card-link" onclick="window.location='{{ project.url | prepend: site.baseurl }}'">
           <article class="card blog-post" data-tags="{{ project.tags | join: ',' | downcase }}">
             {% if project.thumbnail %}
-            <img src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}" 
-                 alt="{{ project.title }}" 
-                 class="project-thumbnail">
+            <div class="project-thumbnail-wrap">
+              <img src="{{ site.url }}{{ site.baseurl }}{{ project.thumbnail }}"
+                   alt="{{ project.title }}"
+                   class="project-thumbnail">
+              {% if project.thumbnail_logo == "shadertoy" %}
+              <!-- Shadertoy's wordmark is its name set in the Lobster font -->
+              <span class="thumbnail-logo thumbnail-logo-shadertoy" aria-hidden="true">Shadertoy</span>
+              {% endif %}
+            </div>
             {% endif %}
             
             <div class="card-body">

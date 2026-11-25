@@ -741,3 +741,219 @@ details {
     border-bottom: none;
   }
 }
+/* ------------------------------------------------------------------ */
+/* Live shader player (assets/js/shader-player.js)                     */
+/* A poster with a play button; after a click a WebGL canvas takes its */
+/* place with a control bar that shows on hover (always on touch).     */
+/* ------------------------------------------------------------------ */
+.shader-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  // Poster and canvas both fill the 16:9 box exactly.
+  .shader-poster,
+  .shader-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    display: block;
+  }
+
+  .shader-poster {
+    object-fit: cover;
+    transition: filter 0.3s ease, transform 0.3s ease;
+  }
+
+  // The canvas is rendered smaller than it is shown; let the browser
+  // smooth the upscale. touch-action: none keeps touch drags on the
+  // shader (iMouse) instead of scrolling the page.
+  .shader-canvas {
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  &:not(.is-live):hover .shader-poster {
+    filter: brightness(0.75);
+    transform: scale(1.03);
+  }
+
+  // Once live, the poster and the big play button are no longer needed.
+  &.is-live .shader-poster,
+  &.is-live .shader-play-button {
+    display: none;
+  }
+}
+
+// Big centred "Run live shader" button over the poster.
+.shader-play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+
+  i { color: #f69801; }
+
+  &:hover,
+  &:focus-visible {
+    border-color: #f69801;
+    box-shadow: 0 0 16px rgba(246, 152, 1, 0.45);
+    background: rgba(0, 0, 0, 0.75);
+    outline: none;
+  }
+
+  &:disabled { opacity: 0.6; cursor: wait; }
+}
+
+// "Loading…" / error text, under the play button.
+.shader-status {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 40px);
+  transform: translateX(-50%);
+  width: 90%;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  pointer-events: none;
+
+  &:empty { display: none; }
+
+  &.is-error {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 12px 16px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.75);
+    pointer-events: auto;
+  }
+}
+
+.shader-status-link {
+  display: block;
+  margin-top: 6px;
+  color: #f69801;
+}
+
+// Control bar along the bottom of a live shader.
+.shader-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 24px 10px 8px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+  color: #fff;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.shader-player:hover .shader-controls,
+.shader-player.is-paused .shader-controls,
+.shader-player:focus-within .shader-controls {
+  opacity: 1;
+}
+
+// Touch screens have no hover, so keep the bar visible there.
+@media (hover: none) {
+  .shader-controls { opacity: 1; }
+}
+
+.shader-ctrl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  min-width: 30px;
+  padding: 0 8px;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff !important;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none !important;
+
+  &:hover,
+  &:focus-visible {
+    border-color: #f69801;
+    outline: none;
+  }
+}
+
+.shader-quality {
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 13px;
+  padding: 0 4px;
+  cursor: pointer;
+
+  &:hover, &:focus-visible { border-color: #f69801; outline: none; }
+  option { color: #000; }
+}
+
+.shader-fps {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.shader-spacer { flex: 1; }
+
+// Narrow cards: drop the resolution part of the readout first.
+@media (max-width: 480px) {
+  .shader-fps { display: none; }
+}
+
+// Fullscreen: fill the screen instead of keeping the 16:9 box.
+.shader-player:fullscreen {
+  aspect-ratio: auto;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+}
+
+// Shadertoy brand-ish button for the project page footer.
+a.btn-shadertoy {
+  background-color: #1a1a1a !important;
+  color: #fff !important;
+  border: 1px solid #f69801 !important;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: #000 !important;
+    box-shadow: 0 0 16px rgba(246, 152, 1, 0.45);
+    transform: translateY(-2px);
+    color: #fff !important;
+  }
+}
